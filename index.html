@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>dom-builder | Declarative JSON to Native HTML DOM Platform</title>
+  <title>dom-builder | How JSON Builds UI</title>
   <meta name="description"
     content="KeshavSoft dom-builder: The declarative UI platform uniting json-renderers (component runtime) and json-to-tag (universal DOM compiler)." />
 
@@ -108,314 +107,139 @@
       border-radius: 9999px;
     }
   </style>
+
+<style>
+:root{--ink:#172033;--muted:#5d687b;--line:#e3e8f0;--blue:#315de8;--green:#0d8c68;--pale:#f6f8fc;--code:#101827}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:#fff;line-height:1.7}
+.wrap{width:min(100% - 40px,900px);margin:0 auto}
+.hero{padding:58px 0 42px;background:linear-gradient(135deg,#f5f8ff 0%,#fff 68%);border-bottom:1px solid var(--line)}
+.eyebrow,.section-kicker{font-size:.75rem;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--blue)}
+h1{font-size:clamp(2.6rem,7vw,4.1rem);line-height:1.05;letter-spacing:-.055em;margin:12px 0 16px;font-weight:850}
+.intro{font-size:1.12rem;max-width:700px;color:var(--muted);margin:0 0 28px}
+.repo-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.nav-link{display:flex;align-items:center;gap:13px;padding:17px 18px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);text-decoration:none;transition:border-color .18s,transform .18s}
+.nav-link:hover{transform:translateY(-2px);border-color:#b6c6fa;color:var(--ink)}
+.nav-number{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:#edf2ff;color:var(--blue);font-weight:800;font-size:.82rem;flex:none}
+.nav-link.tag .nav-number{background:#e7f7f1;color:var(--green)}
+.nav-link strong{display:block;font-size:1rem}
+.nav-link small{display:block;color:var(--muted);font-size:.79rem;line-height:1.4;margin-top:2px}
+.arrow{margin-left:auto;font-size:1.1rem;color:var(--muted)}
+.content{padding-top:10px;padding-bottom:58px}
+section{padding:35px 0;border-bottom:1px solid var(--line)}
+.section-kicker{margin-bottom:7px}
+h2{font-size:clamp(1.55rem,4vw,2rem);letter-spacing:-.035em;font-weight:800;margin:0 0 14px}
+section p{color:#4d586b;margin:0 0 12px}
+strong{color:var(--ink)}
+.steps{margin-top:22px;border-top:1px solid var(--line)}
+.step{display:grid;grid-template-columns:52px 1fr;gap:16px;padding:22px 0;border-bottom:1px solid var(--line)}
+.step-index{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:var(--pale);color:var(--blue);font-weight:800;font-size:.82rem}
+h3{font-size:1.08rem;letter-spacing:-.015em;font-weight:750;margin:0 0 5px}
+.step p,.responsibility p{margin:0}
+pre{margin:18px 0 14px;background:var(--code);color:#e7edf7;padding:22px 24px;border-radius:14px;overflow-x:auto;font-size:.88rem;line-height:1.75}
+code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;font-size:.92em}
+p code,.note code{background:#edf1f7;padding:2px 5px;border-radius:5px;color:#25334a}
+.note{padding:15px 17px;border-left:3px solid var(--blue);background:#f5f7fc;border-radius:0 10px 10px 0;color:var(--muted);font-size:.93rem}
+.responsibility{padding:16px 0;border-bottom:1px solid var(--line)}
+.closing{margin-top:22px!important;font-weight:650;color:var(--ink)!important}
+footer{border-top:1px solid var(--line);background:#fafbfe;padding:22px 0;color:var(--muted);font-size:.85rem}
+footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+footer strong{letter-spacing:-.02em}
+@media(max-width:620px){.wrap{width:min(100% - 28px,900px)}.hero{padding:42px 0 30px}.repo-nav{grid-template-columns:1fr}.nav-link{padding:14px}.step{grid-template-columns:42px 1fr;gap:12px}pre{padding:17px;font-size:.8rem}}
+</style>
+
 </head>
 
 <body>
-
-  <!-- Lean Smart Hero -->
-  <header class="hero-section text-center">
-    <div class="container" style="max-width: 860px;">
-
-      <h1 class="hero-title mb-3">
-        (json-builder) Build Native Web UI with Pure JSON
-      </h1>
-      <p class="lead text-muted mx-auto mb-4" style="max-width: 680px;">
-        Separating UI structure from the code that builds it. Describe what to render with data; let the engine compile
-        and mount native HTML elements with zero virtual DOM overhead.
-      </p>
-
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">KeshavSoft · Technical Documentation</div>
+      <h1>dom-builder</h1>
+      <p class="intro">Build UI from JSON: define the structure, connect it to a target element, and render the result as native HTML.</p>
+      <nav class="repo-nav" aria-label="Repository documentation">
+        <a class="nav-link renderers" href="json-renderers/" target="_blank" rel="noopener noreferrer">
+          <span class="nav-number">01</span>
+          <span><strong>json-renderers</strong><small>Component blueprint and rendering request</small></span>
+          <span class="arrow">↗</span>
+        </a>
+        <a class="nav-link tag" href="json-to-tag/" target="_blank" rel="noopener noreferrer">
+          <span class="nav-number">02</span>
+          <span><strong>json-to-tag</strong><small>Builds native HTML elements from JSON</small></span>
+          <span class="arrow">↗</span>
+        </a>
+      </nav>
     </div>
   </header>
 
-  <!-- The Two Core Pillars -->
-  <section class="py-5 bg-white border-bottom">
-    <div class="container">
-      <div class="text-center mb-5">
-        <span class="flow-badge bg-light text-muted border font-mono">The 2 Foundation Pillars</span>
-        <h2 class="fw-bold mt-2">Two Specialized Engines, One Ecosystem</h2>
-        <p class="text-muted small mx-auto" style="max-width: 580px;">
-          Clean separation between the high-level business component orchestrator and the low-level universal DOM tag
-          compiler.
+  <main class="wrap content">
+    <section>
+      <div class="section-kicker">Overview</div>
+      <h2>How it is built</h2>
+      <p>dom-builder documents how the two repositories work together. <strong>json-renderers</strong> receives the rendering request and prepares the blueprint for a component. <strong>json-to-tag</strong> uses the JSON tag structure to create the actual HTML elements. The target element ID connects the rendered result to the intended place in the page.</p>
+    </section>
+
+     <section class="responsibilities">
+      <div class="section-kicker">Responsibilities</div>
+      <h2>What each repository does</h2>
+      <div class="responsibility">
+        <h3>json-renderers</h3>
+        <p>Works at the component level: interprets the render request, uses the component blueprint, and coordinates preparation of the requested UI.</p>
+      </div>
+      <div class="responsibility">
+        <h3>json-to-tag</h3>
+        <p>Works at the DOM level: converts a JSON description of tags, attributes, text, and children into native HTML elements.</p>
+      </div>
+      <p class="closing">Together, they separate <em>what UI is requested</em> from <em>how its HTML elements are created</em>.</p>
+    </section>
+
+    <section>
+      <div class="section-kicker">Example</div>
+      <h2>Add to any HTML page via CDN</h2>
+      <p>This example shows the kind of request used to ask json-renderers to build a table and place it in the element with ID <code>my-table withFooter</code>.</p>
+      <pre><code>&lt;!-- 1. Target Container --&gt;
+&lt;div id="my-table"&gt;&lt;/div&gt;
+
+&lt;!-- 2. Single Script Import &amp; Render --&gt;
+&lt;script type="module"&gt;
+  import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+  render({
+    type: "table.withFooter",
+    columns: ["item", "qty", "amount"],
+    data: [
+      { item: "High Tensile Rope", qty: 25, amount: 3000 },
+      { item: "Agri Shading Net",  qty: 10, amount: 1250 }
+    ],
+    targetHtmlId: "my-table"
+  });
+&lt;/script&gt;</code></pre>
+      <div class="note"><strong>In this example:</strong> <code>type</code> selects the component, <code>columns</code> describes the fields, <code>data</code> supplies the rows, and <code>targetHtmlId</code> identifies where the result should be mounted.</div>
+    </section>
+
+     <section class="responsibilities">
+      <div class="section-kicker">Live JSON-to-DOM Playground</div>
+      <h2>playground</h2>
+      <div class="responsibility">
+        <p>
+              Edit declarative JSON configurations in real-time and inspect mounted DOM output immediately. Includes instant presets for tables, datalists, and select menus with error diagnostics.
         </p>
       </div>
+      <nav class="repo-nav" aria-label="Repository documentation">
+        <a class="nav-link renderers" href="playground.html" target="_blank" rel="noopener noreferrer">
+          <span class="nav-number">0</span>
+          <span><strong>open interactive playground</strong><small>Real-time and inspect mounted DOM output</small></span>
+          <span class="arrow">↗</span>
+        </a>
+      
+      </nav>
+     
+    </section>
+  </main>
 
-      <div class="row g-4 align-items-stretch">
-        <!-- Pillar 1: json-renderers -->
-        <div class="col-lg-6">
-          <div
-            class="card-clean card-pillar-renderers p-4 p-md-5 h-100 d-flex flex-column border-top border-4 border-success">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-              <span
-                class="badge bg-success-subtle text-success border border-success-subtle font-mono px-3 py-1 rounded-pill fw-bold">
-                Pillar 01 &bull; High-Level Runtime
-              </span>
-              <span class="fs-4">🖥️</span>
-            </div>
-
-            <h3 class="fw-bold text-dark mb-2">json-renderers</h3>
-            <p class="text-muted small mb-4">
-              <strong>The Component Orchestrator.</strong> Accepts raw business <code>data</code>, <code>columns</code>
-              (the story about the data), and <code>type</code> (the component intent). Coordinates contract validation,
-              headless spec compilation, and DOM placement.
-            </p>
-
-            <div class="bg-light p-3.5 rounded-3 border mb-4 flex-grow-1">
-              <span class="text-xs text-uppercase font-mono fw-bold text-success d-block mb-2">What It Delivers:</span>
-              <ul class="list-unstyled small text-muted mb-0 space-y-1 lh-lg">
-                <li><i class="bi bi-check-circle-fill text-success me-1.5"></i> <strong>Composite Tables</strong>:
-                  Automated <code>#</code> serials, numeric alignment, and footer totals in <code>&lt;tfoot&gt;</code>.
-                </li>
-                <li><i class="bi bi-check-circle-fill text-success me-1.5"></i> <strong>Autocomplete Datalists</strong>:
-                  Native HTML5 <code>&lt;datalist&gt;</code> without external JS widgets.</li>
-                <li><i class="bi bi-check-circle-fill text-success me-1.5"></i> <strong>Select Dropdowns &amp;
-                    Forms</strong>: Declarative options binding and schema controls.</li>
-                <li><i class="bi bi-check-circle-fill text-success me-1.5"></i> <strong>The House-Building
-                    Story</strong>: Conceptual mental model in <code>subDoc/</code>.</li>
-              </ul>
-            </div>
-
-            <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-              <a href="json-renderers/index.html"
-                class="btn btn-success text-white fw-bold d-flex align-items-center gap-1">
-                Explore json-renderers Suite &rarr;
-              </a>
-              <a href="json-renderers/subDoc/index.html" class="small text-muted text-decoration-none fw-semibold">
-                Open subDoc Hub &rarr;
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pillar 2: json-to-tag -->
-        <div class="col-lg-6">
-          <div
-            class="card-clean card-pillar-tag p-4 p-md-5 h-100 d-flex flex-column border-top border-4 border-primary">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-              <span
-                class="badge bg-primary-subtle text-primary border border-primary-subtle font-mono px-3 py-1 rounded-pill fw-bold">
-                Pillar 02 &bull; Low-Level Compiler
-              </span>
-              <span class="fs-4">⚙️</span>
-            </div>
-
-            <h3 class="fw-bold text-dark mb-2">json-to-tag</h3>
-            <p class="text-muted small mb-4">
-              <strong>The Universal DOM Compiler.</strong> A zero-dependency engine that transforms declarative JSON
-              specifications into real native HTML DOM elements via recursive specification traversal.
-            </p>
-
-            <div class="bg-light p-3.5 rounded-3 border mb-4 flex-grow-1">
-              <span class="text-xs text-uppercase font-mono fw-bold text-primary d-block mb-2">What It Delivers:</span>
-              <ul class="list-unstyled small text-muted mb-0 space-y-1 lh-lg">
-                <li><i class="bi bi-check-circle-fill text-primary me-1.5"></i> <strong>Recursive Traversal</strong>:
-                  Visits nested parent-child trees handling objects, arrays, and text.</li>
-                <li><i class="bi bi-check-circle-fill text-primary me-1.5"></i> <strong>Zero Virtual DOM</strong>:
-                  Direct synthesis via native <code>document.createElement()</code>.</li>
-                <li><i class="bi bi-check-circle-fill text-primary me-1.5"></i> <strong>HTML Tag Catalog</strong>:
-                  Comprehensive JSON catalog of supported HTML5 tags.</li>
-                <li><i class="bi bi-check-circle-fill text-primary me-1.5"></i> <strong>Independent Utility</strong>:
-                  Can be used standalone in any project without renderers.</li>
-              </ul>
-            </div>
-
-            <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-              <a href="json-to-tag/index.html" class="btn btn-primary fw-bold d-flex align-items-center gap-1">
-                Explore json-to-tag Compiler &rarr;
-              </a>
-              <span class="font-mono text-muted small">npm i @keshavsoft/json-to-tag</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Interactive Sandbox & Visual Story Deck -->
-  <section class="py-5 bg-light border-bottom">
-    <div class="container">
-      <div class="text-center mb-5">
-        <span class="flow-badge bg-white text-muted border font-mono">Tools &amp; Presentation</span>
-        <h3 class="fw-bold mt-2">Sandbox &amp; Presentation Deck</h3>
-        <p class="text-muted small mx-auto" style="max-width: 500px;">
-          Experiment with live configurations or walk through the interactive story deck.
-        </p>
-      </div>
-
-      <div class="row g-4">
-        <!-- 1. Playground -->
-        <div class="col-md-6">
-          <div class="card-clean p-4 h-100 d-flex flex-column bg-white">
-            <div class="d-flex align-items-center gap-2 mb-2 text-warning fw-bold small text-uppercase">
-              <i class="bi bi-code-slash"></i> Developer Sandbox
-            </div>
-            <h4 class="fw-bold text-dark">Live JSON-to-DOM Playground</h4>
-            <p class="text-muted small flex-grow-1">
-              Edit declarative JSON configurations in real-time and inspect mounted DOM output immediately. Includes
-              instant presets for tables, datalists, and select menus with error diagnostics.
-            </p>
-            <div class="pt-3 border-top">
-              <a href="playground.html" class="btn btn-warning text-dark fw-bold px-4">
-                <i class="bi bi-sliders me-1"></i> Open Interactive Playground &rarr;
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. Story Deck -->
-        <div class="col-md-6">
-          <div class="card-clean p-4 h-100 d-flex flex-column bg-white">
-            <div class="d-flex align-items-center gap-2 mb-2 text-info fw-bold small text-uppercase">
-              <i class="bi bi-easel2-fill"></i> Visual Presentation
-            </div>
-            <h4 class="fw-bold text-dark">The Story: Why HTML is Tough</h4>
-            <p class="text-muted small flex-grow-1">
-              A 5-slide interactive full-screen deck covering string concatenation traps, the nightmare of composite
-              tables, class soup, attribute boilerplate, and the declarative breakthrough.
-            </p>
-            <div class="pt-3 border-top">
-              <a href="story.html" class="btn btn-outline-info text-dark fw-bold px-4">
-                <i class="bi bi-play-circle me-1"></i> Launch 5-Slide Presentation &rarr;
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- How the repositories work together -->
-  <section class="py-5 bg-white border-top border-bottom" id="working-principle">
-    <div class="container">
-      <div class="text-center mb-5">
-        <span class="flow-badge bg-light text-muted border font-mono">Working Principle</span>
-        <h2 class="fw-bold mt-2">How dom-builder, json-renderers and json-to-tag Work Together</h2>
-        <p class="text-muted mx-auto" style="max-width:760px;">
-          These repositories have different responsibilities. The overview below describes the roles shown in this
-          documentation;
-          exact behavior depends on the configuration and APIs used by the project.
-        </p>
-      </div>
-
-      <div class="row g-3 align-items-stretch mb-4">
-        <div class="col-md-4">
-          <div class="card-clean p-4 h-100">
-            <div class="text-primary fw-bold small text-uppercase mb-2">01 · Platform / Overview</div>
-            <h3 class="h5 fw-bold">dom-builder</h3>
-            <p class="small text-muted mb-3">
-              The umbrella project and documentation entry point. It explains how declarative JSON can describe a UI
-              and how the rendering/compiler pieces fit together.
-            </p>
-            <a href="https://github.com/keshavsoft/dom-builder" target="_blank" rel="noopener noreferrer"
-              class="small fw-semibold text-decoration-none">Open dom-builder repository ↗</a>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card-clean p-4 h-100">
-            <div class="text-success fw-bold small text-uppercase mb-2">02 · Component Runtime</div>
-            <h3 class="h5 fw-bold">json-renderers</h3>
-            <p class="small text-muted mb-3">
-              Accepts a higher-level render request, such as a component <code>type</code>, <code>data</code>,
-              <code>columns</code> and a target element ID. It coordinates the component-specific rendering workflow
-              and can place the resulting UI in the requested target.
-            </p>
-            <a href="https://github.com/keshavsoft/json-renderers" target="_blank" rel="noopener noreferrer"
-              class="small fw-semibold text-decoration-none">Open json-renderers repository ↗</a>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card-clean p-4 h-100">
-            <div class="text-primary fw-bold small text-uppercase mb-2">03 · DOM Compiler</div>
-            <h3 class="h5 fw-bold">json-to-tag</h3>
-            <p class="small text-muted mb-3">
-              Takes a JSON description of tags and their properties/children, walks the nested structure, creates native
-              HTML elements, applies supported attributes and content, and assembles the DOM tree.
-            </p>
-            <a href="https://github.com/keshavsoft/json-to-tag" target="_blank" rel="noopener noreferrer"
-              class="small fw-semibold text-decoration-none">Open json-to-tag repository ↗</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="card-clean p-4 p-md-5">
-        <h3 class="h5 fw-bold mb-3"><i class="bi bi-diagram-3 me-2 text-primary"></i>Example workflow</h3>
-        <div class="d-flex flex-column flex-md-row align-items-stretch gap-2 text-center mb-4">
-          <div class="flex-fill rounded-3 border bg-light p-3">
-            <div class="fw-bold">1. Request</div>
-            <div class="small text-muted">Component type + data + columns + target ID</div>
-          </div>
-          <div class="d-flex align-items-center justify-content-center text-muted"><i class="bi bi-arrow-right"></i>
-          </div>
-          <div class="flex-fill rounded-3 border bg-light p-3">
-            <div class="fw-bold">2. json-renderers</div>
-            <div class="small text-muted">Coordinates the requested component workflow</div>
-          </div>
-          <div class="d-flex align-items-center justify-content-center text-muted"><i class="bi bi-arrow-right"></i>
-          </div>
-          <div class="flex-fill rounded-3 border bg-light p-3">
-            <div class="fw-bold">3. JSON tag spec</div>
-            <div class="small text-muted">Describes elements, attributes and children</div>
-          </div>
-          <div class="d-flex align-items-center justify-content-center text-muted"><i class="bi bi-arrow-right"></i>
-          </div>
-          <div class="flex-fill rounded-3 border bg-light p-3">
-            <div class="fw-bold">4. DOM output</div>
-            <div class="small text-muted">json-to-tag builds elements; output is mounted at the target</div>
-          </div>
-        </div>
-        <p class="small text-muted mb-0">
-          <strong>Important distinction:</strong> json-renderers is the higher-level component workflow, while
-          json-to-tag
-          is the lower-level JSON-to-native-DOM compiler. The dom-builder repository presents the overall idea and
-          connects
-          the documentation. The exact internal hand-off can vary by implementation; check the source code for a
-          specific call path.
-        </p>
-      </div>
-
-      <div class="row g-4 mt-2">
-        <div class="col-lg-6">
-          <h3 class="h5 fw-bold">What happens inside json-renderers?</h3>
-          <ol class="small text-muted lh-lg">
-            <li>The caller supplies a render request with the intended component type and its data/configuration.</li>
-            <li>The runtime selects the component-specific path and prepares the specification needed for that UI.</li>
-            <li>The target element ID identifies where the rendered output should appear.</li>
-            <li>The UI is created and connected to the target through the rendering workflow.</li>
-          </ol>
-        </div>
-        <div class="col-lg-6">
-          <h3 class="h5 fw-bold">What happens inside json-to-tag?</h3>
-          <ol class="small text-muted lh-lg">
-            <li>Read the JSON node and identify its tag, properties, attributes and child content.</li>
-            <li>Create the corresponding native element with browser DOM APIs.</li>
-            <li>Process nested children recursively, preserving their parent-child relationship.</li>
-            <li>Return/assemble the element tree so the caller can attach it to a page container.</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- Clean Minimal Footer -->
-  <footer class="py-4 bg-light border-top text-center text-muted small">
-    <div class="container d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2">
-      <div>
-        <strong class="text-dark">dom-builder</strong> &bull; KeshavSoft Declarative UI Platform
-      </div>
-      <div class="d-flex align-items-center gap-3">
-        <a href="json-renderers/index.html" class="text-decoration-none text-muted">json-renderers</a>
-        <a href="json-to-tag/index.html" class="text-decoration-none text-muted">json-to-tag</a>
-        <a href="playground.html" class="text-decoration-none text-muted">Playground</a>
-        <a href="story.html" class="text-decoration-none text-muted">Story</a>
-        <a href="https://github.com/keshavsoft/dom-builder" target="_blank"
-          class="text-decoration-none text-dark fw-bold">GitHub</a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+  <footer><div class="wrap"><strong>
+        <a href="https://github.com/keshavsoft/dom-builder" target="_blank" class="text-decoration-none text-dark fw-bold">GitHub</a>
+  </strong><span>JSON specification → native HTML UI</span></div></footer>
 </body>
 
 </html>
