@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>dom-builder | How JSON Builds UI</title>
-  <meta name="description"
-    content="KeshavSoft dom-builder: The declarative UI platform uniting json-renderers (component runtime) and json-to-tag (universal DOM compiler)." />
+  <title>dom-builder | json-renderers Guide</title>
+  <meta name="description" content="A simple story explaining how json-renderers builds UI from a component request." />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -108,46 +108,288 @@
     }
   </style>
 
-<style>
-:root{--ink:#172033;--muted:#5d687b;--line:#e3e8f0;--blue:#315de8;--green:#0d8c68;--pale:#f6f8fc;--code:#101827}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:#fff;line-height:1.7}
-.wrap{width:min(100% - 40px,900px);margin:0 auto}
-.hero{padding:58px 0 42px;background:linear-gradient(135deg,#f5f8ff 0%,#fff 68%);border-bottom:1px solid var(--line)}
-.eyebrow,.section-kicker{font-size:.75rem;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--blue)}
-h1{font-size:clamp(2.6rem,7vw,4.1rem);line-height:1.05;letter-spacing:-.055em;margin:12px 0 16px;font-weight:850}
-.intro{font-size:1.12rem;max-width:700px;color:var(--muted);margin:0 0 28px}
-.repo-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.nav-link{display:flex;align-items:center;gap:13px;padding:17px 18px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);text-decoration:none;transition:border-color .18s,transform .18s}
-.nav-link:hover{transform:translateY(-2px);border-color:#b6c6fa;color:var(--ink)}
-.nav-number{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:#edf2ff;color:var(--blue);font-weight:800;font-size:.82rem;flex:none}
-.nav-link.tag .nav-number{background:#e7f7f1;color:var(--green)}
-.nav-link strong{display:block;font-size:1rem}
-.nav-link small{display:block;color:var(--muted);font-size:.79rem;line-height:1.4;margin-top:2px}
-.arrow{margin-left:auto;font-size:1.1rem;color:var(--muted)}
-.content{padding-top:10px;padding-bottom:58px}
-section{padding:35px 0;border-bottom:1px solid var(--line)}
-.section-kicker{margin-bottom:7px}
-h2{font-size:clamp(1.55rem,4vw,2rem);letter-spacing:-.035em;font-weight:800;margin:0 0 14px}
-section p{color:#4d586b;margin:0 0 12px}
-strong{color:var(--ink)}
-.steps{margin-top:22px;border-top:1px solid var(--line)}
-.step{display:grid;grid-template-columns:52px 1fr;gap:16px;padding:22px 0;border-bottom:1px solid var(--line)}
-.step-index{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:var(--pale);color:var(--blue);font-weight:800;font-size:.82rem}
-h3{font-size:1.08rem;letter-spacing:-.015em;font-weight:750;margin:0 0 5px}
-.step p,.responsibility p{margin:0}
-pre{margin:18px 0 14px;background:var(--code);color:#e7edf7;padding:22px 24px;border-radius:14px;overflow-x:auto;font-size:.88rem;line-height:1.75}
-code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;font-size:.92em}
-p code,.note code{background:#edf1f7;padding:2px 5px;border-radius:5px;color:#25334a}
-.note{padding:15px 17px;border-left:3px solid var(--blue);background:#f5f7fc;border-radius:0 10px 10px 0;color:var(--muted);font-size:.93rem}
-.responsibility{padding:16px 0;border-bottom:1px solid var(--line)}
-.closing{margin-top:22px!important;font-weight:650;color:var(--ink)!important}
-footer{border-top:1px solid var(--line);background:#fafbfe;padding:22px 0;color:var(--muted);font-size:.85rem}
-footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
-footer strong{letter-spacing:-.02em}
-@media(max-width:620px){.wrap{width:min(100% - 28px,900px)}.hero{padding:42px 0 30px}.repo-nav{grid-template-columns:1fr}.nav-link{padding:14px}.step{grid-template-columns:42px 1fr;gap:12px}pre{padding:17px;font-size:.8rem}}
-</style>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --blue: #315de8;
+      --green: #0d8c68;
+      --pale: #f6f8fc;
+      --code: #101827
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #fff;
+      line-height: 1.7
+    }
+
+    .wrap {
+      width: min(100% - 40px, 900px);
+      margin: 0 auto
+    }
+
+    .hero {
+      padding: 58px 0 42px;
+      background: linear-gradient(135deg, #f5f8ff 0%, #fff 68%);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .eyebrow,
+    .section-kicker {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--blue)
+    }
+
+    h1 {
+      font-size: clamp(2.6rem, 7vw, 4.1rem);
+      line-height: 1.05;
+      letter-spacing: -.055em;
+      margin: 12px 0 16px;
+      font-weight: 850
+    }
+
+    .intro {
+      font-size: 1.12rem;
+      max-width: 700px;
+      color: var(--muted);
+      margin: 0 0 28px
+    }
+
+    .repo-nav {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 17px 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--ink);
+      text-decoration: none;
+      transition: border-color .18s, transform .18s
+    }
+
+    .nav-link:hover {
+      transform: translateY(-2px);
+      border-color: #b6c6fa;
+      color: var(--ink)
+    }
+
+    .nav-number {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: #edf2ff;
+      color: var(--blue);
+      font-weight: 800;
+      font-size: .82rem;
+      flex: none
+    }
+
+    .nav-link.tag .nav-number {
+      background: #e7f7f1;
+      color: var(--green)
+    }
+
+    .nav-link strong {
+      display: block;
+      font-size: 1rem
+    }
+
+    .nav-link small {
+      display: block;
+      color: var(--muted);
+      font-size: .79rem;
+      line-height: 1.4;
+      margin-top: 2px
+    }
+
+    .arrow {
+      margin-left: auto;
+      font-size: 1.1rem;
+      color: var(--muted)
+    }
+
+    .content {
+      padding-top: 10px;
+      padding-bottom: 58px
+    }
+
+    section {
+      padding: 35px 0;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .section-kicker {
+      margin-bottom: 7px
+    }
+
+    h2 {
+      font-size: clamp(1.55rem, 4vw, 2rem);
+      letter-spacing: -.035em;
+      font-weight: 800;
+      margin: 0 0 14px
+    }
+
+    section p {
+      color: #4d586b;
+      margin: 0 0 12px
+    }
+
+    strong {
+      color: var(--ink)
+    }
+
+    .steps {
+      margin-top: 22px;
+      border-top: 1px solid var(--line)
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 16px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .step-index {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--pale);
+      color: var(--blue);
+      font-weight: 800;
+      font-size: .82rem
+    }
+
+    h3 {
+      font-size: 1.08rem;
+      letter-spacing: -.015em;
+      font-weight: 750;
+      margin: 0 0 5px
+    }
+
+    .step p,
+    .responsibility p {
+      margin: 0
+    }
+
+    pre {
+      margin: 18px 0 14px;
+      background: var(--code);
+      color: #e7edf7;
+      padding: 22px 24px;
+      border-radius: 14px;
+      overflow-x: auto;
+      font-size: .88rem;
+      line-height: 1.75
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: .92em
+    }
+
+    p code,
+    .note code {
+      background: #edf1f7;
+      padding: 2px 5px;
+      border-radius: 5px;
+      color: #25334a
+    }
+
+    .note {
+      padding: 15px 17px;
+      border-left: 3px solid var(--blue);
+      background: #f5f7fc;
+      border-radius: 0 10px 10px 0;
+      color: var(--muted);
+      font-size: .93rem
+    }
+
+    .responsibility {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .closing {
+      margin-top: 22px !important;
+      font-weight: 650;
+      color: var(--ink) !important
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: #fafbfe;
+      padding: 22px 0;
+      color: var(--muted);
+      font-size: .85rem
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap
+    }
+
+    footer strong {
+      letter-spacing: -.02em
+    }
+
+    @media(max-width:620px) {
+      .wrap {
+        width: min(100% - 28px, 900px)
+      }
+
+      .hero {
+        padding: 42px 0 30px
+      }
+
+      .repo-nav {
+        grid-template-columns: 1fr
+      }
+
+      .nav-link {
+        padding: 14px
+      }
+
+      .step {
+        grid-template-columns: 42px 1fr;
+        gap: 12px
+      }
+
+      pre {
+        padding: 17px;
+        font-size: .8rem
+      }
+    }
+  </style>
 
 </head>
 
@@ -156,16 +398,23 @@ footer strong{letter-spacing:-.02em}
     <div class="wrap">
       <div class="eyebrow">KeshavSoft · Technical Documentation</div>
       <h1>dom-builder</h1>
-      <p class="intro">Build UI from JSON: define the structure, connect it to a target element, and render the result as native HTML.</p>
-      <nav class="repo-nav" aria-label="Repository documentation">
+      <div class="section-kicker">A simple story</div>
+      <h2>json-renderers</h2>
+      <p>Build UI from JSON: define the structure, connect it to a target element, and render the result as native HTML.
+      </p>
+      <p>when you want to build a configured component from a render request. You provide a
+        component
+        <code>type</code>, <code>data</code>, <code>columns</code> when needed, and a target HTML element ID. The
+        renderer uses these inputs to build the requested component, such as a table or another supported data-driven
+        UI.
+      </p>
+      <div class="note"><strong>Typical request:</strong> component type + data + columns (when needed) + target HTML
+        ID.</div><br>
+
+      <nav class="repo-nav" aria-label="Repository">
         <a class="nav-link renderers" href="json-renderers/" target="_blank" rel="noopener noreferrer">
-          <span class="nav-number">01</span>
-          <span><strong>json-renderers</strong><small>Component blueprint and rendering request</small></span>
-          <span class="arrow">↗</span>
-        </a>
-        <a class="nav-link tag" href="json-to-tag/" target="_blank" rel="noopener noreferrer">
-          <span class="nav-number">02</span>
-          <span><strong>json-to-tag</strong><small>Builds native HTML elements from JSON</small></span>
+          <span class="nav-number">Open</span>
+          <span><strong>json-renderers</strong><small>Open the source repository</small></span>
           <span class="arrow">↗</span>
         </a>
       </nav>
@@ -174,33 +423,19 @@ footer strong{letter-spacing:-.02em}
 
   <main class="wrap content">
     <section>
-      <div class="section-kicker">Overview</div>
-      <h2>How it is built</h2>
-      <p>dom-builder documents how the two repositories work together. <strong>json-renderers</strong> receives the rendering request and prepares the blueprint for a component. <strong>json-to-tag</strong> uses the JSON tag structure to create the actual HTML elements. The target element ID connects the rendered result to the intended place in the page.</p>
-    </section>
-
-     <section class="responsibilities">
-      <div class="section-kicker">Responsibilities</div>
-      <h2>What each repository does</h2>
-      <div class="responsibility">
-        <h3>json-renderers</h3>
-        <p>Works at the component level: interprets the render request, uses the component blueprint, and coordinates preparation of the requested UI.</p>
-      </div>
-      <div class="responsibility">
-        <h3>json-to-tag</h3>
-        <p>Works at the DOM level: converts a JSON description of tags, attributes, text, and children into native HTML elements.</p>
-      </div>
-      <p class="closing">Together, they separate <em>what UI is requested</em> from <em>how its HTML elements are created</em>.</p>
+      <div class="section-kicker">The main idea</div>
+      <h2>Describe what you want to display</h2>
+      <p>Imagine you have a list of products and want to show them in a table. Instead of manually creating every table
+        row, you send json-renderers a request describing the component, the data, the columns, and the HTML element
+        where the result should appear.</p>
     </section>
 
     <section>
       <div class="section-kicker">Example</div>
-      <h2>Add to any HTML page via CDN</h2>
-      <p>This example shows the kind of request used to ask json-renderers to build a table and place it in the element with ID <code>my-table withFooter</code>.</p>
-      <pre><code>&lt;!-- 1. Target Container --&gt;
-&lt;div id="my-table"&gt;&lt;/div&gt;
+      <h2>Build a table from data</h2>
+      <p>This request displays two product rows in a table and places the result inside <code>my-table</code>.</p>
+      <pre><code>&lt;div id="my-table"&gt;&lt;/div&gt;
 
-&lt;!-- 2. Single Script Import &amp; Render --&gt;
 &lt;script type="module"&gt;
   import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
 
@@ -208,38 +443,45 @@ footer strong{letter-spacing:-.02em}
     type: "table.withFooter",
     columns: ["item", "qty", "amount"],
     data: [
-      { item: "High Tensile Rope", qty: 25, amount: 3000 },
-      { item: "Agri Shading Net",  qty: 10, amount: 1250 }
+      { item: "Rope", qty: 25, amount: 3000 },
+      { item: "Net",  qty: 10, amount: 1250 }
     ],
     targetHtmlId: "my-table"
   });
 &lt;/script&gt;</code></pre>
-      <div class="note"><strong>In this example:</strong> <code>type</code> selects the component, <code>columns</code> describes the fields, <code>data</code> supplies the rows, and <code>targetHtmlId</code> identifies where the result should be mounted.</div>
+      <div class="note"><strong>Field meanings</strong><br>
+        <code>type</code> selects the component.<br>
+        <code>columns</code> defines the table fields.<br>
+        <code>data</code> supplies the row values.<br>
+        <code>targetHtmlId</code> identifies where to render the result.
+      </div>
     </section>
 
-     <section class="responsibilities">
+    <section class="responsibilities">
       <div class="section-kicker">Live JSON-to-DOM Playground</div>
       <h2>playground</h2>
       <div class="responsibility">
         <p>
-              Edit declarative JSON configurations in real-time and inspect mounted DOM output immediately. Includes instant presets for tables, datalists, and select menus with error diagnostics.
+          Edit declarative JSON configurations in real-time and inspect mounted DOM output immediately. Includes instant
+          presets for tables, datalists, and select menus with error diagnostics.
         </p>
       </div>
       <nav class="repo-nav" aria-label="Repository documentation">
         <a class="nav-link renderers" href="playground.html" target="_blank" rel="noopener noreferrer">
-          <span class="nav-number">0</span>
-          <span><strong>open interactive playground</strong><small>Real-time and inspect mounted DOM output</small></span>
+          <span class="nav-number">Open</span>
+          <span><strong>interactive playground</strong><small>Real-time and inspect mounted DOM
+              output</small></span>
           <span class="arrow">↗</span>
         </a>
-      
+
       </nav>
-     
+
     </section>
   </main>
 
-  <footer><div class="wrap"><strong>
-        <a href="https://github.com/keshavsoft/dom-builder" target="_blank" class="text-decoration-none text-dark fw-bold">GitHub</a>
-  </strong><span>JSON specification → native HTML UI</span></div></footer>
+  <footer>
+    <div class="wrap"><strong>dom-builder</strong><span>json-renderers · Request → UI</span></div>
+  </footer>
 </body>
 
 </html>
