@@ -331,6 +331,37 @@
       margin: 16px 0;
     }
 
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--pale);
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .badge-error {
+      display: inline-block;
+      font-size: .75rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #fee2e2;
+      color: #991b1b;
+      font-weight: 600;
+    }
+
     footer {
       border-top: 1px solid var(--line);
       background: #fafbfe;
@@ -457,101 +488,187 @@
     <!-- Section 2: Compulsory Keys Verification -->
     <section>
       <div class="section-kicker">The Checklist</div>
-      <h2>Compulsory keys and validation rules</h2>
+      <h2>Compulsory keys and validation errors</h2>
       <p>
-        When <code>guard(renderRequest)</code> is invoked, it verifies the following requirements:
+        When <code>guardFunc(config)</code> is invoked, it validates every compulsory key and throws an immediate, descriptive Error if any rule is violated:
       </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Status</th>
+            <th>Expected Type</th>
+            <th>Error Thrown on Violation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>type</code></td>
+            <td>Compulsory</td>
+            <td><code>string</code> (e.g. <code>"table.simple"</code>)</td>
+            <td><span class="badge-error">Error: Missing compulsory key: "type"</span><br><span class="badge-error">TypeError: type must be a string</span></td>
+          </tr>
+          <tr>
+            <td><code>data</code></td>
+            <td>Compulsory</td>
+            <td><code>Array</code> of row objects</td>
+            <td><span class="badge-error">Error: Missing compulsory key: "data"</span><br><span class="badge-error">TypeError: data must be an Array</span></td>
+          </tr>
+          <tr>
+            <td><code>columns</code></td>
+            <td>Compulsory</td>
+            <td><code>Array</code> of column objects</td>
+            <td><span class="badge-error">Error: Missing compulsory key: "columns"</span><br><span class="badge-error">TypeError: columns must be an Array</span></td>
+          </tr>
+          <tr>
+            <td><code>targetHtmlId</code></td>
+            <td>Compulsory</td>
+            <td>Non-empty <code>string</code></td>
+            <td><span class="badge-error">Error: Missing compulsory key: "targetHtmlId"</span><br><span class="badge-error">Error: targetHtmlId must be a non-empty string</span></td>
+          </tr>
+          <tr>
+            <td><code>appendPosition</code></td>
+            <td>Compulsory</td>
+            <td><code>string</code> (e.g. <code>"replace"</code>)</td>
+            <td><span class="badge-error">Error: Missing compulsory key: "appendPosition"</span><br><span class="badge-error">TypeError: appendPosition must be a string</span></td>
+          </tr>
+          <tr>
+            <td><code>classToApply</code></td>
+            <td>Compulsory</td>
+            <td><code>string</code> (e.g. <code>"table table-striped"</code>)</td>
+            <td><span class="badge-error">Error: Missing compulsory key: "classToApply"</span><br><span class="badge-error">TypeError: classToApply must be a string</span></td>
+          </tr>
+          <tr>
+            <td><code>showLog</code></td>
+            <td>Optional</td>
+            <td><code>boolean</code></td>
+            <td><span class="badge-error">TypeError: showLog must be a boolean</span></td>
+          </tr>
+        </tbody>
+      </table>
 
       <div class="steps">
         <div class="step">
-          <div class="step-index">✓</div>
+          <div class="step-index">01</div>
           <div>
-            <h3><code>targetHtmlId</code> verification</h3>
+            <h3><code>type</code> validation</h3>
             <p>
-              Must be a non-empty string. Additionally checks:
-              <code>document.getElementById(targetHtmlId) !== null</code>. If the DOM element does not exist, an error
-              is logged with the exact missing ID.
+              Must be a string. If omitted, throws <span class="badge-error">Error: Missing compulsory key: "type"</span>. If non-string, throws <span class="badge-error">TypeError: type must be a string</span>. For table renderers (like v19), supply dotted subtypes like <code>"table.simple"</code> or <code>"table.withFooter"</code>.
             </p>
           </div>
         </div>
 
         <div class="step">
-          <div class="step-index">✓</div>
+          <div class="step-index">02</div>
           <div>
-            <h3><code>type</code> intent verification</h3>
+            <h3><code>columns</code> validation</h3>
             <p>
-              Must be specified and recognized by the builder registry: <code>table.simple</code>,
-              <code>table.withFooter</code>, <code>datalist</code>, <code>select</code>, or <code>form</code>.
+              Must be an Array. If omitted, throws <span class="badge-error">Error: Missing compulsory key: "columns"</span>. If not an Array, throws <span class="badge-error">TypeError: columns must be an Array</span>. In table renderers, each item is a column object with <code>columnName</code> (e.g. <code>[{ columnName: "itemName" }]</code>).
             </p>
           </div>
         </div>
 
         <div class="step">
-          <div class="step-index">✓</div>
+          <div class="step-index">03</div>
           <div>
             <h3><code>data</code> array integrity</h3>
             <p>
-              Must satisfy <code>Array.isArray(data)</code>. Empty arrays (<code>[]</code>) are handled gracefully by
-              rendering an empty-state indicator rather than crashing.
+              Must be an Array. If omitted, throws <span class="badge-error">Error: Missing compulsory key: "data"</span>. If not an Array, throws <span class="badge-error">TypeError: data must be an Array</span>.
             </p>
           </div>
         </div>
 
         <div class="step">
-          <div class="step-index">✓</div>
+          <div class="step-index">04</div>
           <div>
-            <h3><code>columns</code> verification (component-dependent)</h3>
+            <h3><code>targetHtmlId</code> mount target</h3>
             <p>
-              For table builds, <code>columns</code> must be an array of column keys. If omitted, the guard offers
-              automatic column key extraction from the first row of <code>data</code>.
+              Must be a non-empty string. If omitted, throws <span class="badge-error">Error: Missing compulsory key: "targetHtmlId"</span>. If empty or whitespace, throws <span class="badge-error">Error: targetHtmlId must be a non-empty string</span>.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-index">05</div>
+          <div>
+            <h3><code>appendPosition</code> &amp; <code>classToApply</code></h3>
+            <p>
+              Mounting parameters must be strings (e.g. <code>appendPosition: "replace"</code>, <code>classToApply: "table table-striped"</code>). Missing keys throw compulsory key errors.
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Section 3: How It Works in Code -->
+    <!-- Section 3: How It Works in Code & CDN Usage -->
     <section>
-      <div class="section-kicker">Implementation Pattern</div>
-      <h2>Clean functional validation</h2>
+      <div class="section-kicker">Implementation &amp; CDN</div>
+      <h2>How to use guardFunc via CDN</h2>
       <p>
-        <code>json-renderers-guard</code> is designed as a pure, zero-dependency validation function that returns a
-        boolean status and diagnostics array:
+        Import <code>json-renderers-guard</code> directly in browser ES modules via jsDelivr CDN and validate the configuration before calling the renderer:
       </p>
 
-      <pre><code>// Conceptual Guard Logic inside json-renderers
-export function guardRenderRequest(config) {
-  const errors = [];
+      <pre><code>// 1. Import guardFunc and renderer via CDN
+import guardFunc, { guardSpec, guardMount } from "https://cdn.jsdelivr.net/npm/json-renderers-guard/+esm";
+import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v19/min.js";
 
-  // 1. Check target element
-  if (!config.targetHtmlId) {
-    errors.push("Missing required field 'targetHtmlId'.");
-  } else if (!document.getElementById(config.targetHtmlId)) {
-    errors.push(`Target element '#${config.targetHtmlId}' does not exist in the DOM.`);
-  }
+const config = {
+  type: "table.simple",
+  targetHtmlId: "dom-render-container",
+  data: [
+    { itemName: "Item 01", baseUnit: "kgs" },
+    { itemName: "Item 02", baseUnit: "pcs" }
+  ],
+  columns: [
+    { columnName: "itemName" },
+    { columnName: "baseUnit" }
+  ],
+  appendPosition: "replace",
+  classToApply: "table table-striped",
+  showLog: true
+};
 
-  // 2. Check component type
-  if (!config.type) {
-    errors.push("Missing required field 'type'.");
-  }
+try {
+  // 2. Validate configuration (throws descriptive error if anything is wrong/missing)
+  guardFunc(config);
 
-  // 3. Check data
-  if (!Array.isArray(config.data)) {
-    errors.push("Field 'data' must be a valid Array of objects.");
-  }
-
-  if (errors.length &gt; 0) {
-    console.error("[json-renderers-guard] Validation failed:", errors);
-    return { valid: false, errors };
-  }
-
-  return { valid: true };
+  // 3. Render cleanly to the DOM
+  render(config);
+} catch (err) {
+  // Catches missing keys, invalid types, or malformed arrays
+  console.error("Validation / Render error:", err.message);
 }</code></pre>
 
+      <div class="grid-cards">
+        <div class="card-box">
+          <span class="pill green">Modular Guard</span>
+          <h3><code>guardSpec(config)</code></h3>
+          <p>
+            Validates only data specification keys (<code>type</code>, <code>data</code>, <code>columns</code>, <code>showLog</code>). Ideal when you don't need DOM mount keys.
+          </p>
+        </div>
+
+        <div class="card-box">
+          <span class="pill blue">Modular Guard</span>
+          <h3><code>guardMount(config)</code></h3>
+          <p>
+            Validates only DOM mounting keys (<code>targetHtmlId</code>, <code>appendPosition</code>, <code>classToApply</code>).
+          </p>
+        </div>
+
+        <div class="card-box">
+          <span class="pill amber">Composite Guard</span>
+          <h3><code>guardFunc(config)</code></h3>
+          <p>
+            Complete pipeline validation: executes both <code>guardSpec</code> and <code>guardMount</code> in one call.
+          </p>
+        </div>
+      </div>
+
       <div class="note">
-        <strong>Fail-Fast Architecture:</strong> By rejecting bad requests immediately with clear descriptions,
-        <code>json-renderers-guard</code> ensures that downstream builders (<code>json-renderers-build</code>) and tag
-        engines (<code>json-to-tag</code>) never receive corrupt state.
+        <strong>Fail-Fast Architecture:</strong> By throwing descriptive errors before DOM creation begins,
+        <code>json-renderers-guard</code> prevents downstream crashes and pinpoint exact configuration mistakes immediately.
       </div>
     </section>
 

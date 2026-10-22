@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>json-renderers-guard | KeshavSoft Technical Documentation</title>
+  <meta name="description"
+    content="A simple story explaining how json-renderers-guard validates rendering configurations, enforces compulsory keys, and prevents runtime DOM failures." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --blue: #315de8;
+      --green: #0d8c68;
+      --purple: #7c3aed;
+      --amber: #d97706;
+      --pale: #f6f8fc;
+      --code: #101827;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 900px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 58px 0 42px;
+      background: linear-gradient(135deg, #fffbeb 0%, #ffffff 68%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      font-size: .82rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover {
+      color: var(--amber);
+    }
+
+    .top-crumbs span.sep {
+      color: #cbd5e1;
+    }
+
+    .top-crumbs span.current {
+      color: var(--amber);
+    }
+
+    .eyebrow,
+    .section-kicker {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--amber);
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      line-height: 1.08;
+      letter-spacing: -.05em;
+      margin: 10px 0 14px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.12rem;
+      max-width: 720px;
+      color: var(--muted);
+      margin: 0 0 24px;
+    }
+
+    .repo-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #ffffff;
+      color: var(--ink);
+      text-decoration: none;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+
+    .nav-link:hover {
+      transform: translateY(-2px);
+      border-color: #fcd34d;
+      color: var(--ink);
+      box-shadow: 0 4px 14px rgba(217, 119, 6, 0.08);
+    }
+
+    .nav-number {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #fef3c7;
+      color: var(--amber);
+      font-weight: 800;
+      font-size: .82rem;
+      flex: none;
+    }
+
+    .nav-link.hub .nav-number {
+      background: #edf2ff;
+      color: var(--blue);
+    }
+
+    .nav-link.build .nav-number {
+      background: #f3e8ff;
+      color: var(--purple);
+    }
+
+    .nav-link.tag .nav-number {
+      background: #e7f7f1;
+      color: var(--green);
+    }
+
+    .nav-link strong {
+      display: block;
+      font-size: 0.98rem;
+    }
+
+    .nav-link small {
+      display: block;
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .arrow {
+      margin-left: auto;
+      font-size: 1.1rem;
+      color: var(--muted);
+    }
+
+    .content {
+      padding-top: 10px;
+      padding-bottom: 58px;
+    }
+
+    section {
+      padding: 35px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      margin-bottom: 7px;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 3.5vw, 1.95rem);
+      letter-spacing: -.035em;
+      font-weight: 800;
+      margin: 0 0 14px;
+    }
+
+    h3 {
+      font-size: 1.12rem;
+      letter-spacing: -.015em;
+      font-weight: 750;
+      margin: 0 0 6px;
+    }
+
+    section p {
+      color: #4d586b;
+      margin: 0 0 14px;
+    }
+
+    strong {
+      color: var(--ink);
+    }
+
+    .steps {
+      margin-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 16px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .step-index {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: #fffbeb;
+      color: var(--amber);
+      font-weight: 800;
+      font-size: .85rem;
+    }
+
+    .step p,
+    .responsibility p {
+      margin: 0;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .card-box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      background: #ffffff;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+
+    .card-box:hover {
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+
+    .pill.amber {
+      background: #fef3c7;
+      color: var(--amber);
+    }
+
+    .pill.green {
+      background: #e7f7f1;
+      color: var(--green);
+    }
+
+    .pill.blue {
+      background: #edf2ff;
+      color: var(--blue);
+    }
+
+    pre {
+      margin: 18px 0 14px;
+      background: var(--code);
+      color: #e7edf7;
+      padding: 20px 24px;
+      border-radius: 14px;
+      overflow-x: auto;
+      font-size: .88rem;
+      line-height: 1.75;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', "SFMono-Regular", Consolas, monospace;
+      font-size: .92em;
+    }
+
+    p code,
+    .note code,
+    .card-box code {
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #25334a;
+      font-size: .88em;
+    }
+
+    .note {
+      padding: 15px 18px;
+      border-left: 3px solid var(--amber);
+      background: #fffbeb;
+      border-radius: 0 10px 10px 0;
+      color: #78350f;
+      font-size: .93rem;
+      margin: 16px 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: #fafbfe;
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    @media(max-width:620px) {
+      .wrap {
+        width: min(100% - 28px, 900px);
+      }
+
+      .hero {
+        padding: 42px 0 30px;
+      }
+
+      .repo-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-link {
+        padding: 14px;
+      }
+
+      .step {
+        grid-template-columns: 42px 1fr;
+        gap: 12px;
+      }
+
+      pre {
+        padding: 16px;
+        font-size: .82rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="top-crumbs">
+        <a href="../index.html">dom-builder</a>
+        <span class="sep">/</span>
+        <a href="index.html">json-renderers</a>
+        <span class="sep">/</span>
+        <span class="current">json-renderers-guard</span>
+      </div>
+
+      <div class="eyebrow">KeshavSoft · Dependency 01</div>
+      <h1>json-renderers-guard</h1>
+      <div class="section-kicker">A simple story</div>
+      <h2>The First Line of Defense: Schema &amp; Runtime Validation</h2>
+      <p class="intro">
+        In dynamic, data-driven web applications, rendering calls frequently fail due to missing target IDs, undefined
+        data arrays, or mistyped component names. <code>json-renderers-guard</code> is the lightweight sentinel that
+        validates every render request before any DOM building begins &mdash; preventing silent crashes and saving hours
+        of debugging.
+      </p>
+
+      <div class="note">
+        <strong>Guard Purpose:</strong> Intercept every render request, check compulsory keys, confirm DOM target
+        existence, and output actionable developer diagnostic warnings.
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <!-- Section 1: The Problem Guard Solves -->
+    <section>
+      <div class="section-kicker">Why It Matters</div>
+      <h2>The 4 common runtime pitfalls in DOM rendering</h2>
+      <p>
+        Without a dedicated guard layer, rendering libraries easily throw obscure browser exceptions like
+        <code>TypeError: Cannot read properties of null</code> or silently fail to mount elements.
+      </p>
+
+      <div class="grid-cards">
+        <div class="card-box">
+          <span class="pill amber">Pitfall 01</span>
+          <h3>Missing Target Element</h3>
+          <p>
+            The developer passes <code>targetHtmlId: "user-table"</code>, but the ID in the HTML is misspelled or
+            hasn't been rendered yet. The guard catches this and warns you immediately.
+          </p>
+        </div>
+
+        <div class="card-box">
+          <span class="pill amber">Pitfall 02</span>
+          <h3>Null or Non-Array Data</h3>
+          <p>
+            An API query returns <code>null</code>, an error object, or undefined. The guard ensures <code>data</code>
+            is verified as an array before iterations begin.
+          </p>
+        </div>
+
+        <div class="card-box">
+          <span class="pill amber">Pitfall 03</span>
+          <h3>Unsupported Component Type</h3>
+          <p>
+            Passing <code>type: "tabl"</code> instead of <code>"table.simple"</code>. The guard inspects the type
+            catalog and indicates valid choices.
+          </p>
+        </div>
+
+        <div class="card-box">
+          <span class="pill amber">Pitfall 04</span>
+          <h3>Missing Columns in Tables</h3>
+          <p>
+            Table components require defined column mappings. The guard verifies column arrays or provides safe
+            defaults inferred from data keys.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Compulsory Keys Verification -->
+    <section>
+      <div class="section-kicker">The Checklist</div>
+      <h2>Compulsory keys and validation rules</h2>
+      <p>
+        When <code>guard(renderRequest)</code> is invoked, it verifies the following requirements:
+      </p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-index">✓</div>
+          <div>
+            <h3><code>targetHtmlId</code> verification</h3>
+            <p>
+              Must be a non-empty string. Additionally checks:
+              <code>document.getElementById(targetHtmlId) !== null</code>. If the DOM element does not exist, an error
+              is logged with the exact missing ID.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-index">✓</div>
+          <div>
+            <h3><code>type</code> intent verification</h3>
+            <p>
+              Must be specified and recognized by the builder registry: <code>table.simple</code>,
+              <code>table.withFooter</code>, <code>datalist</code>, <code>select</code>, or <code>form</code>.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-index">✓</div>
+          <div>
+            <h3><code>data</code> array integrity</h3>
+            <p>
+              Must satisfy <code>Array.isArray(data)</code>. Empty arrays (<code>[]</code>) are handled gracefully by
+              rendering an empty-state indicator rather than crashing.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-index">✓</div>
+          <div>
+            <h3><code>columns</code> verification (component-dependent)</h3>
+            <p>
+              For table builds, <code>columns</code> must be an array of column keys. If omitted, the guard offers
+              automatic column key extraction from the first row of <code>data</code>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: How It Works in Code -->
+    <section>
+      <div class="section-kicker">Implementation Pattern</div>
+      <h2>Clean functional validation</h2>
+      <p>
+        <code>json-renderers-guard</code> is designed as a pure, zero-dependency validation function that returns a
+        boolean status and diagnostics array:
+      </p>
+
+      <pre><code>// Conceptual Guard Logic inside json-renderers
+export function guardRenderRequest(config) {
+  const errors = [];
+
+  // 1. Check target element
+  if (!config.targetHtmlId) {
+    errors.push("Missing required field 'targetHtmlId'.");
+  } else if (!document.getElementById(config.targetHtmlId)) {
+    errors.push(`Target element '#${config.targetHtmlId}' does not exist in the DOM.`);
+  }
+
+  // 2. Check component type
+  if (!config.type) {
+    errors.push("Missing required field 'type'.");
+  }
+
+  // 3. Check data
+  if (!Array.isArray(config.data)) {
+    errors.push("Field 'data' must be a valid Array of objects.");
+  }
+
+  if (errors.length &gt; 0) {
+    console.error("[json-renderers-guard] Validation failed:", errors);
+    return { valid: false, errors };
+  }
+
+  return { valid: true };
+}</code></pre>
+
+      <div class="note">
+        <strong>Fail-Fast Architecture:</strong> By rejecting bad requests immediately with clear descriptions,
+        <code>json-renderers-guard</code> ensures that downstream builders (<code>json-renderers-build</code>) and tag
+        engines (<code>json-to-tag</code>) never receive corrupt state.
+      </div>
+    </section>
+
+    <!-- Section 4: Ecosystem Positioning -->
+    <section>
+      <div class="section-kicker">Next Step in Pipeline</div>
+      <h2>From validation to specification building</h2>
+      <p>
+        Once <code>json-renderers-guard</code> gives the green light, execution is handed over to
+        <strong>json-renderers-build</strong> to create the component's abstract JSON tag tree:
+      </p>
+
+      <div class="repo-nav">
+        <a class="nav-link build" href="build.html">
+          <span class="nav-number">02</span>
+          <span><strong>Proceed to json-renderers-build</strong><small>Learn how headless specifications are
+              constructed</small></span>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div>
+        <strong>dom-builder</strong> · <span>json-renderers-guard Documentation</span>
+      </div>
+      <div>
+        <a href="index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">json-renderers
+          Hub</a>
+        <a href="../index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">Portal Home</a>
+        <a href="https://github.com/keshavsoft/json-renderers" target="_blank" rel="noopener noreferrer"
+          style="color: var(--amber); text-decoration: none; font-weight: 600;">GitHub ↗</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
