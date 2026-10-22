@@ -2,434 +2,319 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>json-renderers-guard | Hub & Overview</title>
-  <meta name="description"
-    content="Documentation Hub for json-renderers-guard: Fail-fast schema validation, compulsory key enforcement, and the 4 common runtime pitfalls." />
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>json-renderers-guard | Configuration Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
-    rel="stylesheet" />
-
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --ink: #172033;
-      --muted: #5d687b;
-      --line: #e3e8f0;
-      --blue: #315de8;
-      --green: #0d8c68;
-      --purple: #7c3aed;
-      --amber: #d97706;
-      --red: #dc2626;
+      --muted: #58677d;
+      --line: #dce4ef;
+      --blue: #2864e8;
+      --amber: #e87900;
       --pale: #f8fafc;
-      --code: #0f172a;
+      --code: #0f172a
     }
 
     * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
+      box-sizing: border-box
     }
 
     body {
       margin: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f6f8fc;
       color: var(--ink);
-      background: #ffffff;
-      line-height: 1.7;
+      font-family: Inter, Arial, sans-serif;
+      line-height: 1.7
     }
 
     .wrap {
-      width: min(100% - 40px, 940px);
-      margin: 0 auto;
+      width: min(100% - 32px, 1008px);
+      margin: 0 auto
     }
 
     .hero {
-      padding: 56px 0 44px;
-      background: linear-gradient(135deg, #fffbeb 0%, #ffffff 72%);
-      border-bottom: 1px solid var(--line);
+      padding: 42px 0 30px;
+      background: linear-gradient(135deg, #fff7e8, #fff 72%);
+      border-bottom: 1px solid var(--line)
     }
 
-    .top-crumbs {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 18px;
-      font-size: .84rem;
-      font-weight: 600;
-    }
-
-    .top-crumbs a {
+    .crumb {
+      font-size: .83rem;
       color: var(--muted);
-      text-decoration: none;
-      transition: color .15s;
+      font-weight: 600
     }
 
-    .top-crumbs a:hover {
+    .eyebrow {
       color: var(--amber);
-    }
-
-    .top-crumbs span.sep {
-      color: #cbd5e1;
-    }
-
-    .top-crumbs span.current {
-      color: var(--amber);
-    }
-
-    .eyebrow,
-    .section-kicker {
       font-size: .75rem;
-      text-transform: uppercase;
-      letter-spacing: .14em;
+      letter-spacing: .13em;
       font-weight: 800;
-      color: var(--amber);
+      text-transform: uppercase;
+      margin-top: 22px
     }
 
     h1 {
-      font-size: clamp(2.3rem, 5.5vw, 3.6rem);
-      line-height: 1.1;
-      letter-spacing: -.045em;
-      margin: 10px 0 14px;
-      font-weight: 850;
-      color: var(--ink);
-    }
-
-    .intro {
-      font-size: 1.12rem;
-      max-width: 740px;
-      color: var(--muted);
-      margin: 0 0 24px;
-    }
-
-    .hero-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
-      border-radius: 9999px;
-      font-size: .8rem;
-      font-weight: 600;
-      background: #ffffff;
-      border: 1px solid var(--line);
-      color: var(--ink);
-    }
-
-    .hero-badge .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--amber);
-    }
-
-    .content {
-      padding-top: 10px;
-      padding-bottom: 58px;
-    }
-
-    section {
-      padding: 38px 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .section-kicker {
-      margin-bottom: 7px;
+      font-size: clamp(2rem, 5vw, 3.1rem);
+      line-height: 1.13;
+      letter-spacing: -.04em;
+      margin: 8px 0 12px
     }
 
     h2 {
-      font-size: clamp(1.45rem, 3.2vw, 1.95rem);
-      letter-spacing: -.035em;
-      font-weight: 800;
+      font-size: 1.4rem;
+      line-height: 1.3;
       margin: 0 0 14px;
+      letter-spacing: -.025em
     }
 
     h3 {
-      font-size: 1.12rem;
-      letter-spacing: -.015em;
-      font-weight: 750;
-      margin: 0 0 8px;
+      font-size: 1rem;
+      margin: 0 0 6px
     }
 
-    section p {
-      color: #4d586b;
-      margin: 0 0 14px;
+    p {
+      color: var(--muted);
+      margin: 0 0 14px
     }
 
-    /* Grid of 4 Pitfalls (Single Line Row) */
-    .pitfall-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-top: 24px;
+    .intro {
+      font-size: 1.08rem;
+      max-width: 800px
     }
 
-    .pitfall-card {
-      display: flex;
-      flex-direction: column;
+    .content {
+      padding: 26px 0 55px
+    }
+
+    .panel {
+      background: #fff;
       border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 18px 16px;
-      background: #ffffff;
-      text-decoration: none;
-      color: inherit;
-      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-      position: relative;
+      border-radius: 16px;
+      padding: 26px 30px;
+      margin: 0 0 22px;
+      box-shadow: 0 3px 9px rgba(15, 23, 42, .025)
     }
 
-    .pitfall-card:hover {
-      transform: translateY(-3px);
-      border-color: #fcd34d;
-      box-shadow: 0 10px 24px rgba(217, 119, 6, 0.08);
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 14px
     }
 
-    .card-head {
+    .number {
+      display: grid;
+      place-items: center;
+      min-width: 41px;
+      height: 41px;
+      border-radius: 11px;
+      background: #fff8e7;
+      color: var(--amber);
+      font-weight: 800
+    }
+
+    .section-copy {
+      flex: 1
+    }
+
+    .section-copy p {
+      margin: 0
+    }
+
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px
+    }
+
+    .key-card {
+      background: #f9fbfd;
+      border: 1px solid #dfe7f1;
+      border-left: 4px solid var(--amber);
+      border-radius: 12px;
+      padding: 14px 15px;
+      min-width: 0
+    }
+
+    .key-card:nth-child(n+4) {
+      border-left-color: var(--blue)
+    }
+
+    .key-name {
+      font-family: "JetBrains Mono", monospace;
+      font-size: .92rem;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+      margin-bottom: 6px
+    }
+
+    .key-card p {
+      font-size: .87rem;
+      line-height: 1.55;
+      margin: 0
+    }
+
+    .key-card code,
+    .inline-code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: .9em;
+      background: #edf2f8;
+      color: #172033;
+      border-radius: 5px;
+      padding: 2px 5px
+    }
+
+    .note {
+      background: #fff8e8;
+      border-left: 4px solid var(--amber);
+      border-radius: 0 10px 10px 0;
+      padding: 14px 17px;
+      color: #744210;
+      margin-top: 18px;
+      font-size: .92rem
+    }
+
+    .code-card {
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid #263449;
+      background: var(--code);
+      margin-top: 15px
+    }
+
+    .code-toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      gap: 12px;
+      background: #172338;
+      border-bottom: 1px solid #334155;
+      padding: 10px 14px
     }
 
-    .pill {
-      display: inline-block;
-      font-size: .68rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-      padding: 3px 8px;
-      border-radius: 9999px;
-      white-space: nowrap;
+    .code-label {
+      font-size: .78rem;
+      color: #c6d1e0;
+      font-weight: 700
     }
 
-    .pill.amber {
-      background: #fef3c7;
-      color: var(--amber);
-    }
-
-    .pill.red {
-      background: #fee2e2;
-      color: var(--red);
-    }
-
-    .pill.blue {
-      background: #edf2ff;
-      color: var(--blue);
-    }
-
-    .pill.green {
-      background: #e7f7f1;
-      color: var(--green);
-    }
-
-    .card-number {
-      font-family: 'JetBrains Mono', monospace;
+    .copy-btn {
+      border: 1px solid #52627a;
+      border-radius: 7px;
+      background: #25334a;
+      color: #fff;
+      padding: 6px 11px;
       font-size: .8rem;
       font-weight: 700;
-      color: #94a3b8;
+      cursor: pointer
     }
 
-    .pitfall-card h3 {
-      color: var(--ink);
-      font-size: 0.98rem;
-      line-height: 1.35;
-      margin: 0 0 10px;
-      font-weight: 750;
-      min-height: 44px;
+    .copy-btn:hover {
+      background: #354761
     }
 
-    .pitfall-card p {
-      font-size: .83rem;
-      color: #556987;
-      flex: 1;
-      margin-bottom: 14px;
-      line-height: 1.45;
+    .copy-btn.copied {
+      background: #065f46;
+      border-color: #34d399
     }
 
-    .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    pre {
+      margin: 0;
+      padding: 20px;
+      overflow: auto;
+      color: #e7edf7;
+      font: .86rem/1.75 "JetBrains Mono", monospace;
+      tab-size: 2
+    }
+
+    pre code {
+      font: inherit;
+      white-space: pre
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 14px;
+      background: #fbfcfe
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 4px
+    }
+
+    .step p {
       font-size: .84rem;
-      font-weight: 700;
-      color: var(--amber);
-      border-top: 1px dashed var(--line);
-      padding-top: 12px;
+      margin: 0
     }
 
-    .card-footer .arrow {
-      transition: transform .2s ease;
+    .table-wrap {
+      overflow-x: auto
     }
 
-    .pitfall-card:hover .card-footer .arrow {
-      transform: translateX(4px);
-    }
-
-    /* Table styles */
     table {
       border-collapse: collapse;
       width: 100%;
-      margin: 20px 0;
-      font-size: 0.9rem;
+      margin-top: 14px;
+      font-size: .9rem
     }
 
     th,
     td {
+      padding: 11px 12px;
       border: 1px solid var(--line);
-      padding: 10px 14px;
       text-align: left;
-      vertical-align: top;
+      vertical-align: top
     }
 
     th {
-      background: var(--pale);
-      font-weight: 700;
-      color: var(--ink);
-    }
-
-    .badge-error {
-      display: inline-block;
-      font-size: .74rem;
-      font-family: 'JetBrains Mono', monospace;
-      padding: 2px 7px;
-      border-radius: 4px;
-      background: #fee2e2;
-      color: #991b1b;
-      font-weight: 600;
-    }
-
-    pre {
-      margin: 18px 0 14px;
-      background: var(--code);
-      color: #e7edf7;
-      padding: 20px 24px;
-      border-radius: 14px;
-      overflow-x: auto;
-      font-size: .88rem;
-      line-height: 1.75;
-    }
-
-    code {
-      font-family: 'JetBrains Mono', "SFMono-Regular", Consolas, monospace;
-      font-size: .92em;
-    }
-
-    p code,
-    li code,
-    .input-item code,
-    .note code,
-    .pitfall-card code {
-      background: #edf1f7;
-      padding: 2px 6px;
-      border-radius: 5px;
-      color: #25334a;
-      font-size: .88em;
-    }
-
-    .config-inputs-card {
-      background: #ffffff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin: 18px 0 20px;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
-    }
-
-    .config-inputs-header {
-      font-size: .78rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--amber);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .inputs-compact-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 10px 18px;
-    }
-
-    .input-item {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      font-size: .84rem;
-      color: #4d586b;
-      line-height: 1.45;
-    }
-
-    .input-item code {
-      font-weight: 600;
-      color: var(--ink);
-      flex-shrink: 0;
-    }
-
-    .note {
-      padding: 16px 20px;
-      border-left: 4px solid var(--amber);
-      background: #fffbeb;
-      border-radius: 0 12px 12px 0;
-      color: #78350f;
-      font-size: .94rem;
-      margin: 18px 0;
-    }
-
-    /* Modular Cards */
-    .modular-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-      margin: 22px 0;
-    }
-
-    .modular-box {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 20px;
-      background: #ffffff;
+      background: #f4f7fb
     }
 
     footer {
+      padding: 22px 0;
       border-top: 1px solid var(--line);
-      background: #fafbfe;
-      padding: 28px 0;
       color: var(--muted);
-      font-size: .86rem;
+      font-size: .84rem
     }
 
-    footer .wrap {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      flex-wrap: wrap;
+    @media(max-width:700px) {
+      .key-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+      }
+
+      .flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+      }
+
+      .panel {
+        padding: 21px 18px
+      }
     }
 
-    @media(max-width:640px) {
-      .wrap {
-        width: min(100% - 28px, 940px);
+    @media(max-width:460px) {
+
+      .key-grid,
+      .flow {
+        grid-template-columns: 1fr
       }
 
-      .hero {
-        padding: 40px 0 28px;
-      }
-
-      .pitfall-grid {
-        grid-template-columns: 1fr;
+      .section-head {
+        gap: 10px
       }
     }
   </style>
@@ -438,219 +323,247 @@
 <body>
   <header class="hero">
     <div class="wrap">
-      <div class="top-crumbs">
+      <div class="crumb">
         <a href="../../index.html">dom-builder</a>
         <span class="sep">/</span>
         <a href="../index.html">json-renderers</a>
         <span class="sep">/</span>
         <span class="current">guard</span>
       </div>
-
-      <h1>json-renderers-guard</h1>
-      <p class="intro">
-        <b>json-renderers-guard</b> validates your table configuration inputs before rendering begins.
-        It catches missing or invalid settings immediately, preventing runtime crashes and ensuring seamless DOM rendering.
+      <h1>The Contract</h1>
+      <p class="intro">A client sends a <strong>config</strong> object to describe the UI it wants. The
+        <strong>json-renderers-guard</strong> repository defines and checks the expected input contract, helping clients
+        discover missing or incorrectly shaped configuration before rendering is attempted.
       </p>
-
-      <div class="config-inputs-card">
-        <div class="config-inputs-header">
-          <span>Validated Configuration Inputs</span>
-        </div>
-        <div class="inputs-compact-grid">
-          <div class="input-item">
-            <code>type</code>
-            <span>Component to render, e.g. <code>"table.simple"</code></span>
-          </div>
-          <div class="input-item">
-            <code>targetHtmlId</code>
-            <span>Destination HTML container element ID</span>
-          </div>
-          <div class="input-item">
-            <code>data</code>
-            <span>Product records array (names, units)</span>
-          </div>
-          <div class="input-item">
-            <code>columns</code>
-            <span>Display fields using <code>columnName</code></span>
-          </div>
-          <div class="input-item">
-            <code>appendPosition</code>
-            <span>Target position (replace or prepend)</span>
-          </div>
-          <div class="input-item">
-            <code>classToApply</code>
-            <span>CSS classes applied to the table</span>
-          </div>
-          <div class="input-item">
-            <code>showLog</code>
-            <span>Controls debug logging options</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-badges">
-        <span class="hero-badge"><span class="dot"></span> Fail-Fast Diagnostics</span>
-        <span class="hero-badge"><span class="dot"></span> Modular Schema Validation</span>
-        <span class="hero-badge"><span class="dot"></span> ES Module &amp; CDN Ready</span>
-      </div>
     </div>
   </header>
-
   <main class="wrap content">
-    <!-- Section 1: The 4 Common Input Errors -->
-    <section id="input-errors">
-      <div class="section-kicker">Input Validation</div>
-      <h2>The 4 Common Input Errors</h2>
-      <p>
-        Rendering web components from dynamic JSON often crashes silently when inputs are malformed.
-        Explore how the guard detects and prevents each common error:
-      </p>
-
-      <div class="pitfall-grid">
-        <!-- Card 1 -->
-        <a class="pitfall-card" href="missing-target.html">
-          <div class="card-head">
-            <span class="pill red">Input Error 01</span>
-            <span class="card-number">#01</span>
-          </div>
-          <h3>Missing Target Element</h3>
-          <p>Throws error when target container ID is missing or not found in DOM.</p>
-          <div class="card-footer">
-            <span>Read full story &amp; fix</span>
-            <span class="arrow">&rarr;</span>
-          </div>
-        </a>
-
-        <!-- Card 2 -->
-        <a class="pitfall-card" href="null-data.html">
-          <div class="card-head">
-            <span class="pill amber">Input Error 02</span>
-            <span class="card-number">#02</span>
-          </div>
-          <h3>Null or Non-Array Data</h3>
-          <p>Catches null, undefined, or non-array product records before iteration.</p>
-          <div class="card-footer">
-            <span>Read full story &amp; fix</span>
-            <span class="arrow">&rarr;</span>
-          </div>
-        </a>
-
-        <!-- Card 3 -->
-        <a class="pitfall-card" href="component-type.html">
-          <div class="card-head">
-            <span class="pill blue">Input Error 03</span>
-            <span class="card-number">#03</span>
-          </div>
-          <h3>Component Type &amp; Sub-Type</h3>
-          <p>Verifies required component dot-notation format like "table.simple".</p>
-          <div class="card-footer">
-            <span>Read full story &amp; fix</span>
-            <span class="arrow">&rarr;</span>
-          </div>
-        </a>
-
-        <!-- Card 4 -->
-        <a class="pitfall-card" href="missing-columns.html">
-          <div class="card-head">
-            <span class="pill green">Input Error 04</span>
-            <span class="card-number">#04</span>
-          </div>
-          <h3>Column Schema Contract</h3>
-          <p>Ensures columns array exists with proper columnName property keys.</p>
-          <div class="card-footer">
-            <span>Read full story &amp; fix</span>
-            <span class="arrow">&rarr;</span>
-          </div>
-        </a>
+    <section class="panel">
+      <div class="section-head">
+        <div class="number">01</div>
+        <div class="section-copy">
+          <h2>What Is the Client Contract?</h2>
+          <p>A contract is an agreement between the client code and the renderer about the shape of the input. The
+            client supplies the expected fields; the guard checks whether the supplied configuration follows the
+            supported rules.</p>
+        </div>
       </div>
+      <div class="key-grid">
+        <article class="key-card">
+          <div class="key-name">Client sends</div>
+          <p>The config object, including the component type, data, columns, and target element ID.</p>
+        </article>
+        <article class="key-card">
+          <div class="key-name">Guard validates</div>
+          <p>It checks the configuration against the input rules defined by the guard's spec and mount checks.</p>
+        </article>
+        <article class="key-card">
+          <div class="key-name">Client gets guidance</div>
+          <p>If the input is invalid, the guard throws an error so the client can identify and fix the configuration
+            problem.</p>
+        </article>
+      </div>
+      <div class="note"><strong>Why this helps:</strong> The contract gives client developers a clear way to prepare
+        valid input. The guard validates the input; it does not build the UI or guarantee that every later rendering
+        operation will succeed.</div>
     </section>
 
-    <!-- Section 2: CDN Integration & Live Example -->
-    <section id="cdn">
-      <div class="section-kicker">CDN Integration</div>
-      <h2>Using guardFunc in the Browser</h2>
-      <p>
-        Import <code>guardFunc</code> from the jsDelivr CDN inside any native ES module script. Validate your config
-        first to guarantee failure-free rendering:
-      </p>
+    <section class="panel">
+      <div class="section-head">
+        <div class="number">02</div>
+        <div class="section-copy">
+          <h2>Understand the Configuration</h2>
+          <p>These are the six main keys shown in this example. Together, they describe the client's request and form
+            part of the input contract checked by the guard.</p>
+        </div>
+      </div>
+      <div class="key-grid">
+        <article class="key-card">
+          <div class="key-name">1. type</div>
+          <p>The component to render. Example: <code>"table.simple"</code> asks for a simple table.</p>
+        </article>
+        <article class="key-card">
+          <div class="key-name">2. data</div>
+          <p>The records that will appear as rows. Here, data comes from <code>batches.json</code>.</p>
+        </article>
+        <article class="key-card">
+          <div class="key-name">3. columns</div>
+          <p>Defines which data fields become table columns, using <code>columnName</code>.</p>
+        </article>
+        <article class="key-card">
+          <div class="key-name">4. targetHtmlId</div>
+          <p>The ID of the HTML element where the renderer should place the output. The element must exist in the page.
+          </p>
+        </article>
+        <article class="key-card">
+          <div class="key-name">5. appendPosition</div>
+          <p>A setting that controls how output is placed in relation to the target. Use a value supported by your
+            renderer version.</p>
+        </article>
+        <article class="key-card">
+          <div class="key-name">6. classToApply</div>
+          <p>CSS class name(s) to apply to the rendered output, depending on the renderer's supported options.</p>
+        </article>
+      </div>
+      <div class="note"><strong>Important:</strong> The guard checks the configuration contract. It does not create the
+        table itself. If the guard accepts the config, the renderer can then try to build the UI.</div>
+    </section>
 
-      <pre><code>// Browser ES Module Integration via jsDelivr CDN
-import guardFunc, { guardSpec, guardMount } from "https://cdn.jsdelivr.net/npm/json-renderers-guard/+esm";
-import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v19/min.js";
-
-const config = {
+    <section class="panel">
+      <div class="section-head">
+        <div class="number">03</div>
+        <div class="section-copy">
+          <h2>Example: The Configuration Object</h2>
+          <p>This is the <code class="inline-code">config</code> used to request a table showing item names and base
+            units. Click <strong>Copy code</strong> to copy just this example.</p>
+        </div>
+      </div>
+      <div class="code-card">
+        <div class="code-toolbar"><span class="code-label">JavaScript · config object</span><button class="copy-btn"
+            type="button" data-copy="config-code">▢ Copy code</button></div>
+        <pre><code id="config-code">const config = {
   type: "table.simple",
   targetHtmlId: "dom-render-container",
-  data: [
-    { itemName: "Item 01", baseUnit: "kgs" },
-    { itemName: "Item 02", baseUnit: "pcs" }
-  ],
+  data: data.slice(0, 50),
   columns: [
     { columnName: "itemName" },
     { columnName: "baseUnit" }
   ],
-  appendPosition: "replace",
-  classToApply: "table table-striped",
+  appendPosition: "",
+  classToApply: "",
   showLog: true
-};
+};</code></pre>
+      </div>
+      <p style="margin-top:14px">In this example, <code class="inline-code">data.slice(0, 50)</code> selects up to the
+        first 50 records. The two column definitions tell the table to show <code class="inline-code">itemName</code>
+        and <code class="inline-code">baseUnit</code>.</p>
+    </section>
 
-try {
-  // 1. Guard intercepts & validates configuration first
-  guardFunc(config);
-
-  // 2. Render executes safely knowing inputs meet the contract
-  render(config);
+    <section class="panel">
+      <div class="section-head">
+        <div class="number">04</div>
+        <div class="section-copy">
+          <h2>How the Config Is Used</h2>
+          <p>The guard is called before the renderer, so invalid configuration can be reported before rendering is
+            attempted.</p>
+        </div>
+      </div>
+      <div class="flow">
+        <div class="step"><strong>1. Prepare data</strong>
+          <p>Load product or batch records from <code>batches.json</code>.</p>
+        </div>
+        <div class="step"><strong>2. Build config</strong>
+          <p>Choose the component, target element, records, and columns.</p>
+        </div>
+        <div class="step"><strong>3. Check config</strong>
+          <p><code>guardFunc(config)</code> checks the expected input format.</p>
+        </div>
+        <div class="step"><strong>4. Render table</strong>
+          <p>If the guard does not throw, call <code>render(config)</code>.</p>
+        </div>
+      </div>
+      <div class="code-card">
+        <div class="code-toolbar"><span class="code-label">JavaScript · guard then render</span><button class="copy-btn"
+            type="button" data-copy="flow-code">▢ Copy code</button></div>
+        <pre><code id="flow-code">try {
+  guardFunc(config); // Check the configuration first
+  render(config);    // Continue to render if the check passes
 } catch (err) {
-  // Catches missing keys or malformed structures before DOM crashes
-  console.error("Guard validation error:", err.message);
+  console.error("Validation / Render error:", err);
 }</code></pre>
+      </div>
+    </section>
 
-      <div class="modular-grid">
-        <div class="modular-box">
-          <span class="pill green">Modular Guard</span>
-          <h3><code>guardSpec(config)</code></h3>
-          <p>
-            Validates data specification only (<code>type</code>, <code>data</code>, <code>columns</code>,
-            <code>showLog</code>). Ideal when DOM mounting is handled separately.
-          </p>
+    <section class="panel">
+      <div class="section-head">
+        <div class="number">05</div>
+        <div class="section-copy">
+          <h2>Quick Reference</h2>
+          <p>Use this table when explaining the configuration to someone else.</p>
         </div>
-
-        <div class="modular-box">
-          <span class="pill blue">Modular Guard</span>
-          <h3><code>guardMount(config)</code></h3>
-          <p>
-            Validates DOM mount keys only (<code>targetHtmlId</code>, <code>appendPosition</code>,
-            <code>classToApply</code>).
-          </p>
-        </div>
-
-        <div class="modular-box">
-          <span class="pill amber">Composite Guard</span>
-          <h3><code>guardFunc(config)</code></h3>
-          <p>
-            Full pipeline sentinel that runs both <code>guardSpec</code> and <code>guardMount</code> in one unified
-            call.
-          </p>
-        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Meaning</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>type</code></td>
+              <td>Which UI component to render</td>
+              <td><code>"table.simple"</code></td>
+            </tr>
+            <tr>
+              <td><code>data</code></td>
+              <td>Rows shown in the table</td>
+              <td><code>data.slice(0, 50)</code></td>
+            </tr>
+            <tr>
+              <td><code>columns</code></td>
+              <td>Fields displayed as columns</td>
+              <td><code>{ columnName: "itemName" }</code></td>
+            </tr>
+            <tr>
+              <td><code>targetHtmlId</code></td>
+              <td>Destination HTML element ID</td>
+              <td><code>"dom-render-container"</code></td>
+            </tr>
+            <tr>
+              <td><code>appendPosition</code></td>
+              <td>Output placement setting</td>
+              <td><code>""</code> in this example</td>
+            </tr>
+            <tr>
+              <td><code>classToApply</code></td>
+              <td>CSS class setting</td>
+              <td><code>""</code> in this example</td>
+            </tr>
+            <tr>
+              <td><code>showLog</code></td>
+              <td>Logging/diagnostic option used in this example</td>
+              <td><code>true</code></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
   </main>
-
   <footer>
-    <div class="wrap">
-      <div>
-        <strong>dom-builder</strong> · <span>json-renderers-guard Documentation Hub</span>
-      </div>
-      <div>
-        <a href="../index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">json-renderers
-          Hub</a>
-        <a href="../../index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">Portal
-          Home</a>
-        <a href="https://github.com/keshavsoft/json-renderers-guard" target="_blank" rel="noopener noreferrer"
-          style="color: var(--amber); text-decoration: none; font-weight: 600;">GitHub ↗</a>
-      </div>
-    </div>
+    <div class="wrap">json-renderers-guard · Client contract, configuration keys, validation, and rendering flow</div>
   </footer>
+  <script>
+    document.querySelectorAll(".copy-btn").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const target = document.getElementById(button.dataset.copy);
+        if (!target) return;
+        const text = target.textContent;
+        const original = button.textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch (e) {
+          const area = document.createElement("textarea");
+          area.value = text;
+          area.style.position = "fixed";
+          area.style.opacity = "0";
+          document.body.appendChild(area);
+          area.select();
+          const ok = document.execCommand("copy");
+          area.remove();
+          if (!ok) { button.textContent = "Copy failed"; return; }
+        }
+        button.textContent = "✓ Copied!";
+        button.classList.add("copied");
+        window.setTimeout(() => {
+          button.textContent = original;
+          button.classList.remove("copied");
+        }, 1600);
+      });
+    });
+  </script>
 </body>
 
 </html>
