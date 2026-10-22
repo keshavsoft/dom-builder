@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pitfall 04: Column Schema Contract | json-renderers-guard</title>
+  <meta name="description"
+    content="How json-renderers-guard enforces column contracts, requires columnName objects, and avoids table mapping crashes." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --blue: #315de8;
+      --green: #0d8c68;
+      --purple: #7c3aed;
+      --amber: #d97706;
+      --red: #dc2626;
+      --pale: #f8fafc;
+      --code: #0f172a;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 860px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 48px 0 36px;
+      background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 75%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: .84rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover { color: var(--green); }
+    .top-crumbs span.sep { color: #cbd5e1; }
+    .top-crumbs span.current { color: var(--green); }
+
+    .eyebrow {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--green);
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.15;
+      letter-spacing: -.04em;
+      margin: 8px 0 12px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.08rem;
+      color: var(--muted);
+      margin: 0 0 18px;
+    }
+
+    .content {
+      padding-top: 10px;
+      padding-bottom: 58px;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      font-size: 1.55rem;
+      letter-spacing: -.03em;
+      font-weight: 800;
+      margin: 0 0 12px;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 750;
+      margin: 0 0 8px;
+    }
+
+    p {
+      color: #4d586b;
+      margin: 0 0 14px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 18px 0;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--pale);
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .compare-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px 22px;
+      background: #ffffff;
+    }
+
+    .compare-card.bad {
+      border-color: #fca5a5;
+      background: #fffafa;
+    }
+
+    .compare-card.good {
+      border-color: #86efac;
+      background: #f9fdfa;
+    }
+
+    .compare-tag {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+
+    .compare-tag.bad { background: #fee2e2; color: #991b1b; }
+    .compare-tag.good { background: #dcfce7; color: #166534; }
+
+    pre {
+      margin: 12px 0 10px;
+      background: var(--code);
+      color: #e7edf7;
+      padding: 16px 18px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: .86rem;
+      line-height: 1.7;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .92em;
+    }
+
+    p code, .note code {
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #25334a;
+      font-size: .88em;
+    }
+
+    .badge-error {
+      display: inline-block;
+      font-size: .76rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: #fee2e2;
+      color: #991b1b;
+      font-weight: 600;
+    }
+
+    .note {
+      padding: 16px 18px;
+      border-left: 4px solid var(--green);
+      background: #f0fdf4;
+      border-radius: 0 10px 10px 0;
+      color: #14532d;
+      font-size: .92rem;
+      margin: 18px 0;
+    }
+
+    .pager {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    .pager-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--ink);
+      font-weight: 700;
+      font-size: .92rem;
+      padding: 10px 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      transition: border-color .15s, transform .15s;
+    }
+
+    .pager-link:hover {
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: #fafbfe;
+      padding: 26px 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="top-crumbs">
+        <a href="index.html">guard</a>
+        <span class="sep">/</span>
+        <span class="current">pitfall-04</span>
+      </div>
+
+      <div class="eyebrow">Runtime Pitfall 04</div>
+      <h1>Column Schema Contract</h1>
+      <p class="intro">
+        In structured table rendering, columns define both data mapping and visual presentation.
+        Passing plain strings instead of column objects violates the contract and crashes cell builders.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <!-- Story -->
+    <section>
+      <h2>The Story: Strings vs. Column Objects</h2>
+      <p>
+        In older renderers (like v14), a simple array of string names was often accepted: <code>columns: ["name", "unit"]</code>.
+        However, modern table builders (like v19) construct complex headers, column groups, cell templates, and custom widths:
+      </p>
+      <pre><code>// Inside json-renderers v19 column loop:
+for (let u = 0; u &lt; inColumns.length; u++) {
+  const d = inColumns[u];
+  if (!d || typeof d != "object")
+    throw new TypeError(`inColumns[${u}] must be an object`);
+  if (typeof d.columnName != "string" || !d.columnName.trim())
+    throw new TypeError(`inColumns[${u}].columnName must be a non-empty string`);
+}</code></pre>
+      <p>
+        If client code passes strings (<code>["itemName", "baseUnit"]</code>), the engine halts with:
+      </p>
+      <pre><code>TypeError: inColumns[0] must be an object</code></pre>
+    </section>
+
+    <!-- Column Contract Fields -->
+    <section>
+      <h2>The Standard Column Fields</h2>
+      <p>Every column object has a required identity and optional layout attributes:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Status</th>
+            <th>Type</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>columnName</code></td>
+            <td><strong>Required</strong></td>
+            <td>Non-empty <code>string</code></td>
+            <td>Identifies the data key in row objects (e.g. <code>"itemName"</code>).</td>
+          </tr>
+          <tr>
+            <td><code>width</code></td>
+            <td>Optional</td>
+            <td><code>string</code></td>
+            <td>Sets column width for colgroup (e.g. <code>"180px"</code> or <code>"25%"</code>).</td>
+          </tr>
+          <tr>
+            <td><code>template</code></td>
+            <td>Optional</td>
+            <td><code>object</code></td>
+            <td>Customizes header/body/footer cell rendering templates.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="compare-grid">
+        <div class="compare-card bad">
+          <span class="compare-tag bad">❌ Bad Input</span>
+          <pre><code>// Plain strings instead of objects
+const badConfig = {
+  type: "table.simple",
+  targetHtmlId: "dom-container",
+  data: [{ itemName: "Steel Rods" }],
+  columns: ["itemName"] // 💥 Strings reject in v19
+};
+
+render(badConfig);
+// 💥 TypeError: inColumns[0] must be an object</code></pre>
+        </div>
+
+        <div class="compare-card good">
+          <span class="compare-tag good">✅ Good Input</span>
+          <pre><code>// Valid array of column objects
+const goodConfig = {
+  type: "table.simple",
+  targetHtmlId: "dom-container",
+  data: [{ itemName: "Steel Rods", baseUnit: "kgs" }],
+  columns: [
+    { columnName: "itemName", width: "200px" },
+    { columnName: "baseUnit" }
+  ],
+  appendPosition: "replace",
+  classToApply: "table table-striped"
+};
+
+guardFunc(goodConfig); // Returns true ✅
+render(goodConfig);    // Renders table cleanly ✅</code></pre>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>Fail-Fast Alignment:</strong>
+        <code>json-renderers-guard</code> checks <code>Array.isArray(columns)</code> and enforces the existence of column definitions, ensuring zero corrupt column structures pass down to the builder.
+      </div>
+
+      <!-- Pager -->
+      <div class="pager">
+        <a class="pager-link" href="component-type.html">← Pitfall 03: Component Type</a>
+        <a class="pager-link" href="index.html">Back to Guard Hub 🏠</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div><strong>json-renderers-guard</strong> · Pitfall 04 Documentation</div>
+      <div><a href="index.html" style="color: var(--muted); text-decoration: none;">Hub Home</a></div>
+    </div>
+  </footer>
+</body>
+
+</html>

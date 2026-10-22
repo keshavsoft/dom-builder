@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pitfall 03: Component Type & Sub-Type | json-renderers-guard</title>
+  <meta name="description"
+    content="How json-renderers-guard validates component type intent, prevents unrecognized component crashes, and guides dot-notation sub-types." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --blue: #315de8;
+      --green: #0d8c68;
+      --purple: #7c3aed;
+      --amber: #d97706;
+      --red: #dc2626;
+      --pale: #f8fafc;
+      --code: #0f172a;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 860px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 48px 0 36px;
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 75%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: .84rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover { color: var(--blue); }
+    .top-crumbs span.sep { color: #cbd5e1; }
+    .top-crumbs span.current { color: var(--blue); }
+
+    .eyebrow {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.15;
+      letter-spacing: -.04em;
+      margin: 8px 0 12px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.08rem;
+      color: var(--muted);
+      margin: 0 0 18px;
+    }
+
+    .content {
+      padding-top: 10px;
+      padding-bottom: 58px;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      font-size: 1.55rem;
+      letter-spacing: -.03em;
+      font-weight: 800;
+      margin: 0 0 12px;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 750;
+      margin: 0 0 8px;
+    }
+
+    p {
+      color: #4d586b;
+      margin: 0 0 14px;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .compare-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px 22px;
+      background: #ffffff;
+    }
+
+    .compare-card.bad {
+      border-color: #fca5a5;
+      background: #fffafa;
+    }
+
+    .compare-card.good {
+      border-color: #86efac;
+      background: #f9fdfa;
+    }
+
+    .compare-tag {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+
+    .compare-tag.bad { background: #fee2e2; color: #991b1b; }
+    .compare-tag.good { background: #dcfce7; color: #166534; }
+
+    pre {
+      margin: 12px 0 10px;
+      background: var(--code);
+      color: #e7edf7;
+      padding: 16px 18px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: .86rem;
+      line-height: 1.7;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .92em;
+    }
+
+    p code, .note code {
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #25334a;
+      font-size: .88em;
+    }
+
+    .badge-error {
+      display: inline-block;
+      font-size: .76rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: #fee2e2;
+      color: #991b1b;
+      font-weight: 600;
+    }
+
+    .badge-good {
+      display: inline-block;
+      font-size: .76rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 600;
+    }
+
+    .note {
+      padding: 16px 18px;
+      border-left: 4px solid var(--blue);
+      background: #f0f7ff;
+      border-radius: 0 10px 10px 0;
+      color: #1e3a8a;
+      font-size: .92rem;
+      margin: 18px 0;
+    }
+
+    .pager {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    .pager-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--ink);
+      font-weight: 700;
+      font-size: .92rem;
+      padding: 10px 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      transition: border-color .15s, transform .15s;
+    }
+
+    .pager-link:hover {
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+    }
+
+    .pager-link.next {
+      margin-left: auto;
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: var(--green);
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: #fafbfe;
+      padding: 26px 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="top-crumbs">
+        <a href="index.html">guard</a>
+        <span class="sep">/</span>
+        <span class="current">pitfall-03</span>
+      </div>
+
+      <div class="eyebrow">Runtime Pitfall 03</div>
+      <h1>Component Type &amp; Sub-Type</h1>
+      <p class="intro">
+        The <code>type</code> field is the central routing key that instructs the rendering pipeline which builder algorithm to dispatch.
+        Mistyping the type or omitting the required sub-mode results in undefined builder dispatch errors.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <!-- Story -->
+    <section>
+      <h2>The Story: The Missing Sub-Type Trap</h2>
+      <p>
+        In modern <code>json-renderers</code> (such as v19), tables support multiple structural variants:
+        <code>simple</code>, <code>withFooter</code>, <code>headerOnly</code>, and <code>bodyOnly</code>.
+        The dispatcher parses the type using dot notation:
+      </p>
+      <pre><code>// Inside json-renderers v19 dispatcher:
+if (config.type.includes(".")) {
+  const parts = config.type.split(".");
+  mainType = parts[0]; // "table"
+  subType = parts[1];  // "simple"
+}</code></pre>
+      <p>
+        If a developer passes plain <code>type: "table"</code>, the sub-mode defaults to <code>"table"</code>.
+        Because the sub-builder table only contains <code>simple</code>, <code>withFooter</code>, etc., looking up <code>builders["table"]</code> yields <code>undefined</code>, triggering:
+      </p>
+      <pre><code>TypeError: i is not a function at V (min.js:1019:46)</code></pre>
+      <p>
+        The table never mounts, leaving the user with an indefinite <em>"Rendering table to DOM..."</em> placeholder.
+      </p>
+    </section>
+
+    <!-- Guard Validation Rules -->
+    <section>
+      <h2>How the Guard Enforces Type Intent</h2>
+      <p>
+        Inside <code>json-renderers-guard</code>, <code>validateType</code> ensures the primary key is cleanly defined:
+      </p>
+      <ul>
+        <li><strong>Presence Check:</strong> Rejects missing type keys with <span class="badge-error">Error: Missing compulsory key: "type"</span>.</li>
+        <li><strong>Type Verification:</strong> Ensures the value is a string with <span class="badge-error">TypeError: type must be a string</span>.</li>
+        <li><strong>Sub-Type Convention:</strong> For table renderers, use <span class="badge-good">"table.simple"</span> to specify standard table generation.</li>
+      </ul>
+
+      <div class="compare-grid">
+        <div class="compare-card bad">
+          <span class="compare-tag bad">❌ Bad Input</span>
+          <pre><code>// Plain "table" without sub-type
+const badConfig = {
+  type: "table", // 💥 Causes v19 builder lookup to fail
+  targetHtmlId: "dom-container",
+  data: [{ name: "Alice" }],
+  columns: [{ columnName: "name" }]
+};
+
+render(badConfig);
+// 💥 TypeError: i is not a function</code></pre>
+        </div>
+
+        <div class="compare-card good">
+          <span class="compare-tag good">✅ Good Input</span>
+          <pre><code>// Correct dot notation sub-type
+const goodConfig = {
+  type: "table.simple", // ✅ Clean dispatcher match
+  targetHtmlId: "dom-container",
+  data: [{ name: "Alice" }],
+  columns: [{ columnName: "name" }],
+  appendPosition: "replace",
+  classToApply: "table table-striped"
+};
+
+guardFunc(goodConfig); // Returns true ✅
+render(goodConfig);    // Builds & mounts cleanly ✅</code></pre>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>Supported Type Catalog:</strong>
+        Common valid types across the ecosystem include <code>table.simple</code>, <code>table.withFooter</code>, <code>select</code>, <code>selectOptionsOnly</code>, <code>datalist</code>, and <code>form</code>.
+      </div>
+
+      <!-- Pager -->
+      <div class="pager">
+        <a class="pager-link" href="null-data.html">← Pitfall 02: Null Data</a>
+        <a class="pager-link next" href="missing-columns.html">Pitfall 04: Column Schema →</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div><strong>json-renderers-guard</strong> · Pitfall 03 Documentation</div>
+      <div><a href="index.html" style="color: var(--muted); text-decoration: none;">Hub Home</a></div>
+    </div>
+  </footer>
+</body>
+
+</html>

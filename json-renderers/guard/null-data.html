@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pitfall 02: Null or Non-Array Data | json-renderers-guard</title>
+  <meta name="description"
+    content="How json-renderers-guard validates the data collection, prevents non-array iterations, and guards against malformed API payloads." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --blue: #315de8;
+      --green: #0d8c68;
+      --purple: #7c3aed;
+      --amber: #d97706;
+      --red: #dc2626;
+      --pale: #f8fafc;
+      --code: #0f172a;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 860px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 48px 0 36px;
+      background: linear-gradient(135deg, #fffbeb 0%, #ffffff 75%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: .84rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover { color: var(--amber); }
+    .top-crumbs span.sep { color: #cbd5e1; }
+    .top-crumbs span.current { color: var(--amber); }
+
+    .eyebrow {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--amber);
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.15;
+      letter-spacing: -.04em;
+      margin: 8px 0 12px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.08rem;
+      color: var(--muted);
+      margin: 0 0 18px;
+    }
+
+    .content {
+      padding-top: 10px;
+      padding-bottom: 58px;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      font-size: 1.55rem;
+      letter-spacing: -.03em;
+      font-weight: 800;
+      margin: 0 0 12px;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 750;
+      margin: 0 0 8px;
+    }
+
+    p {
+      color: #4d586b;
+      margin: 0 0 14px;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .compare-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px 22px;
+      background: #ffffff;
+    }
+
+    .compare-card.bad {
+      border-color: #fca5a5;
+      background: #fffafa;
+    }
+
+    .compare-card.good {
+      border-color: #86efac;
+      background: #f9fdfa;
+    }
+
+    .compare-tag {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+
+    .compare-tag.bad { background: #fee2e2; color: #991b1b; }
+    .compare-tag.good { background: #dcfce7; color: #166534; }
+
+    pre {
+      margin: 12px 0 10px;
+      background: var(--code);
+      color: #e7edf7;
+      padding: 16px 18px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: .86rem;
+      line-height: 1.7;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .92em;
+    }
+
+    p code, .note code {
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #25334a;
+      font-size: .88em;
+    }
+
+    .badge-error {
+      display: inline-block;
+      font-size: .76rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: #fee2e2;
+      color: #991b1b;
+      font-weight: 600;
+    }
+
+    .note {
+      padding: 16px 18px;
+      border-left: 4px solid var(--amber);
+      background: #fffbeb;
+      border-radius: 0 10px 10px 0;
+      color: #78350f;
+      font-size: .92rem;
+      margin: 18px 0;
+    }
+
+    .pager {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    .pager-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--ink);
+      font-weight: 700;
+      font-size: .92rem;
+      padding: 10px 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      transition: border-color .15s, transform .15s;
+    }
+
+    .pager-link:hover {
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+    }
+
+    .pager-link.next {
+      margin-left: auto;
+      background: #edf2ff;
+      border-color: #c7d2fe;
+      color: var(--blue);
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: #fafbfe;
+      padding: 26px 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="top-crumbs">
+        <a href="index.html">guard</a>
+        <span class="sep">/</span>
+        <span class="current">pitfall-02</span>
+      </div>
+
+      <div class="eyebrow">Runtime Pitfall 02</div>
+      <h1>Null or Non-Array Data</h1>
+      <p class="intro">
+        Rendering tables and lists fundamentally requires an Array collection.
+        Passing unhandled API failure payloads, single objects, or null values breaks downstream row loops.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <!-- Story -->
+    <section>
+      <h2>The Story: The Unchecked API Response</h2>
+      <p>
+        In real-world applications, data is fetched asynchronously from backend endpoints:
+      </p>
+      <pre><code>const response = await fetch("/api/items");
+const payload = await response.json();
+
+// If the API failed or returned 404, payload is { error: "Not Found" } instead of an Array!
+render({
+  type: "table.simple",
+  targetHtmlId: "app",
+  data: payload, // 💥 Not an Array!
+  columns: [{ columnName: "itemName" }]
+});</code></pre>
+      <p>
+        Without a guard check, downstream builder engines attempt <code>data.map(...)</code> or <code>for (const row of data)</code>.
+        The browser throws an unhandled <span class="badge-error">TypeError: data.map is not a function</span>, halting execution.
+      </p>
+    </section>
+
+    <!-- Guard Validation Rules -->
+    <section>
+      <h2>How the Guard Enforces Array Integrity</h2>
+      <p>
+        <code>validateData</code> in <code>json-renderers-guard</code> performs strict fail-fast validation:
+      </p>
+      <ul>
+        <li><strong>Presence Check:</strong> If <code>data === undefined</code>, throws <span class="badge-error">Error: Missing compulsory key: "data"</span>.</li>
+        <li><strong>Array Type Verification:</strong> Evaluates <code>Array.isArray(data)</code>. If false (e.g. string, object, or null), throws <span class="badge-error">TypeError: data must be an Array</span>.</li>
+      </ul>
+
+      <div class="compare-grid">
+        <div class="compare-card bad">
+          <span class="compare-tag bad">❌ Bad Input</span>
+          <pre><code>// Object or Null passed instead of Array
+const badConfig = {
+  type: "table.simple",
+  targetHtmlId: "dom-container",
+  data: { error: "Resource Not Found" }, // 💥 Object
+  columns: [{ columnName: "itemName" }]
+};
+
+guardFunc(badConfig);
+// Throws: TypeError: data must be an Array</code></pre>
+        </div>
+
+        <div class="compare-card good">
+          <span class="compare-tag good">✅ Good Input</span>
+          <pre><code>// Valid array of row records
+const goodConfig = {
+  type: "table.simple",
+  targetHtmlId: "dom-container",
+  data: [
+    { itemName: "0.09/30mm", baseUnit: "kgs" },
+    { itemName: "0.11-25", baseUnit: "pcs" }
+  ],
+  columns: [
+    { columnName: "itemName" },
+    { columnName: "baseUnit" }
+  ],
+  appendPosition: "replace",
+  classToApply: "table table-striped"
+};
+
+guardFunc(goodConfig); // Returns true ✅</code></pre>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>Empty Arrays Are Allowed:</strong> If the API returns zero records (<code>data: []</code>),
+        <code>Array.isArray(data)</code> passes, allowing the renderer to render an empty table state rather than crashing.
+      </div>
+
+      <!-- Pager -->
+      <div class="pager">
+        <a class="pager-link" href="missing-target.html">← Pitfall 01: Missing Target</a>
+        <a class="pager-link next" href="component-type.html">Pitfall 03: Component Type →</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div><strong>json-renderers-guard</strong> · Pitfall 02 Documentation</div>
+      <div><a href="index.html" style="color: var(--muted); text-decoration: none;">Hub Home</a></div>
+    </div>
+  </footer>
+</body>
+
+</html>
