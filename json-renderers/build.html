@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>json-renderers-build | KeshavSoft Technical Documentation</title>
+  <meta name="description"
+    content="A simple story explaining how json-renderers-build compiles data, columns, and component intent into headless JSON tag trees for tables, datalists, and select menus." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --blue: #315de8;
+      --green: #0d8c68;
+      --purple: #7c3aed;
+      --amber: #d97706;
+      --pale: #f6f8fc;
+      --code: #101827;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 900px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 58px 0 42px;
+      background: linear-gradient(135deg, #faf5ff 0%, #ffffff 68%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      font-size: .82rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover {
+      color: var(--purple);
+    }
+
+    .top-crumbs span.sep {
+      color: #cbd5e1;
+    }
+
+    .top-crumbs span.current {
+      color: var(--purple);
+    }
+
+    .eyebrow,
+    .section-kicker {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--purple);
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      line-height: 1.08;
+      letter-spacing: -.05em;
+      margin: 10px 0 14px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.12rem;
+      max-width: 720px;
+      color: var(--muted);
+      margin: 0 0 24px;
+    }
+
+    .repo-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #ffffff;
+      color: var(--ink);
+      text-decoration: none;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+
+    .nav-link:hover {
+      transform: translateY(-2px);
+      border-color: #d8b4fe;
+      color: var(--ink);
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.08);
+    }
+
+    .nav-number {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #f3e8ff;
+      color: var(--purple);
+      font-weight: 800;
+      font-size: .82rem;
+      flex: none;
+    }
+
+    .nav-link.guard .nav-number {
+      background: #fef3c7;
+      color: var(--amber);
+    }
+
+    .nav-link.hub .nav-number {
+      background: #edf2ff;
+      color: var(--blue);
+    }
+
+    .nav-link.tag .nav-number {
+      background: #e7f7f1;
+      color: var(--green);
+    }
+
+    .nav-link strong {
+      display: block;
+      font-size: 0.98rem;
+    }
+
+    .nav-link small {
+      display: block;
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .arrow {
+      margin-left: auto;
+      font-size: 1.1rem;
+      color: var(--muted);
+    }
+
+    .content {
+      padding-top: 10px;
+      padding-bottom: 58px;
+    }
+
+    section {
+      padding: 35px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      margin-bottom: 7px;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 3.5vw, 1.95rem);
+      letter-spacing: -.035em;
+      font-weight: 800;
+      margin: 0 0 14px;
+    }
+
+    h3 {
+      font-size: 1.12rem;
+      letter-spacing: -.015em;
+      font-weight: 750;
+      margin: 0 0 6px;
+    }
+
+    section p {
+      color: #4d586b;
+      margin: 0 0 14px;
+    }
+
+    strong {
+      color: var(--ink);
+    }
+
+    .steps {
+      margin-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 16px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .step-index {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: #faf5ff;
+      color: var(--purple);
+      font-weight: 800;
+      font-size: .85rem;
+    }
+
+    .step p,
+    .responsibility p {
+      margin: 0;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .card-box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      background: #ffffff;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+
+    .card-box:hover {
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+
+    .pill.purple {
+      background: #f3e8ff;
+      color: var(--purple);
+    }
+
+    .pill.blue {
+      background: #edf2ff;
+      color: var(--blue);
+    }
+
+    .pill.green {
+      background: #e7f7f1;
+      color: var(--green);
+    }
+
+    pre {
+      margin: 18px 0 14px;
+      background: var(--code);
+      color: #e7edf7;
+      padding: 20px 24px;
+      border-radius: 14px;
+      overflow-x: auto;
+      font-size: .88rem;
+      line-height: 1.75;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', "SFMono-Regular", Consolas, monospace;
+      font-size: .92em;
+    }
+
+    p code,
+    .note code,
+    .card-box code {
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #25334a;
+      font-size: .88em;
+    }
+
+    .note {
+      padding: 15px 18px;
+      border-left: 3px solid var(--purple);
+      background: #faf5ff;
+      border-radius: 0 10px 10px 0;
+      color: #581c87;
+      font-size: .93rem;
+      margin: 16px 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: #fafbfe;
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    @media(max-width:620px) {
+      .wrap {
+        width: min(100% - 28px, 900px);
+      }
+
+      .hero {
+        padding: 42px 0 30px;
+      }
+
+      .repo-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-link {
+        padding: 14px;
+      }
+
+      .step {
+        grid-template-columns: 42px 1fr;
+        gap: 12px;
+      }
+
+      pre {
+        padding: 16px;
+        font-size: .82rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="top-crumbs">
+        <a href="../index.html">dom-builder</a>
+        <span class="sep">/</span>
+        <a href="index.html">json-renderers</a>
+        <span class="sep">/</span>
+        <span class="current">json-renderers-build</span>
+      </div>
+
+      <div class="eyebrow">KeshavSoft · Dependency 02</div>
+      <h1>json-renderers-build</h1>
+      <div class="section-kicker">A simple story</div>
+      <h2>Headless Specification Builder: From Data to JSON Tag Trees</h2>
+      <p class="intro">
+        <code>json-renderers-build</code> is the headless compiler of the ecosystem. It takes raw data records, column
+        definitions, and component intentions &mdash; and translates them into an abstract JSON tag structure
+        specifying the exact DOM hierarchy, attributes, class names, alignments, and footer calculations.
+      </p>
+
+      <div class="note">
+        <strong>Headless Power:</strong> Because <code>json-renderers-build</code> never references
+        <code>document</code> or browser window objects, it is ultra-fast, 100% testable, and runs seamlessly in
+        Node.js,
+        SSR environments, or client browsers.
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <!-- Section 1: What Builds It Performs -->
+    <section>
+      <div class="section-kicker">Component Builders</div>
+      <h2>What builds json-renderers-build constructs</h2>
+      <p>
+        The builder contains specialized factory functions for each supported UI archetype:
+      </p>
+
+      <div class="grid-cards">
+        <div class="card-box">
+          <span class="pill purple">Table Builder</span>
+          <h3>Table Architecture</h3>
+          <p>
+            Transforms an array of records into a structured <code>&lt;table&gt;</code> specification:
+          </p>
+          <ul style="padding-left: 20px; font-size: 0.9rem; color: #4d586b; margin-bottom: 0;">
+            <li><code>thead</code>: Headers with formatted column titles and serial `#` column.</li>
+            <li><code>tbody</code>: Serialized rows, cell-level data bindings, and alignment.</li>
+            <li><code>tfoot</code>: Automated totals and arithmetic sums for numerical columns.</li>
+          </ul>
+        </div>
+
+        <div class="card-box">
+          <span class="pill blue">Datalist Builder</span>
+          <h3>Autocomplete Pairs</h3>
+          <p>
+            Generates a synchronized pair: an <code>&lt;input list="id"&gt;</code> element paired with a child
+            <code>&lt;datalist&gt;</code> holding dynamic <code>&lt;option value="..."&gt;</code> children.
+          </p>
+        </div>
+
+        <div class="card-box">
+          <span class="pill green">Select Builder</span>
+          <h3>Dropdown Selects</h3>
+          <p>
+            Compiles data records into a native <code>&lt;select&gt;</code> element with populated
+            <code>&lt;option&gt;</code>
+            items, setting value attributes and readable display text.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Concrete Input -> Output Transformation -->
+    <section>
+      <div class="section-kicker">Functional Transformation</div>
+      <h2>How input becomes a JSON tag tree</h2>
+      <p>
+        Here is what happens when you call the builder. Notice how high-level intentions are translated into concrete
+        element blueprints:
+      </p>
+
+      <p><strong>1. Input Render Request:</strong></p>
+      <pre><code>{
+  type: "table.simple",
+  columns: ["item", "qty"],
+  data: [
+    { item: "Rope", qty: 25 },
+    { item: "Net",  qty: 10 }
+  ]
+}</code></pre>
+
+      <p><strong>2. Output JSON Tag Specification (compiled by json-renderers-build):</strong></p>
+      <pre><code>{
+  tagName: "table",
+  attributes: { class: "table table-striped table-bordered" },
+  children: [
+    {
+      tagName: "thead",
+      children: [
+        {
+          tagName: "tr",
+          children: [
+            { tagName: "th", text: "#", attributes: { style: "width: 50px;" } },
+            { tagName: "th", text: "Item" },
+            { tagName: "th", text: "Qty", attributes: { style: "text-align: right;" } }
+          ]
+        }
+      ]
+    },
+    {
+      tagName: "tbody",
+      children: [
+        {
+          tagName: "tr",
+          children: [
+            { tagName: "td", text: "1" },
+            { tagName: "td", text: "Rope" },
+            { tagName: "td", text: "25", attributes: { style: "text-align: right;" } }
+          ]
+        },
+        {
+          tagName: "tr",
+          children: [
+            { tagName: "td", text: "2" },
+            { tagName: "td", text: "Net" },
+            { tagName: "td", text: "10", attributes: { style: "text-align: right;" } }
+          ]
+        }
+      ]
+    }
+  ]
+}</code></pre>
+
+      <div class="note">
+        <strong>The Contract:</strong> Notice how <code>json-renderers-build</code> produces a pure data object. It does
+        not create DOM nodes, attach listeners, or render to the screen. That responsibility is delegated entirely to
+        <code>json-to-tag</code>.
+      </div>
+    </section>
+
+    <!-- Section 3: Automatic Column Calculation & Alignment -->
+    <section>
+      <div class="section-kicker">Smart Calculations</div>
+      <h2>Automated footer sums and column detection</h2>
+      <p>
+        One of the biggest struggles in building composite tables is calculating totals and aligning numbers to the
+        right. <code>json-renderers-build</code> handles this automatically:
+      </p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-index">01</div>
+          <div>
+            <h3>Numeric Type Detection</h3>
+            <p>
+              The builder samples row values. If a column contains numerical quantities or amounts, it flags the column
+              for right-alignment and marks it eligible for summary totals.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-index">02</div>
+          <div>
+            <h3>Footer Sum Accumulation</h3>
+            <p>
+              When <code>type: "table.withFooter"</code> is selected, the builder calculates sums across all rows during
+              its single pass, formatting the results into a dedicated <code>&lt;tfoot&gt;</code> row.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-index">03</div>
+          <div>
+            <h3>Row Serials Insertion</h3>
+            <p>
+              Adds an index column (<code>#</code>) automatically, starting at 1 and incrementing sequentially for every
+              row.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Ecosystem Positioning -->
+    <section>
+      <div class="section-kicker">Next Step in Pipeline</div>
+      <h2>Feeding the blueprint into the DOM engine</h2>
+      <p>
+        Now that the JSON tag tree is synthesized, it is passed directly to <strong>json-to-tag</strong> to create real
+        native HTML elements and mount them into the webpage:
+      </p>
+
+      <div class="repo-nav">
+        <a class="nav-link tag" href="json-to-tag.html">
+          <span class="nav-number">03</span>
+          <span><strong>Proceed to json-to-tag</strong><small>Learn how JSON tags become live native HTML
+              elements</small></span>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div>
+        <strong>dom-builder</strong> · <span>json-renderers-build Documentation</span>
+      </div>
+      <div>
+        <a href="index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">json-renderers
+          Hub</a>
+        <a href="../index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">Portal Home</a>
+        <a href="https://github.com/keshavsoft/json-renderers" target="_blank" rel="noopener noreferrer"
+          style="color: var(--purple); text-decoration: none; font-weight: 600;">GitHub ↗</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

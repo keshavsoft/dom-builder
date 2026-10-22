@@ -1,50 +1,482 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Understand JSON to Tag: why declarative JSON can describe HTML structures and how specifications become native DOM elements.">
-  <title>JSON to Tag | Describe It. Build the DOM.</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>json-to-tag | KeshavSoft Technical Documentation</title>
+  <meta name="description"
+    content="Describe an HTML structure as data. Let a library turn that specification into native DOM elements." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
   <style>
-    :root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#172033;background:#fff;line-height:1.65}*{box-sizing:border-box}body{margin:0}main{max-width:980px;margin:auto;padding:42px 22px 56px}h1{font-size:clamp(2.3rem,6vw,4rem);line-height:1.08;margin:.4rem 0 1rem}h2{margin:2.2rem 0 .6rem}p{color:#526074}.eyebrow{font-size:.8rem;font-weight:750;letter-spacing:.12em;text-transform:uppercase;color:#2457c5}.lead{font-size:1.2rem;max-width:760px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.card{display:block;border:1px solid #dbe2ec;border-radius:14px;padding:18px;color:inherit;text-decoration:none}.card:hover{border-color:#2457c5;background:#f8faff}.card h3{margin:0 0 6px}.card p{margin:0;font-size:.95rem}.flow{background:#f1f5f9;border-radius:12px;padding:18px;overflow:auto}code{font-family:ui-monospace,monospace}a{color:#2457c5}footer{border-top:1px solid #dbe2ec;margin-top:34px;padding-top:18px;font-size:.9rem;color:#64748b}
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --blue: #315de8;
+      --green: #0d8c68;
+      --purple: #7c3aed;
+      --amber: #d97706;
+      --pale: #f6f8fc;
+      --code: #101827;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 900px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 58px 0 42px;
+      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 68%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      font-size: .82rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover {
+      color: var(--green);
+    }
+
+    .top-crumbs span.sep {
+      color: #cbd5e1;
+    }
+
+    .top-crumbs span.current {
+      color: var(--green);
+    }
+
+    .eyebrow,
+    .section-kicker {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--green);
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      line-height: 1.08;
+      letter-spacing: -.05em;
+      margin: 10px 0 14px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.12rem;
+      max-width: 720px;
+      color: var(--muted);
+      margin: 0 0 24px;
+    }
+
+    .repo-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #ffffff;
+      color: var(--ink);
+      text-decoration: none;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+
+    .nav-link:hover {
+      transform: translateY(-2px);
+      border-color: #86efac;
+      color: var(--ink);
+      box-shadow: 0 4px 14px rgba(13, 140, 104, 0.08);
+    }
+
+    .nav-number {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #e7f7f1;
+      color: var(--green);
+      font-weight: 800;
+      font-size: .82rem;
+      flex: none;
+    }
+
+    .nav-link.hub .nav-number {
+      background: #edf2ff;
+      color: var(--blue);
+    }
+
+    .nav-link.guard .nav-number {
+      background: #fef3c7;
+      color: var(--amber);
+    }
+
+    .nav-link.build .nav-number {
+      background: #f3e8ff;
+      color: var(--purple);
+    }
+
+    .nav-link strong {
+      display: block;
+      font-size: 0.98rem;
+    }
+
+    .nav-link small {
+      display: block;
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .arrow {
+      margin-left: auto;
+      font-size: 1.1rem;
+      color: var(--muted);
+    }
+
+    .content {
+      padding-top: 10px;
+      padding-bottom: 58px;
+    }
+
+    section {
+      padding: 35px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      margin-bottom: 7px;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 3.5vw, 1.95rem);
+      letter-spacing: -.035em;
+      font-weight: 800;
+      margin: 0 0 14px;
+    }
+
+    h3 {
+      font-size: 1.12rem;
+      letter-spacing: -.015em;
+      font-weight: 750;
+      margin: 0 0 6px;
+    }
+
+    section p {
+      color: #4d586b;
+      margin: 0 0 14px;
+    }
+
+    strong {
+      color: var(--ink);
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .card-box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      background: #ffffff;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+
+    .card-box:hover {
+      border-color: #86efac;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+
+    .pill.green {
+      background: #e7f7f1;
+      color: var(--green);
+    }
+
+    .pill.blue {
+      background: #edf2ff;
+      color: var(--blue);
+    }
+
+    pre {
+      margin: 18px 0 14px;
+      background: var(--code);
+      color: #e7edf7;
+      padding: 20px 24px;
+      border-radius: 14px;
+      overflow-x: auto;
+      font-size: .88rem;
+      line-height: 1.75;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', "SFMono-Regular", Consolas, monospace;
+      font-size: .92em;
+    }
+
+    p code,
+    .note code,
+    .card-box code {
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #25334a;
+      font-size: .88em;
+    }
+
+    .note {
+      padding: 15px 18px;
+      border-left: 3px solid var(--green);
+      background: #f0fdf4;
+      border-radius: 0 10px 10px 0;
+      color: #065f46;
+      font-size: .93rem;
+      margin: 16px 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: #fafbfe;
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    @media(max-width:620px) {
+      .wrap {
+        width: min(100% - 28px, 900px);
+      }
+
+      .hero {
+        padding: 42px 0 30px;
+      }
+
+      .repo-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-link {
+        padding: 14px;
+      }
+
+      pre {
+        padding: 16px;
+        font-size: .82rem;
+      }
+    }
   </style>
 </head>
+
 <body>
-<main>
-  <header>
-    <div class="eyebrow">KeshavSoft · JavaScript library</div>
-    <h1>JSON to Tag</h1>
-    <p class="lead">Describe an HTML structure as data. Let a library turn that specification into native DOM elements.</p>
-    <p>Every web interface ultimately becomes a Document Object Model (DOM). Developers can describe it with HTML markup or construct it through JavaScript DOM APIs. JSON to Tag explores another approach: define the intended structure in a familiar, machine-readable JSON shape and build the DOM from that description.</p>
+  <header class="hero">
+    <div class="wrap">
+      <div class="top-crumbs">
+        <a href="../index.html">dom-builder</a>
+        <span class="sep">/</span>
+        <span class="current">json-to-tag</span>
+      </div>
+
+      <div class="eyebrow">KeshavSoft · DOM Synthesis Engine</div>
+      <h1>JSON to Tag</h1>
+      <div class="section-kicker">A simple story</div>
+      <h2>Describe It as Data. Build the DOM.</h2>
+      <p class="intro">
+        Describe an HTML structure as data. Let a library turn that specification into native DOM elements. Every web
+        interface ultimately becomes a Document Object Model (DOM) &mdash; JSON to Tag explores defining the intended
+        structure in a clean JSON format and synthesizing native elements with zero <code>innerHTML</code> vulnerabilities.
+      </p>
+
+      <div class="note">
+        <strong>Core Pipeline:</strong> <code>JSON Specification</code> &rarr; <code>JSON to Tag</code> &rarr;
+        <code>Native HTML DOM</code>.
+      </div>
+
+      <nav class="repo-nav" aria-label="Ecosystem Navigation">
+        <a class="nav-link hub" href="../json-renderers/index.html">
+          <span class="nav-number">Hub</span>
+          <span><strong>json-renderers</strong><small>Main runtime orchestrator</small></span>
+          <span class="arrow">←</span>
+        </a>
+
+        <a class="nav-link guard" href="../json-renderers/guard.html">
+          <span class="nav-number">01</span>
+          <span><strong>json-renderers-guard</strong><small>Validation &amp; compulsory keys</small></span>
+          <span class="arrow">→</span>
+        </a>
+
+        <a class="nav-link build" href="../json-renderers/build.html">
+          <span class="nav-number">02</span>
+          <span><strong>json-renderers-build</strong><small>Headless spec builder</small></span>
+          <span class="arrow">→</span>
+        </a>
+
+        <a class="nav-link" href="../playground.html" target="_blank" rel="noopener noreferrer">
+          <span class="nav-number">⚡</span>
+          <span><strong>Playground</strong><small>Live interactive sandbox</small></span>
+          <span class="arrow">↗</span>
+        </a>
+      </nav>
+    </div>
   </header>
-  <section>
-    <h2>Why this approach?</h2>
-    <div class="grid">
-      <article class="card"><h3>HTML markup</h3><p>Expresses structure directly, but requires familiarity with tags, nesting, closing tags and attributes.</p></article>
-      <article class="card"><h3>DOM APIs</h3><p>Offer programmatic control, but element creation, attributes and child insertion can require repetitive code.</p></article>
-      <article class="card"><h3>JSON specification</h3><p>Represents structure as data that can be generated, inspected, changed, stored and passed between tools.</p></article>
+
+  <main class="wrap content">
+    <section>
+      <div class="section-kicker">Why this approach?</div>
+      <h2>Comparing interface construction paradigms</h2>
+      <div class="grid-cards">
+        <div class="card-box">
+          <span class="pill blue">HTML Markup</span>
+          <h3>Direct HTML</h3>
+          <p>Expresses structure directly, but requires familiarity with tags, nesting, closing tags, and attributes in strings.</p>
+        </div>
+
+        <div class="card-box">
+          <span class="pill amber">DOM APIs</span>
+          <h3>Imperative APIs</h3>
+          <p>Offers programmatic control, but manual element creation, attribute assignment, and child insertion require repetitive code.</p>
+        </div>
+
+        <div class="card-box">
+          <span class="pill green">JSON Spec</span>
+          <h3>JSON Specification</h3>
+          <p>Represents structure as clean data that can be generated, inspected, changed, serialized, and passed between tools.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-kicker">Guides</div>
+      <h2>Learn the concepts</h2>
+      <div class="grid-cards">
+        <a class="card-box" href="docs/guides/index.html">
+          <span class="pill green">Guide 01</span>
+          <h3>Recursive traversal</h3>
+          <p>How nested specifications are traversed and how parent and child structures relate.</p>
+        </a>
+
+        <a class="card-box" href="docs/guides/buildingElements.html">
+          <span class="pill green">Guide 02</span>
+          <h3>Building elements</h3>
+          <p>How a specification becomes an element, including text, attributes, and children.</p>
+        </a>
+
+        <a class="card-box" href="docs/guides/jsonSpecificationReference.html">
+          <span class="pill green">Guide 03</span>
+          <h3>Specification reference</h3>
+          <p>Understand the JSON fields and the meaning of the structure they describe.</p>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-kicker">References</div>
+      <h2>Explore implementation references</h2>
+      <div class="grid-cards">
+        <a class="card-box" href="docs/reference/index.html">
+          <span class="pill blue">Engine</span>
+          <h3>Engine Architecture</h3>
+          <p>Low-level declarative DOM construction reference.</p>
+        </a>
+
+        <a class="card-box" href="docs/reference/renderers.html">
+          <span class="pill blue">Renderers</span>
+          <h3>Renderers Catalog</h3>
+          <p>Higher-level component and renderer reference.</p>
+        </a>
+
+        <a class="card-box" href="docs/reference/tags.html">
+          <span class="pill blue">HTML Catalog</span>
+          <h3>HTML Tag Catalog</h3>
+          <p>Reference material for HTML tags and content.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div>
+        <strong>dom-builder</strong> · <span>json-to-tag Technical Documentation</span>
+      </div>
+      <div>
+        <a href="../json-renderers/index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">json-renderers</a>
+        <a href="../index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">Portal Home</a>
+        <a href="https://github.com/keshavsoft/json-to-tag" target="_blank" rel="noopener noreferrer"
+          style="color: var(--green); text-decoration: none; font-weight: 600;">GitHub ↗</a>
+      </div>
     </div>
-    <div class="flow"><code>JSON specification → JSON to Tag → Native HTML DOM</code></div>
-    <p>JSON is not the DOM itself; it is the description. The library interprets that description and creates DOM elements. This separates what the interface should contain from the code that constructs it.</p>
-  </section>
-  <section>
-    <h2>Learn the concepts</h2>
-    <div class="grid">
-      <a class="card" href="docs/guides/index.html"><h3>01 · Recursive traversal</h3><p>How nested specifications are traversed and how parent and child structures relate.</p></a>
-      <a class="card" href="docs/guides/buildingElements.html"><h3>02 · Building elements</h3><p>How a specification becomes an element, including text, attributes and children.</p></a>
-      <a class="card" href="docs/guides/jsonSpecificationReference.html"><h3>03 · Specification reference</h3><p>Understand the JSON fields and the meaning of the structure they describe.</p></a>
-    </div>
-  </section>
-  <section>
-    <h2>Explore the implementation references</h2>
-    <div class="grid">
-      <a class="card" href="docs/reference/index.html"><h3>Engine</h3><p>Low-level declarative DOM construction reference.</p></a>
-      <a class="card" href="docs/reference/renderers.html"><h3>Renderers</h3><p>Higher-level component and renderer reference.</p></a>
-      <a class="card" href="docs/reference/tags.html"><h3>HTML tag catalog</h3><p>Reference material for HTML tags and content.</p></a>
-      <a class="card" href="docs/archive/index.html"><h3>Archived pages</h3><p>Older landing-page drafts retained for reference.</p></a>
-    </div>
-  </section>
-  <footer><p>Use the project README and source code as the authority for installation, supported properties and exact API contracts. This documentation is organized to explain the motivation first, then the concepts and references.</p></footer>
-</main>
+  </footer>
 </body>
+
 </html>

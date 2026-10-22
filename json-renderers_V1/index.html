@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>json-renderers | Where Data + Columns + Type Become Native DOM</title>
+  <meta name="description"
+    content="The declarative browser DOM mounting runtime. The client supplies data, columns (the story about the data), and type (the component intent) — json-renderers compiles and mounts native DOM." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Bootstrap 5 CSS & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <style>
+    :root {
+      --ks-primary: #10b981;
+      --ks-primary-dark: #059669;
+      --ks-accent: #2563eb;
+      --ks-bg-surface: #ffffff;
+      --ks-bg-subtle: #f8fafc;
+      --ks-text-main: #0f172a;
+      --ks-text-muted: #64748b;
+      --ks-border-color: #e2e8f0;
+      --ks-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --ks-font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body {
+      font-family: var(--ks-font-sans);
+      color: var(--ks-text-main);
+      background-color: #ffffff;
+      line-height: 1.6;
+    }
+
+    pre, code {
+      font-family: var(--ks-font-mono);
+    }
+
+    .site-nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--ks-border-color);
+    }
+
+    .hero-section {
+      background: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.06) 0%, transparent 40%),
+        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      padding: 4.5rem 0 3.5rem;
+      border-bottom: 1px solid var(--ks-border-color);
+    }
+
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.15;
+      color: #0f172a;
+    }
+
+    .card-clean {
+      background: #ffffff;
+      border-radius: 1rem;
+      border: 1px solid var(--ks-border-color);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card-clean:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    }
+
+    .code-dark {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      font-size: 0.84rem;
+      overflow-x: auto;
+    }
+
+    .step-pill {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Minimal Header Navbar -->
+  <nav class="site-nav sticky-top py-3">
+    <div class="container d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-3">
+        <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="../index.html">
+          <div class="rounded-3 bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+            style="width: 32px; height: 32px; font-size: 0.85rem;">DB</div>
+          <span class="fw-bold fs-5 text-dark tracking-tight">dom-builder</span>
+        </a>
+        <span class="text-muted small">&bull;</span>
+        <span class="badge bg-emerald-subtle text-success border border-success-subtle font-mono">json-renderers v18.0</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <a href="../index.html" class="btn btn-sm btn-outline-dark d-flex align-items-center gap-1">
+          <i class="bi bi-house"></i> Home
+        </a>
+        <a href="subDoc/index.html" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1">
+          <i class="bi bi-journal-text"></i> SubDoc Hub
+        </a>
+        <a href="../playground.html" class="btn btn-sm btn-warning text-dark fw-bold d-flex align-items-center gap-1">
+          <i class="bi bi-code-slash"></i> Playground
+        </a>
+        <a href="https://github.com/keshavsoft/json-renderers" target="_blank" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 font-mono">
+          <i class="bi bi-github"></i> GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero: The Story of json-renderers -->
+  <header class="hero-section text-center">
+    <div class="container" style="max-width: 820px;">
+      <div class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1.5 rounded-pill mb-3 fw-bold small">
+        Declarative DOM Orchestrator
+      </div>
+      <h1 class="hero-title mb-3">
+        Where <span class="text-success">Data</span> + <span class="text-primary">Columns</span> + <span class="text-warning text-dark">Type</span> Become Native DOM
+      </h1>
+      <p class="lead text-muted mx-auto mb-4" style="max-width: 680px;">
+        <code>json-renderers</code> is the place where we build JSON blueprints and mount real HTML. The client supplies the data, the story about the data, and the component type &mdash; the engine compiles and renders it instantly.
+      </p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="#three-inputs" class="btn btn-success btn-lg px-4 fw-semibold text-white">
+          <i class="bi bi-diagram-3 me-1"></i> The 3 Inputs Story
+        </a>
+        <a href="subDoc/index.html" class="btn btn-primary btn-lg px-4 fw-semibold text-white">
+          <i class="bi bi-journal-text me-1"></i> Open SubDoc Hub
+        </a>
+        <a href="#components-suite" class="btn btn-outline-dark btn-lg px-4 fw-semibold">
+          <i class="bi bi-collection me-1"></i> Explore Components
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Section 1: The 3 Inputs Story -->
+  <section id="three-inputs" class="py-5 bg-white border-bottom">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="badge bg-light text-muted border font-mono small text-uppercase">The Architecture Story</span>
+        <h3 class="fw-bold mt-2">What Does the Client Supply?</h3>
+        <p class="text-muted small mx-auto" style="max-width: 580px;">
+          To build any component, the developer only provides 3 simple, declarative inputs:
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <!-- 1. data -->
+        <div class="col-lg-4">
+          <div class="card-clean p-4 h-100 border-start border-4 border-success">
+            <span class="step-pill bg-success-subtle text-success mb-3 d-inline-block">1. data</span>
+            <h5 class="fw-bold text-dark">The Raw Facts</h5>
+            <p class="text-muted small mb-3">
+              The plain business records directly from your API, database, or state store. An array of objects with zero HTML markup or styling attached.
+            </p>
+            <div class="code-dark">
+<pre class="mb-0"><code>data: [
+  { item: "Rope", qty: 25, price: 120 },
+  { item: "Net",  qty: 10, price: 350 }
+]</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. columns -->
+        <div class="col-lg-4">
+          <div class="card-clean p-4 h-100 border-start border-4 border-primary">
+            <span class="step-pill bg-primary-subtle text-primary mb-3 d-inline-block">2. columns</span>
+            <h5 class="fw-bold text-dark">The Story About The Data</h5>
+            <p class="text-muted small mb-3">
+              Which fields matter to the user, how they are labeled, in what sequence, how numbers should align, and which columns need automated totals.
+            </p>
+            <div class="code-dark">
+<pre class="mb-0"><code>columns: [
+  "item", 
+  "qty", 
+  "price"
+]</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. type -->
+        <div class="col-lg-4">
+          <div class="card-clean p-4 h-100 border-start border-4 border-warning">
+            <span class="step-pill bg-warning-subtle text-dark mb-3 d-inline-block">3. type</span>
+            <h5 class="fw-bold text-dark">The Component Intent</h5>
+            <p class="text-muted small mb-3">
+              What kind of component you wish to materialize from this data: a full table with footer sums, a lightweight autocomplete datalist, or a select dropdown.
+            </p>
+            <div class="code-dark">
+<pre class="mb-0"><code>type: "table.withFooter"
+// or "table.simple"
+// or "datalist"
+// or "select"</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Execution Callout -->
+      <div class="mt-4 p-4 rounded-3 border bg-light text-center">
+        <h6 class="fw-bold text-dark mb-1">
+          <i class="bi bi-cpu text-success me-1"></i> The Runtime Magic
+        </h6>
+        <p class="text-muted small mb-0 mx-auto" style="max-width: 650px;">
+          Once these 3 inputs are given, <code>json-renderers</code> delegates the blueprint synthesis to <code>json-renderers-build</code>, asks <code>@keshavsoft/json-to-tag</code> to create the real HTML DOM nodes, and mounts them cleanly into your target element.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Component Suites (Neatly Organized Sub-folders) -->
+  <section id="components-suite" class="py-5 bg-light border-bottom">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="badge bg-success-subtle text-success px-3 py-1 rounded-pill fw-bold text-uppercase small">Sub-Folder Organization</span>
+        <h3 class="fw-bold mt-2">Dedicated Component Suites</h3>
+        <p class="text-muted small mx-auto" style="max-width: 550px;">
+          Every component has its own dedicated directory containing interactive demos, CDN guides, and enterprise runtimes.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <!-- 1. Table Folder -->
+        <div class="col-md-6 col-lg-3">
+          <div class="card-clean p-4 h-100 d-flex flex-column bg-white">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <span class="rounded-3 bg-success-subtle text-success p-2 fs-5">
+                <i class="bi bi-table"></i>
+              </span>
+              <span class="font-mono text-muted small">samples/table/</span>
+            </div>
+            <h5 class="fw-bold text-dark">Table Suite</h5>
+            <p class="text-muted small flex-grow-1">
+              Multi-column tables with automated serial numbers (`#`), alignment inference, calculated sums in `<tfoot>`, and dynamic builder switches.
+            </p>
+            <div class="d-flex flex-column gap-1.5 pt-3 border-top">
+              <a href="samples/table/index.html" class="btn btn-sm btn-outline-success text-start fw-semibold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-play-circle me-1"></i> Interactive Demo</span>
+                &rarr;
+              </a>
+              <a href="samples/table/cdn.html" class="small text-muted text-decoration-none hover-link">
+                &bull; CDN Import Guide
+              </a>
+              <a href="samples/table/windowKs.html" class="small text-muted text-decoration-none hover-link">
+                &bull; window.ks Runtime Guide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Datalist Folder -->
+        <div class="col-md-6 col-lg-3">
+          <div class="card-clean p-4 h-100 d-flex flex-column bg-white">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <span class="rounded-3 bg-primary-subtle text-primary p-2 fs-5">
+                <i class="bi bi-lightning-charge"></i>
+              </span>
+              <span class="font-mono text-muted small">samples/datalist/</span>
+            </div>
+            <h5 class="fw-bold text-dark">Datalist Suite</h5>
+            <p class="text-muted small flex-grow-1">
+              Native HTML5 `<datalist>` autocomplete popovers linked directly to input fields without heavy autocomplete libraries.
+            </p>
+            <div class="d-flex flex-column gap-1.5 pt-3 border-top">
+              <a href="samples/datalist/index.html" class="btn btn-sm btn-outline-primary text-start fw-semibold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-play-circle me-1"></i> Interactive Demo</span>
+                &rarr;
+              </a>
+              <a href="samples/datalist/cdn.html" class="small text-muted text-decoration-none hover-link">
+                &bull; CDN Import Guide
+              </a>
+              <a href="samples/datalist/windowks.html" class="small text-muted text-decoration-none hover-link">
+                &bull; window.ks Runtime Guide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Select Folder -->
+        <div class="col-md-6 col-lg-3">
+          <div class="card-clean p-4 h-100 d-flex flex-column bg-white">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <span class="rounded-3 bg-warning-subtle text-dark p-2 fs-5">
+                <i class="bi bi-menu-button-wide"></i>
+              </span>
+              <span class="font-mono text-muted small">samples/select/</span>
+            </div>
+            <h5 class="fw-bold text-dark">Select Suite</h5>
+            <p class="text-muted small flex-grow-1">
+              Standard semantic `<select>` dropdowns rendered directly from simple string or key-value object arrays with change listeners.
+            </p>
+            <div class="d-flex flex-column gap-1.5 pt-3 border-top">
+              <a href="samples/select/index.html" class="btn btn-sm btn-outline-warning text-dark text-start fw-semibold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-play-circle me-1"></i> Interactive Demo</span>
+                &rarr;
+              </a>
+              <a href="samples/select/about.html" class="small text-muted text-decoration-none hover-link">
+                &bull; Beginner Guide (about.html)
+              </a>
+              <a href="samples/select/cdn.html" class="small text-muted text-decoration-none hover-link">
+                &bull; CDN Import Guide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Form Folder -->
+        <div class="col-md-6 col-lg-3">
+          <div class="card-clean p-4 h-100 d-flex flex-column bg-white">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <span class="rounded-3 bg-secondary-subtle text-dark p-2 fs-5">
+                <i class="bi bi-ui-checks"></i>
+              </span>
+              <span class="font-mono text-muted small">samples/form/</span>
+            </div>
+            <h5 class="fw-bold text-dark">Form Suite</h5>
+            <p class="text-muted small flex-grow-1">
+              Schema-driven form controls: labels, text fields, email, passwords, buttons, and input validation without writing repetitive HTML tags.
+            </p>
+            <div class="d-flex flex-column gap-1.5 pt-3 border-top">
+              <a href="samples/form/index.html" class="btn btn-sm btn-outline-secondary text-start fw-semibold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-play-circle me-1"></i> Interactive Demo</span>
+                &rarr;
+              </a>
+              <span class="small text-muted">&bull; Schema-Driven Form Controls</span>
+              <span class="small text-muted">&bull; Validations &amp; Placeholders</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: The House-Building Metaphor (subDoc/) -->
+  <section class="py-5 bg-white border-bottom">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-mono small text-uppercase fw-bold">subDoc Architecture</span>
+        <h3 class="fw-bold mt-2">The House-Building Story (`subDoc/`)</h3>
+        <p class="text-muted small mx-auto" style="max-width: 540px;">
+          Explore the conceptual mental models, pipeline lifecycles, and architectural roles in the dedicated <code>subDoc/</code> hub.
+        </p>
+      </div>
+
+      <div class="row g-4 text-center">
+        <!-- Role 1 -->
+        <div class="col-md-4">
+          <div class="card-clean p-4 h-100">
+            <div class="rounded-circle bg-primary-subtle text-primary mx-auto mb-3 d-flex align-items-center justify-content-center"
+              style="width: 48px; height: 48px; font-size: 1.25rem;">
+              <i class="bi bi-pencil-ruler"></i>
+            </div>
+            <h6 class="fw-bold text-primary text-uppercase small mb-1">Step 1 &bull; The Architect</h6>
+            <h5 class="fw-bold text-dark">json-renderers-build</h5>
+            <p class="text-muted small mb-0">
+              Draws the blueprint. Analyzes data and columns, calculates totals, adds row numbers, and outputs pure JSON AST.
+            </p>
+          </div>
+        </div>
+
+        <!-- Role 2 -->
+        <div class="col-md-4">
+          <div class="card-clean p-4 h-100">
+            <div class="rounded-circle bg-purple-subtle text-purple mx-auto mb-3 d-flex align-items-center justify-content-center"
+              style="width: 48px; height: 48px; font-size: 1.25rem; background: #f3e8ff; color: #7e22ce;">
+              <i class="bi bi-hammer"></i>
+            </div>
+            <h6 class="fw-bold text-uppercase small mb-1" style="color: #7e22ce;">Step 2 &bull; The Construction Worker</h6>
+            <h5 class="fw-bold text-dark">@keshavsoft/json-to-tag</h5>
+            <p class="text-muted small mb-0">
+              Reads the blueprint and creates real native browser elements using <code>document.createElement()</code>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Role 3 -->
+        <div class="col-md-4">
+          <div class="card-clean p-4 h-100 border-2 border-success">
+            <div class="rounded-circle bg-success-subtle text-success mx-auto mb-3 d-flex align-items-center justify-content-center"
+              style="width: 48px; height: 48px; font-size: 1.25rem;">
+              <i class="bi bi-clipboard-check"></i>
+            </div>
+            <h6 class="fw-bold text-success text-uppercase small mb-1">Step 3 &bull; The Site Manager</h6>
+            <h5 class="fw-bold text-dark">json-renderers</h5>
+            <p class="text-muted small mb-0">
+              Orchestrates the whole operation, passes inputs, receives elements, and mounts them cleanly into your page container.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-4 d-flex justify-content-center gap-2 flex-wrap">
+        <a href="subDoc/index.html" class="btn btn-primary btn-sm px-4 fw-bold">
+          <i class="bi bi-journal-text me-1"></i> Open SubDoc Documentation Hub (subDoc/index.html) &rarr;
+        </a>
+        <a href="subDoc/simpleDoc.html" class="btn btn-sm btn-outline-dark">
+          <i class="bi bi-book me-1"></i> Simple Guide (3 min)
+        </a>
+        <a href="subDoc/advanceDoc.html" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-buildings me-1"></i> Advanced Handbook (15 min)
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Quick 10-Second CDN Quickstart -->
+  <section class="py-5 bg-light">
+    <div class="container" style="max-width: 800px;">
+      <div class="card-clean p-4 p-md-5">
+        <div class="d-flex align-items-center gap-2 mb-2 text-success fw-bold small text-uppercase">
+          <i class="bi bi-lightning-charge-fill"></i> Ready in 10 Seconds
+        </div>
+        <h4 class="fw-bold mb-3">Add to any HTML page via CDN</h4>
+        <p class="text-muted small mb-4">
+          Zero dependencies, no node_modules required. Import the ES module and call <code>render()</code>:
+        </p>
+
+        <div class="code-dark mb-4">
+<pre class="mb-0"><code>&lt;!-- 1. Target Mount Element --&gt;
+&lt;div id="my-container"&gt;&lt;/div&gt;
+
+&lt;!-- 2. Declarative Import &amp; Render --&gt;
+&lt;script type="module"&gt;
+  import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+  render({
+    type: "table.withFooter",
+    columns: ["item", "qty", "amount"],
+    data: [
+      { item: "High Tensile Rope", qty: 25, amount: 3000 },
+      { item: "Agri Shading Net", qty: 10, amount: 1250 }
+    ],
+    targetHtmlId: "my-container"
+  });
+&lt;/script&gt;</code></pre>
+        </div>
+
+        <div class="text-center">
+          <a href="../playground.html" class="btn btn-warning btn-lg px-4 text-dark fw-bold">
+            <i class="bi bi-code-slash me-1"></i> Open Interactive Playground
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Minimal Footer -->
+  <footer class="py-4 bg-white border-top text-center text-muted small">
+    <div class="container">
+      <span class="fw-semibold text-dark">json-renderers</span> &bull; Declarative UI Runtime &bull; Part of <a href="../index.html" class="text-decoration-none text-primary">dom-builder</a> &bull; Developed by <a href="https://github.com/keshavsoft" target="_blank" class="text-decoration-none text-success">KeshavSoft</a>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

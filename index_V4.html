@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dom-builder | KeshavSoft Technical Documentation</title>
+  <meta name="description"
+    content="Build UI from JSON: define the structure, connect it to a target element, and render the result as native HTML." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --blue: #315de8;
+      --green: #0d8c68;
+      --purple: #7c3aed;
+      --amber: #d97706;
+      --pale: #f6f8fc;
+      --code: #101827;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 900px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 58px 0 42px;
+      background: linear-gradient(135deg, #f5f8ff 0%, #ffffff 68%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow,
+    .section-kicker {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    h1 {
+      font-size: clamp(2.6rem, 7vw, 4.1rem);
+      line-height: 1.05;
+      letter-spacing: -.055em;
+      margin: 12px 0 16px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.12rem;
+      max-width: 720px;
+      color: var(--muted);
+      margin: 0 0 28px;
+    }
+
+    .repo-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #ffffff;
+      color: var(--ink);
+      text-decoration: none;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+
+    .nav-link:hover {
+      transform: translateY(-2px);
+      border-color: #b6c6fa;
+      color: var(--ink);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);
+    }
+
+    .nav-number {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #edf2ff;
+      color: var(--blue);
+      font-weight: 800;
+      font-size: .82rem;
+      flex: none;
+    }
+
+    .nav-link.guard .nav-number {
+      background: #fef3c7;
+      color: var(--amber);
+    }
+
+    .nav-link.build .nav-number {
+      background: #f3e8ff;
+      color: var(--purple);
+    }
+
+    .nav-link.tag .nav-number {
+      background: #e7f7f1;
+      color: var(--green);
+    }
+
+    .nav-link strong {
+      display: block;
+      font-size: 0.98rem;
+    }
+
+    .nav-link small {
+      display: block;
+      color: var(--muted);
+      font-size: .79rem;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .arrow {
+      margin-left: auto;
+      font-size: 1.1rem;
+      color: var(--muted);
+    }
+
+    .content {
+      padding-top: 10px;
+      padding-bottom: 58px;
+    }
+
+    section {
+      padding: 35px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      margin-bottom: 7px;
+    }
+
+    h2 {
+      font-size: clamp(1.55rem, 4vw, 2rem);
+      letter-spacing: -.035em;
+      font-weight: 800;
+      margin: 0 0 14px;
+      color: var(--ink);
+    }
+
+    h3 {
+      font-size: 1.08rem;
+      letter-spacing: -.015em;
+      font-weight: 750;
+      margin: 0 0 5px;
+      color: var(--ink);
+    }
+
+    section p {
+      color: #4d586b;
+      margin: 0 0 12px;
+    }
+
+    strong {
+      color: var(--ink);
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .card-box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      background: #ffffff;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+
+    .card-box:hover {
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+
+    .pill.blue {
+      background: #edf2ff;
+      color: var(--blue);
+    }
+
+    .pill.green {
+      background: #e7f7f1;
+      color: var(--green);
+    }
+
+    .pill.purple {
+      background: #f3e8ff;
+      color: var(--purple);
+    }
+
+    .pill.amber {
+      background: #fef3c7;
+      color: var(--amber);
+    }
+
+    .steps {
+      margin-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 16px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .step-index {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--pale);
+      color: var(--blue);
+      font-weight: 800;
+      font-size: .82rem;
+    }
+
+    .step p,
+    .responsibility p {
+      margin: 0;
+    }
+
+    pre {
+      margin: 18px 0 14px;
+      background: var(--code);
+      color: #e7edf7;
+      padding: 22px 24px;
+      border-radius: 14px;
+      overflow-x: auto;
+      font-size: .88rem;
+      line-height: 1.75;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: .92em;
+    }
+
+    p code,
+    .note code,
+    .card-box code {
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #25334a;
+    }
+
+    .note {
+      padding: 15px 17px;
+      border-left: 3px solid var(--blue);
+      background: #f5f7fc;
+      border-radius: 0 10px 10px 0;
+      color: var(--muted);
+      font-size: .93rem;
+    }
+
+    .responsibility {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .closing {
+      margin-top: 22px !important;
+      font-weight: 650;
+      color: var(--ink) !important;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: #fafbfe;
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    footer strong {
+      letter-spacing: -.02em;
+    }
+
+    @media(max-width:620px) {
+      .wrap {
+        width: min(100% - 28px, 900px);
+      }
+
+      .hero {
+        padding: 42px 0 30px;
+      }
+
+      .repo-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-link {
+        padding: 14px;
+      }
+
+      .step {
+        grid-template-columns: 42px 1fr;
+        gap: 12px;
+      }
+
+      pre {
+        padding: 17px;
+        font-size: .8rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">KeshavSoft · Technical Documentation</div>
+      <h1>dom-builder</h1>
+      <div class="section-kicker">A simple story</div>
+      <h2>json-renderers Ecosystem</h2>
+      <p class="intro">
+        Build UI from JSON: define the structure, connect it to a target element, and render the result as native HTML.
+        When you want to build a configured component from a render request, you supply a component <code>type</code>,
+        <code>data</code>, <code>columns</code> when needed, and a <code>targetHtmlId</code>. The renderer orchestrates
+        validation, headless blueprint compilation, and direct DOM synthesis.
+      </p>
+
+      <div class="note">
+        <strong>Typical request:</strong> component type + data + columns (when needed) + target HTML ID.
+      </div>
+
+      <nav class="repo-nav" aria-label="Ecosystem Repositories Navigation">
+        <a class="nav-link" href="json-renderers/">
+          <span class="nav-number">Hub</span>
+          <span><strong>json-renderers</strong><small>Component runtime &amp; simple story</small></span>
+          <span class="arrow">→</span>
+        </a>
+
+        <a class="nav-link guard" href="json-renderers/guard.html">
+          <span class="nav-number">01</span>
+          <span><strong>json-renderers-guard</strong><small>Runtime validation &amp; compulsory keys</small></span>
+          <span class="arrow">→</span>
+        </a>
+
+        <a class="nav-link build" href="json-renderers/build.html">
+          <span class="nav-number">02</span>
+          <span><strong>json-renderers-build</strong><small>Headless spec builder for UI components</small></span>
+          <span class="arrow">→</span>
+        </a>
+
+        <a class="nav-link tag" href="json-to-tag/">
+          <span class="nav-number">03</span>
+          <span><strong>json-to-tag</strong><small>Builds native HTML elements from JSON</small></span>
+          <span class="arrow">→</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <section>
+      <div class="section-kicker">The main idea</div>
+      <h2>Describe what you want to display</h2>
+      <p>
+        Imagine you have a list of products and want to show them in a table. Instead of manually creating every table
+        row, setting styles, and concatenating strings, you send <code>json-renderers</code> a request describing the
+        component, the data, the columns, and the HTML element where the result should appear.
+      </p>
+
+      <div class="grid-cards">
+        <div class="card-box">
+          <span class="pill amber">Step 01 · Guard</span>
+          <h3>json-renderers-guard</h3>
+          <p>
+            Validates input integrity, ensures compulsory keys exist, and checks that target DOM containers are mounted
+            prior to execution.
+          </p>
+          <a href="json-renderers/guard.html" style="color: var(--amber); text-decoration: none; font-weight: 600;">Learn more →</a>
+        </div>
+
+        <div class="card-box">
+          <span class="pill purple">Step 02 · Build</span>
+          <h3>json-renderers-build</h3>
+          <p>
+            Compiles data, columns, and component intent headlessly into an abstract JSON tag tree with automated sums
+            and alignments.
+          </p>
+          <a href="json-renderers/build.html" style="color: var(--purple); text-decoration: none; font-weight: 600;">Learn more →</a>
+        </div>
+
+        <div class="card-box">
+          <span class="pill green">Step 03 · Tag</span>
+          <h3>json-to-tag</h3>
+          <p>
+            Traverses the compiled JSON tag tree and instantiates live, native browser DOM nodes safely without
+            innerHTML injection.
+          </p>
+          <a href="json-to-tag/" style="color: var(--green); text-decoration: none; font-weight: 600;">Learn more →</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-kicker">Example</div>
+      <h2>Build a table from data via CDN</h2>
+      <p>This request displays two product rows in a table and places the result inside <code>my-table</code>.</p>
+      <pre><code>&lt;div id="my-table"&gt;&lt;/div&gt;
+
+&lt;script type="module"&gt;
+  import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+  render({
+    type: "table.withFooter",
+    columns: ["item", "qty", "amount"],
+    data: [
+      { item: "Rope", qty: 25, amount: 3000 },
+      { item: "Net",  qty: 10, amount: 1250 }
+    ],
+    targetHtmlId: "my-table"
+  });
+&lt;/script&gt;</code></pre>
+      <div class="note"><strong>Field meanings:</strong><br />
+        • <code>type</code> selects the component.<br />
+        • <code>columns</code> defines the table fields and alignments.<br />
+        • <code>data</code> supplies the row values.<br />
+        • <code>targetHtmlId</code> identifies where to render the result.
+      </div>
+    </section>
+
+    <section class="responsibilities">
+      <div class="section-kicker">Live JSON-to-DOM Playground</div>
+      <h2>Interactive Sandbox</h2>
+      <div class="responsibility">
+        <p>
+          Edit declarative JSON configurations in real-time and inspect mounted DOM output immediately. Includes instant
+          presets for tables, datalists, and select menus with error diagnostics.
+        </p>
+      </div>
+      <nav class="repo-nav" aria-label="Playground Link">
+        <a class="nav-link" href="playground.html" target="_blank" rel="noopener noreferrer">
+          <span class="nav-number">⚡</span>
+          <span><strong>Open Interactive Playground</strong><small>Real-time live DOM compilation &amp; inspection</small></span>
+          <span class="arrow">↗</span>
+        </a>
+      </nav>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <strong>
+        <a href="https://github.com/keshavsoft/dom-builder" target="_blank" rel="noopener noreferrer"
+          class="text-decoration-none" style="color: inherit;">dom-builder on GitHub</a>
+      </strong>
+      <span>json-renderers · Request → UI</span>
+    </div>
+  </footer>
+</body>
+
+</html>

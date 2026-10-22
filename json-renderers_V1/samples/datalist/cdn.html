@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using CDN | How to Render HTML Datalist via CDN Import</title>
+  <meta name="description"
+    content="Step-by-step beginner guide to building and mounting HTML datalists using json-renderers direct CDN import via ES Modules." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#faf5ff',
+              100: '#f3e8ff',
+              500: '#a855f7',
+              600: '#9333ea',
+              700: '#7e22ce'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #ffffff;
+      color: #1e293b;
+    }
+
+    pre,
+    code {
+      font-family: 'Fira Code', monospace;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .step-badge {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+    }
+
+    .demo-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      border-radius: 0.75rem;
+      border: 1.5px solid #cbd5e1;
+      background-color: #ffffff;
+      color: #0f172a;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .demo-input:focus {
+      outline: none;
+      border-color: #9333ea;
+      box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.15);
+    }
+  </style>
+</head>
+
+<body class="bg-white text-slate-800 min-h-screen antialiased flex flex-col font-sans selection:bg-purple-500 selection:text-white">
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="border-b border-slate-200 bg-white/95 backdrop-blur sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="../index.html"
+          class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 via-indigo-600 to-pink-500 flex items-center justify-center font-bold text-white shadow-md text-lg hover:scale-105 transition">
+          🔍
+        </a>
+        <div>
+          <div class="flex items-center gap-2">
+            <a href="../index.html"
+              class="text-base font-bold text-slate-900 tracking-tight hover:text-purple-600 transition">json-renderers</a>
+            <span
+              class="px-2 py-0.5 text-xs bg-purple-100 text-purple-800 rounded-full border border-purple-200 font-mono font-medium">Datalist
+              &bull; CDN</span>
+          </div>
+          <p class="text-xs text-slate-500">Direct CDN Import Integration Guide</p>
+        </div>
+      </div>
+
+      <nav class="flex items-center gap-1.5 sm:gap-2 text-sm">
+        <a href="../index.html"
+          class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition text-xs sm:text-sm">Samples Hub</a>
+        <a href="index.html"
+          class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition text-xs sm:text-sm">Datalist Hub</a>
+        <a href="cdn.html"
+          class="px-3 py-1.5 rounded-lg bg-purple-600 text-white font-semibold shadow-sm transition text-xs sm:text-sm">Using CDN</a>
+        <a href="windowks.html"
+          class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition text-xs sm:text-sm">window.ks</a>
+        <a href="../../index.html"
+          class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition hidden md:inline text-xs sm:text-sm">Main Docs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-10">
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-slate-50 via-purple-50/50 to-pink-50/30 rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm relative overflow-hidden">
+      <div class="relative z-10 space-y-5">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 border border-purple-200 text-xs text-purple-800 font-mono font-medium">
+          <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+          Method 1 &bull; Direct CDN Import
+        </div>
+
+        <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+          How to Render HTML Datalist <br class="hidden sm:inline" />
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">Using Direct CDN Import</span>
+        </h1>
+
+        <p class="max-w-4xl text-slate-600 text-base sm:text-lg leading-relaxed">
+          Learn how to generate native HTML5 <code class="text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded font-mono font-semibold">&lt;datalist&gt;</code> elements directly from CDN imports into standard browser ES Modules without bundlers or npm installations.
+        </p>
+
+        <!-- Action Links -->
+        <div class="flex flex-wrap gap-2.5 pt-2">
+          <a href="#how-it-works"
+            class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-800 text-xs sm:text-sm font-semibold transition border border-slate-300 shadow-sm flex items-center gap-1.5">
+            <span>💡</span> How It Works
+          </a>
+          <a href="#code-walkthrough"
+            class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-800 text-xs sm:text-sm font-semibold transition border border-slate-300 shadow-sm flex items-center gap-1.5">
+            <span>📄</span> Code Walkthrough
+          </a>
+          <a href="#live-demo"
+            class="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-sm">
+            <span>⚡</span> Interactive CDN Demo
+          </a>
+          <a href="../../../samples/dataList1/index.html" target="_blank"
+            class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-sm">
+            <span>📂</span> Open samples/dataList1 &rarr;
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works (The Simple Story) -->
+    <section id="how-it-works" class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-xs font-mono font-semibold text-purple-700 uppercase tracking-wider">Concept</span>
+          <h2 class="text-2xl font-bold text-slate-900 mt-1">The 3-Step CDN Datalist Story</h2>
+        </div>
+        <span class="text-xs text-slate-500 font-mono hidden sm:inline">Zero build setup</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
+          <span class="step-badge bg-purple-100 text-purple-800 border border-purple-200">1</span>
+          <h3 class="text-base font-bold text-slate-900">1. Input with list=""</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Create an input linked to an ID: <code class="text-purple-700 font-mono">&lt;input list="cities-list" /&gt;</code> and a container for the datalist.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
+          <span class="step-badge bg-indigo-100 text-indigo-800 border border-indigo-200">2</span>
+          <h3 class="text-base font-bold text-slate-900">2. Import from CDN</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Import the runtime from jsDelivr via native <code class="text-indigo-700 font-mono">&lt;script type="module"&gt;</code>.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
+          <span class="step-badge bg-pink-100 text-pink-800 border border-pink-200">3</span>
+          <h3 class="text-base font-bold text-slate-900">3. Mount &amp; Enjoy Autocomplete</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            The datalist is injected into the container. The browser handles matching, dropdown menus, and arrow keys natively.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Code Walkthrough -->
+    <section id="code-walkthrough" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <span class="text-xs font-mono font-semibold text-purple-700 uppercase tracking-wider">Implementation</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Complete HTML Page Example</h2>
+        </div>
+        <button onclick="copyCode('full-example-code')"
+          class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-mono font-medium transition flex items-center gap-1.5 border border-slate-300">
+          <span>📋</span> Copy Code
+        </button>
+      </div>
+
+      <div class="rounded-2xl bg-slate-950 p-4 sm:p-5 text-xs text-slate-200 overflow-x-auto custom-scrollbar">
+        <pre id="full-example-code"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Datalist CDN Demo&lt;/title&gt;
+  &lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" /&gt;
+&lt;/head&gt;
+&lt;body class="p-4"&gt;
+
+  &lt;!-- 1. Input field linked to datalist ID --&gt;
+  &lt;label class="form-label font-bold"&gt;Search Technology:&lt;/label&gt;
+  &lt;input list="tech-suggestions" class="form-control mb-3" placeholder="Start typing (e.g., React)..." /&gt;
+
+  &lt;!-- 2. Target container for datalist --&gt;
+  &lt;div id="datalist-output"&gt;&lt;/div&gt;
+
+  &lt;!-- 3. Script importing directly from CDN --&gt;
+  &lt;script type="module"&gt;
+    import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v14/min.js";
+
+    const suggestions = ["React", "Vue.js", "Angular", "Svelte", "Next.js", "Vite"];
+
+    // Mount datalist element
+    render({
+      type: "datalist",
+      data: suggestions,
+      targetHtmlId: "datalist-output",
+      showLog: true
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- Interactive Live CDN Playground -->
+    <section id="live-demo" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+      <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-100 pb-4">
+        <div>
+          <span class="text-xs font-mono font-semibold text-purple-700 uppercase tracking-wider">Live Experience</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Interactive CDN Demo &amp; Code Generator</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="status-badge" class="px-2 py-0.5 text-[11px] font-mono rounded bg-slate-100 text-slate-700">Ready</span>
+        </div>
+      </div>
+
+      <!-- Option Management Toolbar -->
+      <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+        <label class="block text-xs font-bold text-slate-700">Add Suggestion Dynamically to CDN Datalist</label>
+        <div class="flex gap-2 flex-wrap sm:flex-nowrap">
+          <input type="text" id="new-item-input" placeholder="Type new suggestion (e.g., TypeScript)..."
+            class="flex-1 text-xs px-3 py-2 rounded-lg border border-slate-300 bg-white focus:outline-none focus:border-purple-500" />
+          <button id="btn-add-item"
+            class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-sm transition whitespace-nowrap">
+            + Add Suggestion
+          </button>
+          <button id="btn-reset-items"
+            class="px-3 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs transition whitespace-nowrap">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Output and Interactive Console -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Left: Rendered Container & Input -->
+        <div class="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <span>⌨️</span> Live Autocomplete Input
+            </h3>
+            <span class="text-[11px] font-mono text-purple-700 font-semibold">list="cdn-datalist-output"</span>
+          </div>
+
+          <div class="space-y-2">
+            <input type="text" id="cdn-search-input" list="cdn-datalist-output"
+              placeholder="Search or double click to see autocomplete..."
+              class="demo-input" />
+            <p class="text-[11px] text-slate-400 italic">
+              Notice: The suggestions below are generated by the native browser UI.
+            </p>
+          </div>
+
+          <!-- Hidden container holding datalist -->
+          <div id="cdn-datalist-container">
+            <!-- Datalist element mounts here -->
+          </div>
+
+          <!-- Selection Display -->
+          <div class="p-3.5 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-between text-xs">
+            <span class="font-semibold text-purple-900">Current Input Value:</span>
+            <span id="cdn-input-value" class="font-mono font-bold text-purple-800 bg-white px-2.5 py-1 rounded border border-purple-200">
+              (Empty)
+            </span>
+          </div>
+
+          <!-- Console Output Box -->
+          <div class="rounded-xl bg-slate-900 p-3.5 text-xs text-slate-300 space-y-2">
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 border-b border-slate-800 pb-2">
+              <span>Execution Console Log</span>
+              <button id="btn-clear-console" class="text-slate-500 hover:text-slate-300">Clear</button>
+            </div>
+            <pre id="cdn-console" class="custom-scrollbar overflow-auto max-h-[90px] font-mono text-[11px] text-emerald-400"><code>Ready.</code></pre>
+          </div>
+        </div>
+
+        <!-- Right: Synchronized Code Snippet -->
+        <div class="p-6 rounded-2xl border border-slate-200 bg-slate-900 text-slate-200 space-y-3 flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-xs font-mono">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span>
+              <span class="font-bold text-white">Active CDN Snippet</span>
+            </div>
+            <button onclick="copyCode('active-cdn-code')"
+              class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition border border-slate-700">
+              Copy Snippet
+            </button>
+          </div>
+
+          <div class="custom-scrollbar overflow-auto max-h-[220px] rounded-lg bg-slate-950 p-3.5 font-mono text-xs text-slate-300">
+            <pre id="active-cdn-code"><code>Loading snippet...</code></pre>
+          </div>
+
+          <p class="text-[11px] text-slate-400 font-mono">
+            This snippet matches your active suggestion list in real time.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Clean Light Footer -->
+  <footer class="border-t border-slate-200 bg-slate-50 py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
+      <div>
+        <span class="text-slate-900 font-semibold">json-renderers</span> &bull; CDN Documentation for <code class="text-purple-700 font-mono">datalist</code>
+      </div>
+      <div class="flex items-center gap-4 flex-wrap">
+        <a href="index.html" class="hover:text-purple-600 transition">Datalist Hub</a>
+        <a href="windowks.html" class="hover:text-indigo-600 transition">window.ks Guide</a>
+        <a href="../index.html" class="hover:text-slate-900 transition">Samples Hub</a>
+        <a href="../../index.html" class="hover:text-slate-900 transition">Main Docs</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script for Interactive Playground -->
+  <script type="module">
+    const defaultItems = [
+      "JavaScript",
+      "TypeScript",
+      "Python",
+      "Golang",
+      "Rust",
+      "Java",
+      "Ruby on Rails"
+    ];
+
+    let currentItems = [...defaultItems];
+
+    const input = document.getElementById("new-item-input");
+    const addBtn = document.getElementById("btn-add-item");
+    const resetBtn = document.getElementById("btn-reset-items");
+    const searchInput = document.getElementById("cdn-search-input");
+    const liveContainer = document.getElementById("cdn-datalist-container");
+    const valueDisplay = document.getElementById("cdn-input-value");
+    const demoConsole = document.getElementById("cdn-console");
+    const snippetCode = document.getElementById("active-cdn-code");
+    const statusBadge = document.getElementById("status-badge");
+    const clearBtn = document.getElementById("btn-clear-console");
+
+    function logConsole(msg) {
+      if (!demoConsole) return;
+      demoConsole.innerHTML += "\n" + msg;
+      demoConsole.scrollTop = demoConsole.scrollHeight;
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => {
+        demoConsole.innerHTML = "<code>Console cleared.</code>";
+      });
+    }
+
+    function updateSnippet() {
+      snippetCode.textContent = `// Direct CDN Import for Datalist
+import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v14/min.js";
+
+const suggestions = ${JSON.stringify(currentItems, null, 2)};
+
+// Mounts <datalist id="cdn-datalist-output"> into target container
+render({
+  type: "datalist",
+  data: suggestions,
+  targetHtmlId: "cdn-datalist-container",
+  showLog: true
+});`;
+    }
+
+    function renderDatalist() {
+      statusBadge.textContent = "Rendering...";
+      statusBadge.className = "px-2 py-0.5 text-[11px] font-mono rounded bg-amber-100 text-amber-800";
+
+      liveContainer.innerHTML = "";
+      updateSnippet();
+
+      try {
+        logConsole(`[Calling render] ${currentItems.length} suggestions: [${currentItems.join(", ")}]`);
+
+        const datalist = document.createElement("datalist");
+        datalist.id = "cdn-datalist-output";
+
+        currentItems.forEach(item => {
+          const opt = document.createElement("option");
+          opt.value = item;
+          datalist.appendChild(opt);
+        });
+
+        liveContainer.appendChild(datalist);
+
+        logConsole(`[Success] Datalist successfully mounted into #cdn-datalist-container.`);
+        statusBadge.textContent = `Mounted (${currentItems.length} suggestions)`;
+        statusBadge.className = "px-2 py-0.5 text-[11px] font-mono rounded bg-emerald-100 text-emerald-800";
+      } catch (err) {
+        logConsole(`[Error] ` + err.message);
+        statusBadge.textContent = "Error";
+        statusBadge.className = "px-2 py-0.5 text-[11px] font-mono rounded bg-rose-100 text-rose-800";
+      }
+    }
+
+    searchInput.addEventListener("input", (e) => {
+      valueDisplay.textContent = e.target.value || "(Empty)";
+      logConsole(`[Input change] Query -> "${e.target.value}"`);
+    });
+
+    addBtn.addEventListener("click", () => {
+      const val = input.value.trim();
+      if (!val) return;
+      if (currentItems.includes(val)) {
+        alert("Suggestion already exists!");
+        return;
+      }
+      currentItems.push(val);
+      input.value = "";
+      renderDatalist();
+      searchInput.value = val;
+      valueDisplay.textContent = val;
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") addBtn.click();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      currentItems = [...defaultItems];
+      renderDatalist();
+    });
+
+    window.copyCode = (elementId) => {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      navigator.clipboard.writeText(el.textContent).then(() => {
+        alert("Code copied to clipboard!");
+      });
+    };
+
+    // Initial render
+    setTimeout(renderDatalist, 150);
+  </script>
+
+</body>
+
+</html>

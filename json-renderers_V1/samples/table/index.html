@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Composite Table | dom-builder</title>
+  <meta name="description"
+    content="How dom-builder and json-renderers make complex composite tables simple: Serials, alignments, footer sums, formulas, and dynamic builders." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Bootstrap 5 CSS & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <style>
+    :root {
+      --ks-primary: #2563eb;
+      --ks-primary-dark: #1d4ed8;
+      --ks-accent: #06b6d4;
+      --ks-bg-surface: #ffffff;
+      --ks-bg-subtle: #f8fafc;
+      --ks-text-main: #0f172a;
+      --ks-text-muted: #64748b;
+      --ks-border-color: #e2e8f0;
+      --ks-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --ks-font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body {
+      font-family: var(--ks-font-sans);
+      color: var(--ks-text-main);
+      background-color: #f8fafc;
+      line-height: 1.6;
+    }
+
+    pre, code {
+      font-family: var(--ks-font-mono);
+    }
+
+    .hero-banner {
+      background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+        linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+      border-bottom: 1px solid var(--ks-border-color);
+      padding: 4rem 0 3rem;
+    }
+
+    .card-custom {
+      background: #ffffff;
+      border-radius: 1rem;
+      border: 1px solid var(--ks-border-color);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+    }
+
+    .code-container {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      overflow-x: auto;
+      font-size: 0.85rem;
+    }
+
+    /* Modern Table Beautification */
+    #table-container table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+
+    #table-container th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      padding: 0.85rem 1rem;
+      border-bottom: 2px solid #cbd5e1;
+    }
+
+    #table-container td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.9rem;
+    }
+
+    #table-container tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    #table-container tfoot td {
+      background: #f8fafc;
+      font-weight: 700;
+      border-top: 2px solid #cbd5e1;
+      border-bottom: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-dark bg-dark sticky-top border-bottom border-secondary border-opacity-25 py-2.5">
+    <div class="container d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-3">
+        <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="../../index.html">
+          <div class="rounded-3 bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+            style="width: 32px; height: 32px; font-size: 0.9rem;">DB</div>
+          <span class="fw-bold tracking-tight text-white">dom-builder</span>
+        </a>
+        <span class="text-secondary small">&bull;</span>
+        <a href="../index.html" class="text-decoration-none text-light small fw-semibold">
+          json-renderers
+        </a>
+        <span class="text-secondary small">&bull;</span>
+        <span class="badge bg-success font-mono">table/</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <a href="cdn.html" class="btn btn-sm btn-outline-light d-none d-sm-inline-flex align-items-center gap-1">
+          <i class="bi bi-box-arrow-up-right"></i> CDN Guide
+        </a>
+        <a href="windowKs.html" class="btn btn-sm btn-outline-light d-none d-sm-inline-flex align-items-center gap-1">
+          <i class="bi bi-window"></i> window.ks
+        </a>
+        <a href="../../playground.html" class="btn btn-sm btn-warning text-dark fw-bold d-flex align-items-center gap-1">
+          <i class="bi bi-code-slash"></i> Playground
+        </a>
+        <a href="https://github.com/keshavsoft/dom-builder" target="_blank" class="btn btn-sm btn-outline-secondary text-light d-flex align-items-center gap-1 font-mono">
+          <i class="bi bi-github"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Banner -->
+  <header class="hero-banner text-center">
+    <div class="container">
+      <div class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1.5 rounded-pill mb-3 fw-bold small">
+        <i class="bi bi-table me-1"></i> High Performance Tables
+      </div>
+      <h1 class="display-5 fw-bold mb-3" style="letter-spacing: -0.03em;">
+        Declarative Composite Tables
+      </h1>
+      <p class="lead text-muted mx-auto mb-4" style="max-width: 760px;">
+        Compile JSON data and column configurations into full-featured HTML tables with automated columns, footer aggregates, and dynamic modular builders.
+      </p>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container py-5">
+    <div class="row g-4">
+
+      <!-- Left Column: Live Interactive Table -->
+      <div class="col-lg-7">
+        <div class="card-custom p-4">
+          <div class="d-flex justify-content-between align-items-center pb-3 border-bottom mb-3">
+            <div>
+              <span class="badge bg-primary-subtle text-primary mb-1">Live Execution</span>
+              <h4 class="fw-bold mb-0">Interactive Table Demo</h4>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span id="row-badge" class="badge bg-primary font-mono">4 Records</span>
+              <span id="demo-status" class="badge bg-success font-mono">Mounted</span>
+            </div>
+          </div>
+
+          <!-- Controls Bar -->
+          <div class="p-3 bg-light rounded-3 border mb-3 d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-2">
+              <label for="builder-type" class="small fw-bold text-muted text-uppercase mb-0">Builder Mode:</label>
+              <select id="builder-type" class="form-select form-select-sm" style="width: auto;">
+                <option value="table.withFooter" selected>table.withFooter (Full Table with Footers)</option>
+                <option value="table.simple">table.simple (Clean Standard Table)</option>
+                <option value="table.headerOnly">table.headerOnly (Header Only)</option>
+                <option value="table.bodyOnly">table.bodyOnly (Body Only)</option>
+                <option value="table.footerOnly">table.footerOnly (Footer Only)</option>
+              </select>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button id="add-row-btn" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1">
+                <i class="bi bi-plus-circle"></i> Add Row
+              </button>
+              <button id="reset-btn" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+                <i class="bi bi-arrow-counterclockwise"></i> Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Table Mount Target -->
+          <div class="table-responsive p-1">
+            <div id="table-container">
+              <!-- Rendered table mounts here -->
+            </div>
+          </div>
+
+          <div class="alert alert-light border mt-4 mb-0 small text-muted">
+            <i class="bi bi-info-circle text-primary me-1"></i>
+            Notice that column alignments, currency format, and footer formulas calculate automatically from the pure declarative JSON spec.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Code & Features -->
+      <div class="col-lg-5">
+        <div class="card-custom p-4 space-y-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0"><i class="bi bi-code-square me-2 text-primary"></i>Declarative Code</h5>
+            <button class="btn btn-sm btn-outline-secondary font-mono" onclick="copyCode('table-code')">
+              <i class="bi bi-clipboard"></i> Copy
+            </button>
+          </div>
+
+          <div class="code-container custom-scrollbar mb-4">
+            <pre class="mb-0"><code id="table-code">// 1. Import render from json-renderers CDN
+import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+// 2. Define columns and data
+const columns = ["item", "category", "qty", "amount"];
+const data = [
+  { item: "High Tensile Rope 10mm", category: "Hardware", qty: 25, amount: 3000 },
+  { item: "Agri Shading Net 50%", category: "Agri", qty: 10, amount: 1250 },
+  { item: "Baler Twine 400m", category: "Packaging", qty: 40, amount: 2800 },
+  { item: "Safety Cordage", category: "Hardware", qty: 15, amount: 1425 }
+];
+
+// 3. Render directly into target element
+render({
+  type: "table.withFooter", // or simple, headerOnly, bodyOnly, footerOnly
+  columns: columns,
+  data: data,
+  targetHtmlId: "table-container",
+  showLog: true
+});</code></pre>
+          </div>
+
+          <h6 class="fw-bold text-dark mb-2"><i class="bi bi-stars text-warning me-1"></i> Dynamic Builders Available:</h6>
+          <ul class="text-muted small ps-3 mb-0">
+            <li><strong><code>table.withFooter</code></strong>: Full table with <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, and calculated <code>&lt;tfoot&gt;</code>.</li>
+            <li><strong><code>table.simple</code></strong>: Standard table with header and data rows.</li>
+            <li><strong><code>table.headerOnly</code></strong>: Pure table header &mdash; perfect for sticky header setups.</li>
+            <li><strong><code>table.bodyOnly</code></strong>: Pure data rows &mdash; ideal for infinite scroll / pagination appending.</li>
+            <li><strong><code>table.footerOnly</code></strong>: Summary / calculation footer row.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 bg-white py-4 mt-5 border-top">
+    <div class="container text-center text-muted small">
+      <span class="fw-semibold text-dark">dom-builder</span> &bull; Declarative UI Platform &bull; Developed by <a href="https://github.com/keshavsoft" class="text-decoration-none">KeshavSoft</a>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Live Execution Script -->
+  <script type="module">
+    import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+    const demoStatus = document.getElementById("demo-status");
+    const rowBadge = document.getElementById("row-badge");
+    const builderSelect = document.getElementById("builder-type");
+    const addRowBtn = document.getElementById("add-row-btn");
+    const resetBtn = document.getElementById("reset-btn");
+
+    const columns = ["item", "category", "qty", "amount"];
+
+    const initialRecords = [
+      { item: "High Tensile Rope 10mm", category: "Hardware", qty: 25, amount: 3000 },
+      { item: "Agri Shading Net 50%", category: "Agri", qty: 10, amount: 1250 },
+      { item: "Baler Twine 400m", category: "Packaging", qty: 40, amount: 2800 },
+      { item: "Safety Cordage", category: "Hardware", qty: 15, amount: 1425 }
+    ];
+
+    let currentRecords = [...initialRecords];
+
+    function renderTable() {
+      const mode = builderSelect.value;
+      demoStatus.textContent = "Rendering...";
+      demoStatus.className = "badge bg-warning text-dark font-mono";
+
+      try {
+        render({
+          type: mode,
+          columns: columns,
+          data: currentRecords,
+          targetHtmlId: "table-container",
+          showLog: false
+        });
+
+        rowBadge.textContent = `${currentRecords.length} Records`;
+        demoStatus.textContent = `Mounted (${mode})`;
+        demoStatus.className = "badge bg-success font-mono";
+      } catch (err) {
+        console.error("Table render error:", err);
+        demoStatus.textContent = "Error";
+        demoStatus.className = "badge bg-danger font-mono";
+      }
+    }
+
+    builderSelect.addEventListener("change", renderTable);
+
+    addRowBtn.addEventListener("click", () => {
+      const id = currentRecords.length + 1;
+      currentRecords.push({
+        item: `Premium Industrial Roll #${id}`,
+        category: "Industrial",
+        qty: Math.floor(Math.random() * 50) + 5,
+        amount: Math.floor(Math.random() * 4000) + 1000
+      });
+      renderTable();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      currentRecords = [...initialRecords];
+      renderTable();
+    });
+
+    window.copyCode = (id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      navigator.clipboard.writeText(el.textContent).then(() => {
+        alert("Code copied to clipboard!");
+      });
+    };
+
+    // Initial render
+    renderTable();
+  </script>
+
+</body>
+
+</html>

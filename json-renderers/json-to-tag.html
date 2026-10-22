@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>json-to-tag | KeshavSoft Technical Documentation</title>
+  <meta name="description"
+    content="A simple story explaining how json-to-tag parses recursive JSON tag blueprints and synthesizes native HTML DOM elements with zero innerHTML risks." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --blue: #315de8;
+      --green: #0d8c68;
+      --purple: #7c3aed;
+      --amber: #d97706;
+      --pale: #f6f8fc;
+      --code: #101827;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 900px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 58px 0 42px;
+      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 68%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      font-size: .82rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover {
+      color: var(--green);
+    }
+
+    .top-crumbs span.sep {
+      color: #cbd5e1;
+    }
+
+    .top-crumbs span.current {
+      color: var(--green);
+    }
+
+    .eyebrow,
+    .section-kicker {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--green);
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      line-height: 1.08;
+      letter-spacing: -.05em;
+      margin: 10px 0 14px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.12rem;
+      max-width: 720px;
+      color: var(--muted);
+      margin: 0 0 24px;
+    }
+
+    .repo-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #ffffff;
+      color: var(--ink);
+      text-decoration: none;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+
+    .nav-link:hover {
+      transform: translateY(-2px);
+      border-color: #86efac;
+      color: var(--ink);
+      box-shadow: 0 4px 14px rgba(13, 140, 104, 0.08);
+    }
+
+    .nav-number {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #e7f7f1;
+      color: var(--green);
+      font-weight: 800;
+      font-size: .82rem;
+      flex: none;
+    }
+
+    .nav-link.guard .nav-number {
+      background: #fef3c7;
+      color: var(--amber);
+    }
+
+    .nav-link.build .nav-number {
+      background: #f3e8ff;
+      color: var(--purple);
+    }
+
+    .nav-link.hub .nav-number {
+      background: #edf2ff;
+      color: var(--blue);
+    }
+
+    .nav-link strong {
+      display: block;
+      font-size: 0.98rem;
+    }
+
+    .nav-link small {
+      display: block;
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .arrow {
+      margin-left: auto;
+      font-size: 1.1rem;
+      color: var(--muted);
+    }
+
+    .content {
+      padding-top: 10px;
+      padding-bottom: 58px;
+    }
+
+    section {
+      padding: 35px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      margin-bottom: 7px;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 3.5vw, 1.95rem);
+      letter-spacing: -.035em;
+      font-weight: 800;
+      margin: 0 0 14px;
+    }
+
+    h3 {
+      font-size: 1.12rem;
+      letter-spacing: -.015em;
+      font-weight: 750;
+      margin: 0 0 6px;
+    }
+
+    section p {
+      color: #4d586b;
+      margin: 0 0 14px;
+    }
+
+    strong {
+      color: var(--ink);
+    }
+
+    .steps {
+      margin-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 16px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .step-index {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: #f0fdf4;
+      color: var(--green);
+      font-weight: 800;
+      font-size: .85rem;
+    }
+
+    .step p,
+    .responsibility p {
+      margin: 0;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .card-box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      background: #ffffff;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+
+    .card-box:hover {
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+
+    .pill.green {
+      background: #e7f7f1;
+      color: var(--green);
+    }
+
+    .pill.blue {
+      background: #edf2ff;
+      color: var(--blue);
+    }
+
+    .pill.purple {
+      background: #f3e8ff;
+      color: var(--purple);
+    }
+
+    pre {
+      margin: 18px 0 14px;
+      background: var(--code);
+      color: #e7edf7;
+      padding: 20px 24px;
+      border-radius: 14px;
+      overflow-x: auto;
+      font-size: .88rem;
+      line-height: 1.75;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', "SFMono-Regular", Consolas, monospace;
+      font-size: .92em;
+    }
+
+    p code,
+    .note code,
+    .card-box code {
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #25334a;
+      font-size: .88em;
+    }
+
+    .note {
+      padding: 15px 18px;
+      border-left: 3px solid var(--green);
+      background: #f0fdf4;
+      border-radius: 0 10px 10px 0;
+      color: #065f46;
+      font-size: .93rem;
+      margin: 16px 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: #fafbfe;
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    @media(max-width:620px) {
+      .wrap {
+        width: min(100% - 28px, 900px);
+      }
+
+      .hero {
+        padding: 42px 0 30px;
+      }
+
+      .repo-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-link {
+        padding: 14px;
+      }
+
+      .step {
+        grid-template-columns: 42px 1fr;
+        gap: 12px;
+      }
+
+      pre {
+        padding: 16px;
+        font-size: .82rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="top-crumbs">
+        <a href="../index.html">dom-builder</a>
+        <span class="sep">/</span>
+        <a href="index.html">json-renderers</a>
+        <span class="sep">/</span>
+        <span class="current">json-to-tag</span>
+      </div>
+
+      <div class="eyebrow">KeshavSoft · Dependency 03</div>
+      <h1>json-to-tag</h1>
+      <div class="section-kicker">A simple story</div>
+      <h2>Native DOM Synthesizer &amp; Mount Engine</h2>
+      <p class="intro">
+        Every web interface ultimately becomes nodes in the browser's Document Object Model (DOM).
+        <code>json-to-tag</code> is the low-level engine that interprets abstract JSON tag specifications and converts
+        them into real, native HTML elements using standard browser APIs &mdash; without touching risky
+        <code>innerHTML</code> string injection.
+      </p>
+
+      <div class="note">
+        <strong>The Execution Chain:</strong> <code>JSON Specification</code> &rarr; <code>json-to-tag</code> &rarr;
+        <code>Native Browser HTML DOM</code>.
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <!-- Section 1: Why JSON-to-Tag? -->
+    <section>
+      <div class="section-kicker">Core Motivation</div>
+      <h2>Why use JSON specifications to build DOM?</h2>
+      <p>
+        Building DOM elements manually with native JavaScript APIs usually requires hundreds of verbose, repetitive
+        commands:
+      </p>
+
+      <div class="grid-cards">
+        <div class="card-box">
+          <span class="pill blue">The Problem</span>
+          <h3>Manual createElement is Verbose</h3>
+          <p>
+            Creating a table requires calling <code>document.createElement("table")</code>, then
+            <code>thead</code>, <code>tr</code>, <code>th</code>, appending each child, setting classes, and wiring
+            attributes line by line.
+          </p>
+        </div>
+
+        <div class="card-box">
+          <span class="pill amber">The Danger</span>
+          <h3>innerHTML String Injection is Risky</h3>
+          <p>
+            Concatenating HTML strings is vulnerable to Cross-Site Scripting (XSS), breaks event listener bindings, and
+            causes entire subtree re-parsing on every update.
+          </p>
+        </div>
+
+        <div class="card-box">
+          <span class="pill green">The Solution</span>
+          <h3>json-to-tag Tree Synthesis</h3>
+          <p>
+            Structures are described cleanly as JSON trees. <code>json-to-tag</code> recursively traverses the tree and
+            safely creates authentic DOM nodes with high performance.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Recursive Traversal Mechanism -->
+    <section>
+      <div class="section-kicker">How It Works</div>
+      <h2>Recursive DOM generation engine</h2>
+      <p>
+        When given a specification, <code>json-to-tag</code> follows a clean, recursive algorithm:
+      </p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-index">01</div>
+          <div>
+            <h3>Instantiate the Element Node</h3>
+            <p>
+              Reads <code>tagName</code> (e.g., <code>"div"</code>, <code>"table"</code>, <code>"input"</code>) and
+              creates the real element via <code>document.createElement(spec.tagName)</code>.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-index">02</div>
+          <div>
+            <h3>Assign Attributes &amp; Classes</h3>
+            <p>
+              Iterates through the <code>attributes</code> map, applying standard HTML attributes (such as
+              <code>class</code>, <code>id</code>, <code>href</code>, <code>style</code>, <code>colspan</code>) directly
+              to the node.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-index">03</div>
+          <div>
+            <h3>Inject Text or Value Content</h3>
+            <p>
+              If a <code>text</code> property is present, a safe text node is created and appended:
+              <code>element.textContent = spec.text</code>.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-index">04</div>
+          <div>
+            <h3>Recursively Mount Children</h3>
+            <p>
+              If a <code>children</code> array exists, the engine recurses for each child specification, attaching the
+              resulting DOM nodes to the parent element before returning the completed tree.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Concrete Example -->
+    <section>
+      <div class="section-kicker">Code Example</div>
+      <h2>Transforming JSON spec into live DOM</h2>
+      <p>
+        Here is a concise example showing the input specification and the resulting native DOM:
+      </p>
+
+      <pre><code>// 1. JSON Specification
+const cardSpec = {
+  tagName: "div",
+  attributes: { class: "user-card" },
+  children: [
+    { tagName: "h4", text: "Product Catalog" },
+    {
+      tagName: "button",
+      attributes: { class: "btn-primary", type: "button" },
+      text: "View Details"
+    }
+  ]
+};
+
+// 2. Synthesize using json-to-tag
+const domNode = buildElement(cardSpec);
+
+// 3. Mount directly into container
+document.getElementById("container").appendChild(domNode);</code></pre>
+
+      <div class="note">
+        <strong>Result:</strong> A native
+        <code>&lt;div class="user-card"&gt;&lt;h4&gt;Product Catalog&lt;/h4&gt;&lt;button class="btn-primary" type="button"&gt;View Details&lt;/button&gt;&lt;/div&gt;</code>
+        is constructed in memory and safely mounted into the DOM.
+      </div>
+    </section>
+
+    <!-- Section 4: Ecosystem Positioning -->
+    <section>
+      <div class="section-kicker">The Complete Picture</div>
+      <h2>How the 3 repositories unite</h2>
+      <p>
+        Together with <strong>json-renderers-guard</strong> and <strong>json-renderers-build</strong>,
+        <strong>json-to-tag</strong> forms the foundation of KeshavSoft's declarative UI architecture:
+      </p>
+
+      <div class="repo-nav">
+        <a class="nav-link hub" href="index.html">
+          <span class="nav-number">Hub</span>
+          <span><strong>Return to json-renderers Hub</strong><small>Explore component suites and full
+              story</small></span>
+          <span class="arrow">↑</span>
+        </a>
+
+        <a class="nav-link" href="../playground.html" target="_blank" rel="noopener noreferrer">
+          <span class="nav-number">⚡</span>
+          <span><strong>Open Playground</strong><small>Edit JSON and test live DOM rendering</small></span>
+          <span class="arrow">↗</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div>
+        <strong>dom-builder</strong> · <span>json-to-tag Documentation</span>
+      </div>
+      <div>
+        <a href="index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">json-renderers
+          Hub</a>
+        <a href="../index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">Portal Home</a>
+        <a href="https://github.com/keshavsoft/json-to-tag" target="_blank" rel="noopener noreferrer"
+          style="color: var(--green); text-decoration: none; font-weight: 600;">GitHub ↗</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
