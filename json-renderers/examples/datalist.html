@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML5 Autocomplete Datalist | json-renderers Examples</title>
+  <meta name="description"
+    content="Documentation and live interactive example demonstrating how json-renderers compiles raw arrays into native HTML5 datalist autocomplete options." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --green: #0d8c68;
+      --green-hover: #0a7355;
+      --pale: #f6f8fc;
+      --code: #101827;
+      --blue: #315de8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 920px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 50px 0 38px;
+      background: linear-gradient(135deg, #e7f7f1 0%, #ffffff 68%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: .84rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover {
+      color: var(--green);
+    }
+
+    .top-crumbs span.sep {
+      color: #cbd5e1;
+    }
+
+    .top-crumbs span.current {
+      color: var(--green);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: 8px;
+      font-size: .82rem;
+      font-weight: 650;
+      color: var(--green);
+      background: #e7f7f1;
+      text-decoration: none;
+      margin-bottom: 16px;
+      transition: all .18s;
+      border: 1px solid #bfe8d9;
+    }
+
+    .back-btn:hover {
+      background: var(--green);
+      color: #ffffff;
+      transform: translateX(-2px);
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+    }
+
+    .pill.green {
+      background: #e7f7f1;
+      color: var(--green);
+    }
+
+    h1 {
+      font-size: clamp(2.1rem, 5vw, 3.2rem);
+      line-height: 1.12;
+      letter-spacing: -.04em;
+      margin: 8px 0 14px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.08rem;
+      max-width: 760px;
+      color: var(--muted);
+      margin: 0 0 16px;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      font-size: .74rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--green);
+      margin-bottom: 6px;
+    }
+
+    h2 {
+      font-size: 1.65rem;
+      letter-spacing: -.03em;
+      font-weight: 800;
+      margin: 0 0 14px;
+      color: var(--ink);
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 750;
+      margin: 18px 0 8px;
+      color: var(--ink);
+    }
+
+    p {
+      color: #4a5568;
+      margin: 0 0 14px;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .feature-card {
+      background: var(--pale);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .feature-card strong {
+      display: block;
+      color: var(--ink);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .feature-card p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    pre {
+      margin: 16px 0;
+      background: var(--code);
+      color: #e2e8f0;
+      padding: 18px 22px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: .86rem;
+      line-height: 1.7;
+      position: relative;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+    }
+
+    p code, .feature-card code {
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #25334a;
+      font-size: .88em;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f1f5f9;
+      font-size: .75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Live Playground Box */
+    .playground {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin: 24px 0;
+    }
+
+    .playground-header {
+      background: #f8fafc;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .dataset-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .dataset-btn {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .dataset-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .dataset-btn.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: #ffffff;
+    }
+
+    .status-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: #e7f7f1;
+      color: var(--green);
+    }
+
+    .playground-body {
+      padding: 28px;
+      background: #ffffff;
+    }
+
+    .input-group-custom {
+      max-width: 580px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    .search-input {
+      width: 100%;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      transition: all 0.2s;
+      outline: none;
+      color: var(--ink);
+    }
+
+    .search-input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 4px rgba(13, 140, 104, 0.15);
+    }
+
+    .selection-preview {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      font-size: 0.88rem;
+    }
+
+    .table-spec {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 0.88rem;
+    }
+
+    .table-spec th, .table-spec td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .table-spec th {
+      background: var(--pale);
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    footer {
+      padding: 30px 0;
+      text-align: center;
+      font-size: 0.84rem;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Hero & Navigation Header -->
+  <header class="hero">
+    <div class="wrap">
+      <a href="../index.html" class="back-btn" id="btn-back-overview">
+        &larr; Back to json-renderers Overview
+      </a>
+
+      <div class="top-crumbs">
+        <a href="../../index.html">dom-builder</a>
+        <span class="sep">/</span>
+        <a href="../index.html">json-renderers</a>
+        <span class="sep">/</span>
+        <span class="current">Examples &bull; Datalist Autocomplete</span>
+      </div>
+
+      <span class="pill green">Component Build #02</span>
+      <h1>HTML5 Autocomplete Datalists</h1>
+      <p class="intro">
+        Construct native HTML5 <code>&lt;datalist&gt;</code> elements paired with <code>&lt;input list="..."&gt;</code>
+        for zero-dependency, ultra-lightweight autocomplete search suggestions directly from JSON arrays.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- Section 1: Why Use HTML5 Datalists? -->
+    <section>
+      <div class="section-kicker">Documentation &bull; Part 1</div>
+      <h2>Why Use json-renderers Datalist Builds?</h2>
+      <p>
+        Traditional autocomplete requires heavyweight JavaScript search plugins (often 50KB+), external CSS bundles,
+        and complex custom dropdown DOM structures. <code>json-renderers</code> builds native browser datalists:
+      </p>
+
+      <div class="feature-list">
+        <div class="feature-card">
+          <strong>1. Zero Runtime Overhead (0 KB)</strong>
+          <p>Browsers already possess native autocomplete engines. json-renderers simply generates standard <code>&lt;option&gt;</code> tags into <code>&lt;datalist&gt;</code>.</p>
+        </div>
+        <div class="feature-card">
+          <strong>2. Native Accessibility &amp; Keyboard Support</strong>
+          <p>Works out-of-the-box with screen readers and supports native Arrow keys, Enter, and Escape without custom event handlers.</p>
+        </div>
+        <div class="feature-card">
+          <strong>3. Direct Array Source Mapping</strong>
+          <p>Feed a simple string array (e.g. <code>["Delhi", "Mumbai", "Hyderabad"]</code>) and get a fully wired autocomplete suggestion engine.</p>
+        </div>
+        <div class="feature-card">
+          <strong>4. Dynamic Dictionary Swapping</strong>
+          <p>Switch between different recommendation datasets instantly based on user context or preceding form field selections.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: How to Build It -->
+    <section>
+      <div class="section-kicker">Documentation &bull; Part 2</div>
+      <h2>How to Build It (Step-by-Step)</h2>
+      <p>
+        Include an <code>&lt;input&gt;</code> with a <code>list</code> attribute in your HTML, prepare a container for the datalist, and call <code>render()</code>:
+      </p>
+
+      <pre><button class="copy-btn" onclick="copyCode('code-schema')">Copy</button><code id="code-schema">&lt;!-- 1. Input field paired with the datalist ID --&gt;
+&lt;input list="cities-list" placeholder="Search cities..." /&gt;
+
+&lt;!-- 2. Target Container for generated &lt;datalist&gt; --&gt;
+&lt;div id="datalist-container"&gt;&lt;/div&gt;
+
+&lt;!-- 3. ES Module Import &amp; Render --&gt;
+&lt;script type="module"&gt;
+  import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+  render({
+    type: "datalist",
+    data: ["Hyderabad", "Bengaluru", "Chennai", "Mumbai", "Pune", "Delhi", "Kolkata"],
+    targetHtmlId: "datalist-container",
+    showLog: false
+  });
+
+  // Assign the list ID matching your input
+  const container = document.getElementById("datalist-container");
+  const datalist = container.querySelector("datalist") || container;
+  datalist.id = "cities-list";
+&lt;/script&gt;</code></pre>
+
+      <h3>Schema Parameters:</h3>
+      <table class="table-spec">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>type</code></td>
+            <td><code>string</code></td>
+            <td>Yes</td>
+            <td>Must be set to <code>"datalist"</code> to activate the datalist compiler.</td>
+          </tr>
+          <tr>
+            <td><code>data</code></td>
+            <td><code>Array&lt;string | object&gt;</code></td>
+            <td>Yes</td>
+            <td>List of items or strings to generate as suggestion <code>&lt;option&gt;</code> elements.</td>
+          </tr>
+          <tr>
+            <td><code>targetHtmlId</code></td>
+            <td><code>string</code></td>
+            <td>Yes</td>
+            <td>The DOM element <code>id</code> where the compiled <code>&lt;datalist&gt;</code> will be injected.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 3: Live Interactive Demo -->
+    <section>
+      <div class="section-kicker">Interactive Playground</div>
+      <h2>Live Working Demonstration</h2>
+      <p>
+        Switch between the datasets below to see <code>json-renderers</code> recompile the datalist suggestions. Click inside the input field or type to trigger native autocomplete:
+      </p>
+
+      <div class="playground">
+        <div class="playground-header">
+          <div class="dataset-buttons">
+            <button id="btn-frameworks" class="dataset-btn active">Frontend Frameworks</button>
+            <button id="btn-airports" class="dataset-btn">Global Airports</button>
+            <button id="btn-cities" class="dataset-btn">Indian Metro Cities</button>
+            <button id="btn-languages" class="dataset-btn">Tech Languages</button>
+          </div>
+
+          <div id="status-badge" class="status-badge">Mounted (9 items)</div>
+        </div>
+
+        <div class="playground-body">
+          <div class="input-group-custom">
+            <label for="ks-search-input" class="input-label">Type to search with native autocomplete suggestions:</label>
+            <input type="text" id="ks-search-input" class="search-input" list="ks-datalist-demo"
+              placeholder="Click or type (e.g. React, Vue, Angular)..." autocomplete="off" />
+
+            <!-- Target container where json-renderers injects <datalist> -->
+            <div id="dom-datalist-container"></div>
+
+            <div class="selection-preview">
+              <strong>Active Selection:</strong> <span id="selected-result" style="color: var(--green); font-weight: 600;">(None typed yet)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <strong>json-renderers</strong> &bull; Declarative UI Component Suite &bull; KeshavSoft &bull;
+      <a href="../index.html" style="color: var(--green); text-decoration: none;">Return to Docs</a>
+    </div>
+  </footer>
+
+  <!-- Live Execution Script -->
+  <script type="module">
+    import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+    const searchInput = document.getElementById("ks-search-input");
+    const selectedResult = document.getElementById("selected-result");
+    const statusBadge = document.getElementById("status-badge");
+
+    const datasets = {
+      frameworks: ["React", "Vue.js", "Angular", "SvelteKit", "Next.js", "SolidJS", "Astro", "Qwik", "Ember.js"],
+      airports: ["JFK - New York", "LHR - London Heathrow", "HND - Tokyo Haneda", "CDG - Paris", "DXB - Dubai", "SIN - Singapore Changi"],
+      cities: ["Hyderabad", "Bengaluru", "Chennai", "Mumbai", "Pune", "Delhi", "Kolkata", "Ahmedabad"],
+      languages: ["JavaScript", "TypeScript", "Python", "Go", "Rust", "Kotlin", "Swift", "C#", "Java"]
+    };
+
+    let activeData = datasets.frameworks;
+
+    function renderDatalist() {
+      try {
+        render({
+          type: "datalist",
+          data: activeData,
+          targetHtmlId: "dom-datalist-container",
+          showLog: false
+        });
+
+        // Ensure the generated datalist element has id="ks-datalist-demo"
+        const container = document.getElementById("dom-datalist-container");
+        const datalistEl = container.querySelector("datalist") || container;
+        datalistEl.id = "ks-datalist-demo";
+
+        statusBadge.textContent = `Mounted (${activeData.length} items)`;
+        statusBadge.style.color = "var(--green)";
+        statusBadge.style.background = "#e7f7f1";
+      } catch (err) {
+        console.error("Datalist render error:", err);
+        statusBadge.textContent = "Error";
+        statusBadge.style.color = "#ef4444";
+        statusBadge.style.background = "#fee2e2";
+      }
+    }
+
+    searchInput.addEventListener("input", (e) => {
+      selectedResult.textContent = e.target.value ? `"${e.target.value}"` : "(None typed yet)";
+    });
+
+    const btnFrameworks = document.getElementById("btn-frameworks");
+    const btnAirports = document.getElementById("btn-airports");
+    const btnCities = document.getElementById("btn-cities");
+    const btnLanguages = document.getElementById("btn-languages");
+
+    function setActiveBtn(activeBtn, dataKey, placeholder) {
+      [btnFrameworks, btnAirports, btnCities, btnLanguages].forEach(b => b.classList.remove("active"));
+      activeBtn.classList.add("active");
+      activeData = datasets[dataKey];
+      searchInput.value = "";
+      searchInput.placeholder = placeholder;
+      selectedResult.textContent = "(None typed yet)";
+      renderDatalist();
+    }
+
+    btnFrameworks.addEventListener("click", () => setActiveBtn(btnFrameworks, "frameworks", "Click or type (e.g. React, Vue, Angular)..."));
+    btnAirports.addEventListener("click", () => setActiveBtn(btnAirports, "airports", "Click or type airport (e.g. JFK, LHR, DXB)..."));
+    btnCities.addEventListener("click", () => setActiveBtn(btnCities, "cities", "Click or type city (e.g. Hyderabad, Bengaluru)..."));
+    btnLanguages.addEventListener("click", () => setActiveBtn(btnLanguages, "languages", "Click or type language (e.g. Python, TypeScript)..."));
+
+    window.copyCode = function(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Code copied to clipboard!");
+      });
+    };
+
+    // Initial datalist render
+    renderDatalist();
+  </script>
+
+</body>
+
+</html>

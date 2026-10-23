@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Table Builds (Simple &amp; withFooter) | json-renderers Examples</title>
+  <meta name="description"
+    content="Documentation and live interactive example demonstrating how json-renderers generates enterprise tables with auto-numbering, right-aligned numbers, and footer totals." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --blue: #315de8;
+      --blue-hover: #1f4bd6;
+      --pale: #f6f8fc;
+      --code: #101827;
+      --green: #0d8c68;
+      --amber: #d97706;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 920px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 50px 0 38px;
+      background: linear-gradient(135deg, #f5f8ff 0%, #ffffff 68%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: .84rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover {
+      color: var(--blue);
+    }
+
+    .top-crumbs span.sep {
+      color: #cbd5e1;
+    }
+
+    .top-crumbs span.current {
+      color: var(--blue);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: 8px;
+      font-size: .82rem;
+      font-weight: 650;
+      color: var(--blue);
+      background: #edf2ff;
+      text-decoration: none;
+      margin-bottom: 16px;
+      transition: all .18s;
+      border: 1px solid #d4e0fc;
+    }
+
+    .back-btn:hover {
+      background: var(--blue);
+      color: #ffffff;
+      transform: translateX(-2px);
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+    }
+
+    .pill.blue {
+      background: #edf2ff;
+      color: var(--blue);
+    }
+
+    h1 {
+      font-size: clamp(2.1rem, 5vw, 3.2rem);
+      line-height: 1.12;
+      letter-spacing: -.04em;
+      margin: 8px 0 14px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.08rem;
+      max-width: 760px;
+      color: var(--muted);
+      margin: 0 0 16px;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      font-size: .74rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    h2 {
+      font-size: 1.65rem;
+      letter-spacing: -.03em;
+      font-weight: 800;
+      margin: 0 0 14px;
+      color: var(--ink);
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 750;
+      margin: 18px 0 8px;
+      color: var(--ink);
+    }
+
+    p {
+      color: #4a5568;
+      margin: 0 0 14px;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .feature-card {
+      background: var(--pale);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .feature-card strong {
+      display: block;
+      color: var(--ink);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .feature-card p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    pre {
+      margin: 16px 0;
+      background: var(--code);
+      color: #e2e8f0;
+      padding: 18px 22px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: .86rem;
+      line-height: 1.7;
+      position: relative;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+    }
+
+    p code, .feature-card code {
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #25334a;
+      font-size: .88em;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f1f5f9;
+      font-size: .75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Live Playground Box */
+    .playground {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin: 24px 0;
+    }
+
+    .playground-header {
+      background: #f8fafc;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .playground-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 7px 13px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .control-btn:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .control-btn.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #ffffff;
+    }
+
+    .control-btn.primary:hover {
+      background: var(--blue-hover);
+    }
+
+    select.control-select {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .status-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: #e7f7f1;
+      color: var(--green);
+    }
+
+    .playground-body {
+      padding: 24px;
+      background: #ffffff;
+      overflow-x: auto;
+    }
+
+    /* Table Render Beautification */
+    #table-container table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.88rem;
+    }
+
+    #table-container th {
+      background: #f1f5f9;
+      color: #1e293b;
+      font-weight: 700;
+      text-transform: capitalize;
+      letter-spacing: 0.03em;
+      padding: 12px 14px;
+      border-bottom: 2px solid #cbd5e1;
+      text-align: left;
+    }
+
+    #table-container td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+    }
+
+    #table-container tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    #table-container tfoot td {
+      background: #f8fafc;
+      font-weight: 750;
+      color: var(--ink);
+      border-top: 2px solid #cbd5e1;
+    }
+
+    .table-spec {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 0.88rem;
+    }
+
+    .table-spec th, .table-spec td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .table-spec th {
+      background: var(--pale);
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    footer {
+      padding: 30px 0;
+      text-align: center;
+      font-size: 0.84rem;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Hero & Navigation Header -->
+  <header class="hero">
+    <div class="wrap">
+      <a href="../index.html" class="back-btn" id="btn-back-overview">
+        &larr; Back to json-renderers Overview
+      </a>
+
+      <div class="top-crumbs">
+        <a href="../../index.html">dom-builder</a>
+        <span class="sep">/</span>
+        <a href="../index.html">json-renderers</a>
+        <span class="sep">/</span>
+        <span class="current">Examples &bull; Table Builds</span>
+      </div>
+
+      <span class="pill blue">Component Build #01</span>
+      <h1>Table Builds (Simple &amp; withFooter)</h1>
+      <p class="intro">
+        Build high-performance, accessible enterprise data tables with automated serial indexing (<code>#</code>),
+        right-aligned numerical columns, and calculated summary totals in <code>&lt;tfoot&gt;</code>.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- Section 1: Why Use Table Builds? -->
+    <section>
+      <div class="section-kicker">Documentation &bull; Part 1</div>
+      <h2>Why Use json-renderers Table Builds?</h2>
+      <p>
+        Building tables in frontend applications usually requires messy nested string concatenations, template loops,
+        and manual calculations for column footers. <code>json-renderers</code> replaces this entire imperative ritual
+        with a single, declarative JSON config:
+      </p>
+
+      <div class="feature-list">
+        <div class="feature-card">
+          <strong>1. Zero String Concatenation</strong>
+          <p>Instantiates native browser DOM elements (<code>createElement</code>) via <code>json-to-tag</code>, preventing XSS and memory leaks.</p>
+        </div>
+        <div class="feature-card">
+          <strong>2. Automated Serial Numbering (#)</strong>
+          <p>Prepends a 1-based sequential row counter column automatically so your backend does not need to compute row positions.</p>
+        </div>
+        <div class="feature-card">
+          <strong>3. Right-Aligned Numeric Values</strong>
+          <p>Inspects column values dynamically; numeric currencies and quantities are right-aligned following accounting guidelines.</p>
+        </div>
+        <div class="feature-card">
+          <strong>4. Automated Total Calculations</strong>
+          <p>When using <code>table.withFooter</code>, mathematical column totals are computed and placed in <code>&lt;tfoot&gt;</code> automatically.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: How to Build It -->
+    <section>
+      <div class="section-kicker">Documentation &bull; Part 2</div>
+      <h2>How to Build It (Step-by-Step)</h2>
+      <p>
+        To render a table, define a target container in your HTML and call the <code>render()</code> function
+        with your declarative schema:
+      </p>
+
+      <pre><button class="copy-btn" onclick="copyCode('code-schema')">Copy</button><code id="code-schema">&lt;!-- 1. Target Container in HTML --&gt;
+&lt;div id="table-container"&gt;&lt;/div&gt;
+
+&lt;!-- 2. ES Module Import &amp; Execution --&gt;
+&lt;script type="module"&gt;
+  import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+  render({
+    type: "table.withFooter", // Or "table.simple"
+    columns: ["item", "category", "qty", "amount"],
+    data: [
+      { item: "High Tensile Rope 10mm", category: "Hardware", qty: 25, amount: 3000 },
+      { item: "Agri Shading Net 50%", category: "Agri", qty: 10, amount: 1250 },
+      { item: "Safety Cordage Roll", category: "Hardware", qty: 15, amount: 1425 }
+    ],
+    targetHtmlId: "table-container",
+    showLog: false
+  });
+&lt;/script&gt;</code></pre>
+
+      <h3>Schema Parameters:</h3>
+      <table class="table-spec">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>type</code></td>
+            <td><code>string</code></td>
+            <td>Yes</td>
+            <td>Use <code>"table.withFooter"</code> for tables with summary footers, or <code>"table.simple"</code> for standard tables.</td>
+          </tr>
+          <tr>
+            <td><code>columns</code></td>
+            <td><code>Array&lt;string&gt;</code></td>
+            <td>Yes</td>
+            <td>Ordered list of keys from data objects to display as table headers and body columns.</td>
+          </tr>
+          <tr>
+            <td><code>data</code></td>
+            <td><code>Array&lt;object&gt;</code></td>
+            <td>Yes</td>
+            <td>Array of raw JavaScript objects representing rows.</td>
+          </tr>
+          <tr>
+            <td><code>targetHtmlId</code></td>
+            <td><code>string</code></td>
+            <td>Yes</td>
+            <td>The DOM element <code>id</code> where the rendered <code>&lt;table&gt;</code> will be mounted.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 3: Live Interactive Demo -->
+    <section>
+      <div class="section-kicker">Interactive Playground</div>
+      <h2>Live Working Demonstration</h2>
+      <p>
+        The table below is rendered in real-time by <code>json-renderers</code>. Test switching table modes, adding rows, or resetting data:
+      </p>
+
+      <div class="playground">
+        <div class="playground-header">
+          <div class="playground-controls">
+            <label for="table-type-select" style="font-size: 0.82rem; font-weight: 600;">Mode:</label>
+            <select id="table-type-select" class="control-select">
+              <option value="table.withFooter" selected>table.withFooter (With Totals)</option>
+              <option value="table.simple">table.simple (Standard Clean)</option>
+            </select>
+
+            <button id="btn-add-row" class="control-btn primary">+ Add Random Row</button>
+            <button id="btn-reset-data" class="control-btn">Reset Data</button>
+          </div>
+
+          <div id="status-badge" class="status-badge">Mounted (table.withFooter)</div>
+        </div>
+
+        <div class="playground-body">
+          <div id="table-container"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <strong>json-renderers</strong> &bull; Declarative UI Component Suite &bull; KeshavSoft &bull;
+      <a href="../index.html" style="color: var(--blue); text-decoration: none;">Return to Docs</a>
+    </div>
+  </footer>
+
+  <!-- Live Execution Script -->
+  <script type="module">
+    import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+    const typeSelect = document.getElementById("table-type-select");
+    const addRowBtn = document.getElementById("btn-add-row");
+    const resetBtn = document.getElementById("btn-reset-data");
+    const statusBadge = document.getElementById("status-badge");
+
+    const columns = ["item", "category", "qty", "amount"];
+
+    const initialData = [
+      { item: "High Tensile Rope 10mm", category: "Hardware", qty: 25, amount: 3000 },
+      { item: "Agri Shading Net 50%", category: "Agri", qty: 10, amount: 1250 },
+      { item: "Baler Twine 400m", category: "Packaging", qty: 40, amount: 2800 },
+      { item: "Safety Cordage Roll", category: "Hardware", qty: 15, amount: 1425 }
+    ];
+
+    let currentData = [...initialData];
+
+    function executeRender() {
+      const mode = typeSelect.value;
+      try {
+        render({
+          type: mode,
+          columns: columns,
+          data: currentData,
+          targetHtmlId: "table-container",
+          showLog: false
+        });
+
+        statusBadge.textContent = `Mounted (${mode}) • ${currentData.length} Rows`;
+        statusBadge.style.color = "var(--green)";
+        statusBadge.style.background = "#e7f7f1";
+      } catch (err) {
+        console.error("Render failed:", err);
+        statusBadge.textContent = "Error Rendering";
+        statusBadge.style.color = "#ef4444";
+        statusBadge.style.background = "#fee2e2";
+      }
+    }
+
+    typeSelect.addEventListener("change", executeRender);
+
+    addRowBtn.addEventListener("click", () => {
+      const id = currentData.length + 1;
+      const categories = ["Hardware", "Agri", "Industrial", "Packaging"];
+      const randCat = categories[Math.floor(Math.random() * categories.length)];
+      currentData.push({
+        item: `Premium Supply Item #${id}`,
+        category: randCat,
+        qty: Math.floor(Math.random() * 40) + 5,
+        amount: Math.floor(Math.random() * 3500) + 1200
+      });
+      executeRender();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      currentData = [...initialData];
+      executeRender();
+    });
+
+    window.copyCode = function(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Code copied to clipboard!");
+      });
+    };
+
+    // Initial table render
+    executeRender();
+  </script>
+
+</body>
+
+</html>

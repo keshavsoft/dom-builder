@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Composite Input Controls &amp; Forms | json-renderers Examples</title>
+  <meta name="description"
+    content="Documentation and live interactive example demonstrating how json-renderers compiles composite input controls and schema-driven form groups." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --amber: #d97706;
+      --amber-hover: #b45309;
+      --pale: #f6f8fc;
+      --code: #101827;
+      --blue: #315de8;
+      --green: #0d8c68;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 920px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 50px 0 38px;
+      background: linear-gradient(135deg, #fffbeb 0%, #ffffff 68%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: .84rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover {
+      color: var(--amber);
+    }
+
+    .top-crumbs span.sep {
+      color: #cbd5e1;
+    }
+
+    .top-crumbs span.current {
+      color: var(--amber);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: 8px;
+      font-size: .82rem;
+      font-weight: 650;
+      color: var(--amber);
+      background: #fef3c7;
+      text-decoration: none;
+      margin-bottom: 16px;
+      transition: all .18s;
+      border: 1px solid #fedf88;
+    }
+
+    .back-btn:hover {
+      background: var(--amber);
+      color: #ffffff;
+      transform: translateX(-2px);
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+    }
+
+    .pill.amber {
+      background: #fef3c7;
+      color: var(--amber);
+    }
+
+    h1 {
+      font-size: clamp(2.1rem, 5vw, 3.2rem);
+      line-height: 1.12;
+      letter-spacing: -.04em;
+      margin: 8px 0 14px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.08rem;
+      max-width: 760px;
+      color: var(--muted);
+      margin: 0 0 16px;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      font-size: .74rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--amber);
+      margin-bottom: 6px;
+    }
+
+    h2 {
+      font-size: 1.65rem;
+      letter-spacing: -.03em;
+      font-weight: 800;
+      margin: 0 0 14px;
+      color: var(--ink);
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 750;
+      margin: 18px 0 8px;
+      color: var(--ink);
+    }
+
+    p {
+      color: #4a5568;
+      margin: 0 0 14px;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .feature-card {
+      background: var(--pale);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .feature-card strong {
+      display: block;
+      color: var(--ink);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .feature-card p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    pre {
+      margin: 16px 0;
+      background: var(--code);
+      color: #e2e8f0;
+      padding: 18px 22px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: .86rem;
+      line-height: 1.7;
+      position: relative;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+    }
+
+    p code, .feature-card code {
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #25334a;
+      font-size: .88em;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f1f5f9;
+      font-size: .75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Live Playground Box */
+    .playground {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin: 24px 0;
+    }
+
+    .playground-header {
+      background: #f8fafc;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .status-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: #fef3c7;
+      color: var(--amber);
+    }
+
+    .playground-body {
+      padding: 24px;
+      background: #ffffff;
+    }
+
+    /* Form Styles */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .form-control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-control-group label {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .form-input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .form-input-row input {
+      flex: 1;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.92rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-input-row input:focus {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+    }
+
+    .form-input-row button {
+      background: var(--amber);
+      border: 1px solid var(--amber);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 650;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .form-input-row button:hover {
+      background: var(--amber-hover);
+    }
+
+    .reset-filter-btn {
+      background: #f1f5f9;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .reset-filter-btn:hover {
+      background: #e2e8f0;
+      color: var(--ink);
+    }
+
+    /* Table preview inside form playground */
+    .table-container-preview {
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+      margin-top: 10px;
+    }
+
+    .table-container-preview table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 0.88rem;
+    }
+
+    .table-container-preview th {
+      background: #f8fafc;
+      color: #1e293b;
+      font-weight: 700;
+      padding: 10px 12px;
+      border-bottom: 2px solid #cbd5e1;
+      text-align: left;
+    }
+
+    .table-container-preview td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+    }
+
+    .table-container-preview tr:hover td {
+      background: #fdfaf6;
+    }
+
+    .table-spec {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 0.88rem;
+    }
+
+    .table-spec th, .table-spec td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .table-spec th {
+      background: var(--pale);
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    footer {
+      padding: 30px 0;
+      text-align: center;
+      font-size: 0.84rem;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Hero & Navigation Header -->
+  <header class="hero">
+    <div class="wrap">
+      <a href="../index.html" class="back-btn" id="btn-back-overview">
+        &larr; Back to json-renderers Overview
+      </a>
+
+      <div class="top-crumbs">
+        <a href="../../index.html">dom-builder</a>
+        <span class="sep">/</span>
+        <a href="../index.html">json-renderers</a>
+        <span class="sep">/</span>
+        <span class="current">Examples &bull; Form &amp; Input Controls</span>
+      </div>
+
+      <span class="pill amber">Component Build #04</span>
+      <h1>Composite Input Controls &amp; Forms</h1>
+      <p class="intro">
+        Generate schema-driven composite form controls, descriptive labels, paired search buttons,
+        and synchronized datalist autocomplete bindings for interactive data manipulation.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- Section 1: Why Use Form Controls? -->
+    <section>
+      <div class="section-kicker">Documentation &bull; Part 1</div>
+      <h2>Why Use json-renderers Form Builds?</h2>
+      <p>
+        Building data filter toolbars and composite forms frequently involves wiring up multiple inputs,
+        labels, buttons, and matching datalists. <code>json-renderers</code> streamlines this with declarative schemas:
+      </p>
+
+      <div class="feature-list">
+        <div class="feature-card">
+          <strong>1. Schema-Driven Generation</strong>
+          <p>Declare your fields once in a JSON column configuration; input labels, names, and attributes are generated automatically.</p>
+        </div>
+        <div class="feature-card">
+          <strong>2. Paired Search &amp; Filter Triggers</strong>
+          <p>Each composite input control includes an integrated trigger action to filter or query target datasets immediately.</p>
+        </div>
+        <div class="feature-card">
+          <strong>3. Two-Way State Synchronization</strong>
+          <p>Synchronize input changes directly with linked tables and datalists without writing custom event glue code.</p>
+        </div>
+        <div class="feature-card">
+          <strong>4. Automated Layout &amp; Consistency</strong>
+          <p>Consistent, enterprise-grade field spacing, accessible ARIA attributes, and visual styling across your entire suite.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: How to Build It -->
+    <section>
+      <div class="section-kicker">Documentation &bull; Part 2</div>
+      <h2>How to Build It (Step-by-Step)</h2>
+      <p>
+        Declare your column fields, configure target containers, and bind the composite form controls to query your data:
+      </p>
+
+      <pre><button class="copy-btn" onclick="copyCode('code-schema')">Copy</button><code id="code-schema">&lt;!-- Target Containers in HTML --&gt;
+&lt;div id="form-container"&gt;&lt;/div&gt;
+&lt;div id="table-container"&gt;&lt;/div&gt;
+
+&lt;!-- ES Module Import &amp; Form Rendering --&gt;
+&lt;script type="module"&gt;
+  import { Form, Table } 
+    from "https://cdn.jsdelivr.net/gh/keshavsoft/json-to-dom-renderers/docs/dist/v12/min.js";
+
+  const columns = [
+    { key: "item", label: "Product Name" },
+    { key: "category", label: "Category" },
+    { key: "amount", label: "Amount (₹)", type: "number" }
+  ];
+
+  // Initialize and render composite form
+  const form = new Form({
+    inColumns: columns,
+    inConfig: { body: { columns: ["item", "category"] } },
+    inTargetContainerId: "form-container"
+  });
+  form.render();
+&lt;/script&gt;</code></pre>
+
+      <h3>Schema Parameters:</h3>
+      <table class="table-spec">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>inColumns</code></td>
+            <td><code>Array&lt;object&gt;</code></td>
+            <td>Yes</td>
+            <td>Specifies field metadata including <code>key</code>, <code>label</code>, and data types.</td>
+          </tr>
+          <tr>
+            <td><code>inConfig.body.columns</code></td>
+            <td><code>Array&lt;string&gt;</code></td>
+            <td>Yes</td>
+            <td>Specifies which columns from the schema to render as interactive input controls.</td>
+          </tr>
+          <tr>
+            <td><code>inTargetContainerId</code></td>
+            <td><code>string</code></td>
+            <td>Yes</td>
+            <td>The DOM element <code>id</code> where the compiled input controls are mounted.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 3: Live Interactive Demo -->
+    <section>
+      <div class="section-kicker">Interactive Playground</div>
+      <h2>Live Working Demonstration</h2>
+      <p>
+        Use the composite form controls below to filter the live data table in real-time. Type a query into Product Name or Category and click "Filter" (or press Enter):
+      </p>
+
+      <div class="playground">
+        <div class="playground-header">
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--ink);">Composite Form Filter Controls</span>
+          <div id="status-badge" class="status-badge">Showing 5 of 5 Records</div>
+        </div>
+
+        <div class="playground-body">
+          <!-- Form Controls -->
+          <div class="form-grid">
+            <div class="form-control-group">
+              <label for="filter-item">Product Name:</label>
+              <div class="form-input-row">
+                <input type="text" id="filter-item" placeholder="Search product (e.g. Rope)..." list="item-datalist" />
+                <button id="btn-filter-item">Filter</button>
+              </div>
+              <datalist id="item-datalist">
+                <option value="ROPE 10MM High Tensile"></option>
+                <option value="ROPE 12MM Heavy Duty"></option>
+                <option value="Shading Net 50% Green"></option>
+                <option value="Shading Net 75% Black"></option>
+                <option value="Baler Twine 400m Roll"></option>
+              </datalist>
+            </div>
+
+            <div class="form-control-group">
+              <label for="filter-category">Category:</label>
+              <div class="form-input-row">
+                <input type="text" id="filter-category" placeholder="Search category (e.g. Hardware)..." list="category-datalist" />
+                <button id="btn-filter-category">Filter</button>
+              </div>
+              <datalist id="category-datalist">
+                <option value="Hardware"></option>
+                <option value="Agriculture"></option>
+                <option value="Packaging"></option>
+              </datalist>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button id="btn-reset-filters" class="reset-filter-btn">&circlearrowleft; Reset All Filters</button>
+          </div>
+
+          <!-- Synchronized Live Preview Table -->
+          <div class="table-container-preview">
+            <div style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 10px;">
+              Synchronized Table Results
+            </div>
+            <div id="demo-table-container"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <strong>json-renderers</strong> &bull; Declarative UI Component Suite &bull; KeshavSoft &bull;
+      <a href="../index.html" style="color: var(--amber); text-decoration: none;">Return to Docs</a>
+    </div>
+  </footer>
+
+  <!-- Live Execution Script -->
+  <script type="module">
+    import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+    const allData = [
+      { item: "ROPE 10MM High Tensile", category: "Hardware", qty: 25, amount: 1500 },
+      { item: "ROPE 12MM Heavy Duty", category: "Hardware", qty: 18, amount: 2200 },
+      { item: "Shading Net 50% Green", category: "Agriculture", qty: 30, amount: 850 },
+      { item: "Shading Net 75% Black", category: "Agriculture", qty: 15, amount: 1400 },
+      { item: "Baler Twine 400m Roll", category: "Packaging", qty: 50, amount: 1200 }
+    ];
+
+    let currentFiltered = [...allData];
+
+    const inputItem = document.getElementById("filter-item");
+    const inputCat = document.getElementById("filter-category");
+    const btnFilterItem = document.getElementById("btn-filter-item");
+    const btnFilterCat = document.getElementById("btn-filter-category");
+    const btnReset = document.getElementById("btn-reset-filters");
+    const statusBadge = document.getElementById("status-badge");
+
+    function renderFilteredTable() {
+      try {
+        render({
+          type: "table.withFooter",
+          columns: ["item", "category", "qty", "amount"],
+          data: currentFiltered,
+          targetHtmlId: "demo-table-container",
+          showLog: false
+        });
+
+        statusBadge.textContent = `Showing ${currentFiltered.length} of ${allData.length} Records`;
+      } catch (err) {
+        console.error("Form filter render error:", err);
+      }
+    }
+
+    function applyFilter() {
+      const qItem = inputItem.value.trim().toLowerCase();
+      const qCat = inputCat.value.trim().toLowerCase();
+
+      currentFiltered = allData.filter(row => {
+        const matchItem = !qItem || row.item.toLowerCase().includes(qItem);
+        const matchCat = !qCat || row.category.toLowerCase().includes(qCat);
+        return matchItem && matchCat;
+      });
+
+      renderFilteredTable();
+    }
+
+    btnFilterItem.addEventListener("click", applyFilter);
+    btnFilterCat.addEventListener("click", applyFilter);
+    inputItem.addEventListener("keyup", (e) => { if (e.key === "Enter") applyFilter(); });
+    inputCat.addEventListener("keyup", (e) => { if (e.key === "Enter") applyFilter(); });
+
+    btnReset.addEventListener("click", () => {
+      inputItem.value = "";
+      inputCat.value = "";
+      currentFiltered = [...allData];
+      renderFilteredTable();
+    });
+
+    window.copyCode = function(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Code copied to clipboard!");
+      });
+    };
+
+    // Initial table render
+    renderFilteredTable();
+  </script>
+
+</body>
+
+</html>

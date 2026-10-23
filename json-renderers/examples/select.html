@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dropdown Select Menus | json-renderers Examples</title>
+  <meta name="description"
+    content="Documentation and live interactive example demonstrating how json-renderers compiles raw option arrays into clean, accessible HTML select dropdown menus." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --purple: #7c3aed;
+      --purple-hover: #6d28d9;
+      --pale: #f6f8fc;
+      --code: #101827;
+      --blue: #315de8;
+      --green: #0d8c68;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 920px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 50px 0 38px;
+      background: linear-gradient(135deg, #f3e8ff 0%, #ffffff 68%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: .84rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover {
+      color: var(--purple);
+    }
+
+    .top-crumbs span.sep {
+      color: #cbd5e1;
+    }
+
+    .top-crumbs span.current {
+      color: var(--purple);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: 8px;
+      font-size: .82rem;
+      font-weight: 650;
+      color: var(--purple);
+      background: #f3e8ff;
+      text-decoration: none;
+      margin-bottom: 16px;
+      transition: all .18s;
+      border: 1px solid #e1c8ff;
+    }
+
+    .back-btn:hover {
+      background: var(--purple);
+      color: #ffffff;
+      transform: translateX(-2px);
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+    }
+
+    .pill.purple {
+      background: #f3e8ff;
+      color: var(--purple);
+    }
+
+    h1 {
+      font-size: clamp(2.1rem, 5vw, 3.2rem);
+      line-height: 1.12;
+      letter-spacing: -.04em;
+      margin: 8px 0 14px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.08rem;
+      max-width: 760px;
+      color: var(--muted);
+      margin: 0 0 16px;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      font-size: .74rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--purple);
+      margin-bottom: 6px;
+    }
+
+    h2 {
+      font-size: 1.65rem;
+      letter-spacing: -.03em;
+      font-weight: 800;
+      margin: 0 0 14px;
+      color: var(--ink);
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 750;
+      margin: 18px 0 8px;
+      color: var(--ink);
+    }
+
+    p {
+      color: #4a5568;
+      margin: 0 0 14px;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .feature-card {
+      background: var(--pale);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .feature-card strong {
+      display: block;
+      color: var(--ink);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .feature-card p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    pre {
+      margin: 16px 0;
+      background: var(--code);
+      color: #e2e8f0;
+      padding: 18px 22px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: .86rem;
+      line-height: 1.7;
+      position: relative;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+    }
+
+    p code, .feature-card code {
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #25334a;
+      font-size: .88em;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f1f5f9;
+      font-size: .75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Live Playground Box */
+    .playground {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin: 24px 0;
+    }
+
+    .playground-header {
+      background: #f8fafc;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .dataset-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .dataset-btn {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .dataset-btn:hover {
+      border-color: var(--purple);
+      color: var(--purple);
+    }
+
+    .dataset-btn.active {
+      background: var(--purple);
+      border-color: var(--purple);
+      color: #ffffff;
+    }
+
+    .status-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: #f3e8ff;
+      color: var(--purple);
+    }
+
+    .playground-body {
+      padding: 28px;
+      background: #ffffff;
+    }
+
+    .input-group-custom {
+      max-width: 580px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    /* Style the generated select dropdown */
+    #dom-select-container select {
+      width: 100%;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      outline: none;
+      background-color: #ffffff;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    #dom-select-container select:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+    }
+
+    .selection-preview {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      font-size: 0.88rem;
+    }
+
+    .table-spec {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 0.88rem;
+    }
+
+    .table-spec th, .table-spec td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .table-spec th {
+      background: var(--pale);
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    footer {
+      padding: 30px 0;
+      text-align: center;
+      font-size: 0.84rem;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Hero & Navigation Header -->
+  <header class="hero">
+    <div class="wrap">
+      <a href="../index.html" class="back-btn" id="btn-back-overview">
+        &larr; Back to json-renderers Overview
+      </a>
+
+      <div class="top-crumbs">
+        <a href="../../index.html">dom-builder</a>
+        <span class="sep">/</span>
+        <a href="../index.html">json-renderers</a>
+        <span class="sep">/</span>
+        <span class="current">Examples &bull; Dropdown Select Menus</span>
+      </div>
+
+      <span class="pill purple">Component Build #03</span>
+      <h1>Dropdown Select Menus</h1>
+      <p class="intro">
+        Generate standards-compliant <code>&lt;select&gt;</code> elements and option trees effortlessly from
+        declarative JSON structures, eliminating manual HTML concatenation and string templates.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- Section 1: Why Use Dropdown Selects? -->
+    <section>
+      <div class="section-kicker">Documentation &bull; Part 1</div>
+      <h2>Why Use json-renderers Select Builds?</h2>
+      <p>
+        Form dropdown menus are among the most frequently used interface controls. Constructing them imperatively with
+        string templates is tedious and prone to markup bugs. <code>json-renderers</code> handles it declaratively:
+      </p>
+
+      <div class="feature-list">
+        <div class="feature-card">
+          <strong>1. Standard Form Compliance</strong>
+          <p>Creates clean native <code>&lt;select&gt;</code> and <code>&lt;option&gt;</code> elements that integrate directly into HTML form submissions.</p>
+        </div>
+        <div class="feature-card">
+          <strong>2. Direct Array &amp; Key-Value Binding</strong>
+          <p>Pass array items directly. Values and visible labels are automatically structured without boilerplate loops.</p>
+        </div>
+        <div class="feature-card">
+          <strong>3. Safe DOM Creation</strong>
+          <p>Constructed via native text nodes, preventing escaping errors when values contain quotation marks, ampersands, or symbols.</p>
+        </div>
+        <div class="feature-card">
+          <strong>4. Reactive Options Swapping</strong>
+          <p>Updating options when parent dropdowns change (e.g. Country -> State -> City) takes only a single declarative render call.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: How to Build It -->
+    <section>
+      <div class="section-kicker">Documentation &bull; Part 2</div>
+      <h2>How to Build It (Step-by-Step)</h2>
+      <p>
+        Provide a target container in your HTML and call <code>render()</code> with <code>type: "select"</code>:
+      </p>
+
+      <pre><button class="copy-btn" onclick="copyCode('code-schema')">Copy</button><code id="code-schema">&lt;!-- 1. Target Container for generated &lt;select&gt; --&gt;
+&lt;div id="select-container"&gt;&lt;/div&gt;
+
+&lt;!-- 2. ES Module Import &amp; Render --&gt;
+&lt;script type="module"&gt;
+  import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+  render({
+    type: "select",
+    data: ["India", "United States", "United Kingdom", "Germany", "Japan", "Australia"],
+    targetHtmlId: "select-container",
+    showLog: false
+  });
+
+  // Attach change listener to the mounted <select>
+  const select = document.querySelector("#select-container select");
+  select.addEventListener("change", (e) => {
+    console.log("Selected value:", e.target.value);
+  });
+&lt;/script&gt;</code></pre>
+
+      <h3>Schema Parameters:</h3>
+      <table class="table-spec">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>type</code></td>
+            <td><code>string</code></td>
+            <td>Yes</td>
+            <td>Must be set to <code>"select"</code> to build a dropdown select control.</td>
+          </tr>
+          <tr>
+            <td><code>data</code></td>
+            <td><code>Array&lt;string | object&gt;</code></td>
+            <td>Yes</td>
+            <td>List of options to render as items in the select menu.</td>
+          </tr>
+          <tr>
+            <td><code>targetHtmlId</code></td>
+            <td><code>string</code></td>
+            <td>Yes</td>
+            <td>The DOM element <code>id</code> where the compiled <code>&lt;select&gt;</code> will be injected.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 3: Live Interactive Demo -->
+    <section>
+      <div class="section-kicker">Interactive Playground</div>
+      <h2>Live Working Demonstration</h2>
+      <p>
+        The select menu below is rendered in real-time. Choose different option categories below or select an option to inspect its value:
+      </p>
+
+      <div class="playground">
+        <div class="playground-header">
+          <div class="dataset-buttons">
+            <button id="btn-countries" class="dataset-btn active">Countries</button>
+            <button id="btn-departments" class="dataset-btn">Departments</button>
+            <button id="btn-roles" class="dataset-btn">Engineering Roles</button>
+            <button id="btn-status" class="dataset-btn">Task Statuses</button>
+          </div>
+
+          <div id="status-badge" class="status-badge">Mounted (8 options)</div>
+        </div>
+
+        <div class="playground-body">
+          <div class="input-group-custom">
+            <label class="input-label" id="select-label">Select Country:</label>
+
+            <!-- Target container where json-renderers injects <select> -->
+            <div id="dom-select-container"></div>
+
+            <div class="selection-preview">
+              <strong>Current Selection:</strong> <span id="selected-result" style="color: var(--purple); font-weight: 600;">India</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <strong>json-renderers</strong> &bull; Declarative UI Component Suite &bull; KeshavSoft &bull;
+      <a href="../index.html" style="color: var(--purple); text-decoration: none;">Return to Docs</a>
+    </div>
+  </footer>
+
+  <!-- Live Execution Script -->
+  <script type="module">
+    import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+    const container = document.getElementById("dom-select-container");
+    const selectedResult = document.getElementById("selected-result");
+    const statusBadge = document.getElementById("status-badge");
+    const selectLabel = document.getElementById("select-label");
+
+    const datasets = {
+      countries: ["India", "United States", "United Kingdom", "Germany", "Japan", "Australia", "Canada", "Singapore"],
+      departments: ["Engineering", "Product Management", "UI/UX Design", "Quality Assurance", "Cloud Infrastructure", "DevOps"],
+      roles: ["Frontend Engineer", "Full-stack Developer", "Systems Architect", "Data Engineer", "Security Analyst"],
+      status: ["Open / Backlog", "In Development", "Code Review", "QA Testing Passed", "Deployed to Production"]
+    };
+
+    let activeData = datasets.countries;
+
+    function renderSelect() {
+      try {
+        render({
+          type: "select",
+          data: activeData,
+          targetHtmlId: "dom-select-container",
+          showLog: false
+        });
+
+        const selectEl = container.querySelector("select");
+        if (selectEl) {
+          selectedResult.textContent = selectEl.value || activeData[0];
+          selectEl.addEventListener("change", (e) => {
+            selectedResult.textContent = e.target.value;
+          });
+        }
+
+        statusBadge.textContent = `Mounted (${activeData.length} options)`;
+        statusBadge.style.color = "var(--purple)";
+        statusBadge.style.background = "#f3e8ff";
+      } catch (err) {
+        console.error("Select render error:", err);
+        statusBadge.textContent = "Error";
+        statusBadge.style.color = "#ef4444";
+        statusBadge.style.background = "#fee2e2";
+      }
+    }
+
+    const btnCountries = document.getElementById("btn-countries");
+    const btnDepartments = document.getElementById("btn-departments");
+    const btnRoles = document.getElementById("btn-roles");
+    const btnStatus = document.getElementById("btn-status");
+
+    function setActiveBtn(activeBtn, dataKey, labelText) {
+      [btnCountries, btnDepartments, btnRoles, btnStatus].forEach(b => b.classList.remove("active"));
+      activeBtn.classList.add("active");
+      activeData = datasets[dataKey];
+      selectLabel.textContent = labelText;
+      renderSelect();
+    }
+
+    btnCountries.addEventListener("click", () => setActiveBtn(btnCountries, "countries", "Select Country:"));
+    btnDepartments.addEventListener("click", () => setActiveBtn(btnDepartments, "departments", "Select Department:"));
+    btnRoles.addEventListener("click", () => setActiveBtn(btnRoles, "roles", "Select Engineering Role:"));
+    btnStatus.addEventListener("click", () => setActiveBtn(btnStatus, "status", "Select Task Status:"));
+
+    window.copyCode = function(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Code copied to clipboard!");
+      });
+    };
+
+    // Initial select render
+    renderSelect();
+  </script>
+
+</body>
+
+</html>

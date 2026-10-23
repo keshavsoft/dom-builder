@@ -258,15 +258,87 @@
     .card-box {
       border: 1px solid var(--line);
       border-radius: 14px;
-      padding: 20px;
+      padding: 22px;
       background: #ffffff;
       transition: border-color .18s, transform .18s, box-shadow .18s;
+      display: flex;
+      flex-direction: column;
     }
 
     .card-box:hover {
       border-color: #cbd5e1;
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .card-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 18px;
+      padding: 9px 15px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card-btn.blue {
+      background: #edf2ff;
+      color: var(--blue);
+      border: 1px solid #d4e0fc;
+    }
+
+    .card-btn.blue:hover {
+      background: var(--blue);
+      color: #ffffff;
+      border-color: var(--blue);
+      box-shadow: 0 4px 14px rgba(49, 93, 232, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .card-btn.green {
+      background: #e7f7f1;
+      color: var(--green);
+      border: 1px solid #bfe8d9;
+    }
+
+    .card-btn.green:hover {
+      background: var(--green);
+      color: #ffffff;
+      border-color: var(--green);
+      box-shadow: 0 4px 14px rgba(13, 140, 104, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .card-btn.purple {
+      background: #f3e8ff;
+      color: var(--purple);
+      border: 1px solid #e1c8ff;
+    }
+
+    .card-btn.purple:hover {
+      background: var(--purple);
+      color: #ffffff;
+      border-color: var(--purple);
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .card-btn.amber {
+      background: #fef3c7;
+      color: var(--amber);
+      border: 1px solid #fedf88;
+    }
+
+    .card-btn.amber:hover {
+      background: var(--amber);
+      color: #ffffff;
+      border-color: var(--amber);
+      box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25);
+      transform: translateY(-1px);
     }
 
     .pill {
@@ -599,6 +671,10 @@
             <code>&lt;tfoot&gt;</code> summary totals.
           </p>
           <p><small class="text-muted">Types: <code>table.simple</code>, <code>table.withFooter</code></small></p>
+          <a href="examples/table.html" class="card-btn blue" id="btn-example-table">
+            <span>View Table Example</span>
+            <span aria-hidden="true">&rarr;</span>
+          </a>
         </div>
 
         <div class="card-box">
@@ -609,6 +685,10 @@
             containing <code>&lt;option&gt;</code> entries for instant, zero-dependency search suggestions.
           </p>
           <p><small class="text-muted">Type: <code>datalist</code></small></p>
+          <a href="examples/datalist.html" class="card-btn green" id="btn-example-datalist">
+            <span>View Datalist Example</span>
+            <span aria-hidden="true">&rarr;</span>
+          </a>
         </div>
 
         <div class="card-box">
@@ -619,6 +699,10 @@
             for clean form selections.
           </p>
           <p><small class="text-muted">Type: <code>select</code></small></p>
+          <a href="examples/select.html" class="card-btn purple" id="btn-example-select">
+            <span>View Select Example</span>
+            <span aria-hidden="true">&rarr;</span>
+          </a>
         </div>
 
         <div class="card-box">
@@ -629,6 +713,10 @@
             schemas.
           </p>
           <p><small class="text-muted">Type: <code>form</code></small></p>
+          <a href="examples/form.html" class="card-btn amber" id="btn-example-form">
+            <span>View Form Example</span>
+            <span aria-hidden="true">&rarr;</span>
+          </a>
         </div>
       </div>
     </section>
