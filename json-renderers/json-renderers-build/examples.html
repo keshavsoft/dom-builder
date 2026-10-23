@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clean Examples | json-renderers-build</title>
+  <meta name="description"
+    content="Concise, 30-line practical examples of what can be built with json-renderers-build: Table, Select, and Datalist autocomplete." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --blue: #315de8;
+      --purple: #7c3aed;
+      --code: #101827;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 1180px);
+      margin: 0 auto;
+    }
+
+    /* Hero Section (Matching json-renderers style, NO navbar) */
+    .hero {
+      padding: 50px 0 34px;
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 68%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: .82rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover {
+      color: var(--blue);
+    }
+
+    .top-crumbs span.sep {
+      color: #cbd5e1;
+    }
+
+    .top-crumbs span.current {
+      color: var(--blue);
+    }
+
+    .section-kicker {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      line-height: 1.1;
+      letter-spacing: -.04em;
+      margin: 8px 0 10px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .intro {
+      font-size: 1.05rem;
+      max-width: 100%;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* Content */
+    .content {
+      padding: 30px 0 60px;
+    }
+
+    /* Tab switcher */
+    .tab-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+    }
+
+    .tab-btn {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+
+    .tab-btn.active {
+      background: var(--blue);
+      color: #ffffff;
+      border-color: var(--blue);
+    }
+
+    .example-panel {
+      display: none;
+    }
+
+    .example-panel.active {
+      display: block;
+    }
+
+    .code-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 800px) {
+      .code-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .code-box {
+      background: var(--code);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #1e293b;
+    }
+
+    .code-box-header {
+      background: #1e293b;
+      padding: 9px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #94a3b8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: #e7edf7;
+    }
+
+    .copy-btn {
+      background: #334155;
+      color: #ffffff;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .copy-btn:hover {
+      background: var(--blue);
+    }
+
+    .preview-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px;
+      background: #f8fafc;
+    }
+
+    .preview-card h4 {
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      margin: 0 0 12px;
+    }
+
+    .table-render {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .table-render th {
+      background: #f1f5f9;
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .table-render td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+    }
+
+    .table-render tr:last-child td {
+      border-bottom: none;
+    }
+
+    .styled-control {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      background: #ffffff;
+      color: var(--ink);
+      outline: none;
+    }
+
+    /* Back Link */
+    .back-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.88rem;
+      transition: all 0.18s;
+      margin-top: 10px;
+    }
+
+    .back-action:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+      transform: translateX(-2px);
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: #fafbfe;
+      padding: 22px 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Clean Header with Breadcrumbs (NO navbar) -->
+  <header class="hero">
+    <div class="wrap">
+      <div class="top-crumbs">
+        <a href="../../index.html">dom-builder</a>
+        <span class="sep">/</span>
+        <a href="../index.html">json-renderers</a>
+        <span class="sep">/</span>
+        <a href="index.html">json-renderers-build</a>
+        <span class="sep">/</span>
+        <span class="current">Clean Examples</span>
+      </div>
+
+      <h1>Examples</h1>
+      <p class="intro">
+        Practical, minimal code examples for the three primary UI components built with json-renderers-build.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <!-- Tab Controls -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="showTab('tab-1', this)">
+        <span>📊</span> 1. Data Table
+      </button>
+      <button class="tab-btn" onclick="showTab('tab-2', this)">
+        <span>🔽</span> 2. Dropdown Select
+      </button>
+      <button class="tab-btn" onclick="showTab('tab-3', this)">
+        <span>🔍</span> 3. Datalist Autocomplete
+      </button>
+    </div>
+
+    <!-- TAB 1: DATA TABLE -->
+    <div id="tab-1" class="example-panel active">
+      <div class="code-grid">
+        <div class="code-box">
+          <div class="code-box-header">
+            <span>table.js (25 Lines)</span>
+            <button class="copy-btn" onclick="copyCode('code-t')">Copy</button>
+          </div>
+          <pre><code id="code-t">import render from "json-renderers-build";
+
+// 1. Data records
+const products = [
+  { item: "Roller Bearing 6205", cat: "Parts", qty: 40, price: 280 },
+  { item: "Synthetic Oil 5W-40", cat: "Lubes", qty: 15, price: 650 },
+  { item: "Copper Cable 2.5mm",  cat: "Wire",  qty: 80, price: 120 }
+];
+
+// 2. Build table specification
+const spec = render({
+  type: "table",
+  columns: ["item", "cat", "qty", "price"],
+  data: products
+});
+
+console.log("Compiled Table AST:", spec);</code></pre>
+        </div>
+
+        <div class="preview-card">
+          <h4>⚡ Live Visual Output</h4>
+          <table class="table-render">
+            <thead>
+              <tr>
+                <th style="width: 36px;">#</th>
+                <th>Item</th>
+                <th>Cat</th>
+                <th style="text-align: right;">Qty</th>
+                <th style="text-align: right;">Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><strong>Roller Bearing 6205</strong></td>
+                <td>Parts</td>
+                <td style="text-align: right; font-family: monospace;">40</td>
+                <td style="text-align: right; font-family: monospace;">₹280</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td><strong>Synthetic Oil 5W-40</strong></td>
+                <td>Lubes</td>
+                <td style="text-align: right; font-family: monospace;">15</td>
+                <td style="text-align: right; font-family: monospace;">₹650</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td><strong>Copper Cable 2.5mm</strong></td>
+                <td>Wire</td>
+                <td style="text-align: right; font-family: monospace;">80</td>
+                <td style="text-align: right; font-family: monospace;">₹120</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="font-size: 0.78rem; color: var(--muted); margin-top: 10px;">
+            ✓ Auto row serials `#` &bull; Numeric cell alignment
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: SELECT DROPDOWN -->
+    <div id="tab-2" class="example-panel">
+      <div class="code-grid">
+        <div class="code-box">
+          <div class="code-box-header">
+            <span>select.js (20 Lines)</span>
+            <button class="copy-btn" onclick="copyCode('code-s')">Copy</button>
+          </div>
+          <pre><code id="code-s">import render from "json-renderers-build";
+
+// 1. Ledger Accounts Array
+const accounts = [
+  { id: 101, name: "State Bank of India" },
+  { id: 102, name: "HDFC Operating A/c" },
+  { id: 103, name: "Petty Cash Wallet" }
+];
+
+// 2. Build Select Spec
+const spec = render({
+  type: "select",
+  columns: ["name"],
+  data: accounts
+});</code></pre>
+        </div>
+
+        <div class="preview-card">
+          <h4>⚡ Live Visual Output</h4>
+          <label style="font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block;">
+            Select Ledger Account:
+          </label>
+          <select class="styled-control">
+            <option value="101">State Bank of India</option>
+            <option value="102">HDFC Operating A/c</option>
+            <option value="103">Petty Cash Wallet</option>
+          </select>
+          <p style="font-size: 0.78rem; color: var(--muted); margin-top: 10px;">
+            ✓ Single pass generation &bull; Native option values
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: DATALIST AUTOCOMPLETE -->
+    <div id="tab-3" class="example-panel">
+      <div class="code-grid">
+        <div class="code-box">
+          <div class="code-box-header">
+            <span>datalist.js (22 Lines)</span>
+            <button class="copy-btn" onclick="copyCode('code-d')">Copy</button>
+          </div>
+          <pre><code id="code-d">import render from "json-renderers-build";
+
+// 1. Autocomplete records
+const cities = [
+  { city: "Bengaluru", state: "Karnataka" },
+  { city: "Hyderabad", state: "Telangana" },
+  { city: "Chennai",   state: "Tamil Nadu" }
+];
+
+// 2. Build Datalist Spec
+const spec = render({
+  type: "dataList",
+  columns: ["city"],
+  data: cities
+});</code></pre>
+        </div>
+
+        <div class="preview-card">
+          <h4>⚡ Live Visual Output</h4>
+          <label style="font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block;">
+            Search City:
+          </label>
+          <input list="city-dl" class="styled-control" placeholder="Type B, H, or C..." />
+          <datalist id="city-dl">
+            <option value="Bengaluru">
+            <option value="Hyderabad">
+            <option value="Chennai">
+          </datalist>
+          <p style="font-size: 0.78rem; color: var(--muted); margin-top: 10px;">
+            ✓ Synchronized input list with zero external libraries
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <strong>dom-builder</strong> &bull; json-renderers-build Documentation
+    </div>
+  </footer>
+
+  <script>
+    function copyCode(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      navigator.clipboard.writeText(el.textContent).then(() => {
+        alert("Code copied to clipboard!");
+      });
+    }
+
+    function showTab(id, btn) {
+      document.querySelectorAll(".example-panel").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      btn.classList.add("active");
+    }
+  </script>
+</body>
+
+</html>

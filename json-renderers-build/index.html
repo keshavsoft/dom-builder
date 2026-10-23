@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>json-renderers-build | KeshavSoft Technical Documentation</title>
+  <meta name="description"
+    content="A simple story explaining how json-renderers-build compiles data, columns, and component intent into headless JSON tag trees for tables, selects, and datalists." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --blue: #315de8;
+      --green: #0d8c68;
+      --purple: #7c3aed;
+      --amber: #d97706;
+      --pale: #f6f8fc;
+      --code: #101827;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 1180px);
+      margin: 0 auto;
+    }
+
+    /* Hero Section (Matching json-renderers style) */
+    .hero {
+      padding: 54px 0 38px;
+      background: linear-gradient(135deg, #faf5ff 0%, #ffffff 68%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      font-size: .82rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .top-crumbs a:hover {
+      color: var(--purple);
+    }
+
+    .top-crumbs span.sep {
+      color: #cbd5e1;
+    }
+
+    .top-crumbs span.current {
+      color: var(--purple);
+    }
+
+    .eyebrow,
+    .section-kicker {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+      color: var(--purple);
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      line-height: 1.1;
+      letter-spacing: -.05em;
+      margin: 10px 0 12px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .subtitle {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: #334155;
+      margin: 0 0 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .intro {
+      font-size: 1.05rem;
+      max-width: 100%;
+      color: var(--muted);
+      margin: 0 0 20px;
+      line-height: 1.68;
+    }
+
+    /* Mental Model Note Box */
+    .note {
+      padding: 15px 18px;
+      border-left: 3px solid var(--purple);
+      background: #faf5ff;
+      border-radius: 0 10px 10px 0;
+      color: #581c87;
+      font-size: .93rem;
+      margin: 18px 0 24px;
+      line-height: 1.6;
+    }
+
+    .note strong {
+      color: #3b0764;
+    }
+
+    /* Deep Dive Section */
+    .section-kicker {
+      margin-top: 24px;
+      margin-bottom: 6px;
+    }
+
+    /* Button Cards Grid (Exact Screenshot Style) */
+    .repo-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #ffffff;
+      color: var(--ink);
+      text-decoration: none;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+
+    .nav-link:hover {
+      transform: translateY(-2px);
+      border-color: #d8b4fe;
+      color: var(--ink);
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.08);
+    }
+
+    .nav-number {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #f3e8ff;
+      color: var(--purple);
+      font-weight: 800;
+      font-size: .82rem;
+      flex: none;
+    }
+
+    .nav-link.cdn .nav-number {
+      background: #ecfdf5;
+      color: var(--green);
+    }
+
+    .nav-link.examples .nav-number {
+      background: #edf2ff;
+      color: var(--blue);
+    }
+
+    .nav-link strong {
+      display: block;
+      font-size: 0.98rem;
+      font-weight: 700;
+    }
+
+    .nav-link small {
+      display: block;
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .arrow {
+      margin-left: auto;
+      font-size: 1.1rem;
+      color: var(--muted);
+      transition: transform 0.15s;
+    }
+
+    .nav-link:hover .arrow {
+      transform: translateX(3px);
+      color: var(--purple);
+    }
+
+    /* Main Content Sections */
+    .content {
+      padding-top: 10px;
+      padding-bottom: 58px;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      font-size: clamp(1.4rem, 3.5vw, 1.85rem);
+      letter-spacing: -.035em;
+      font-weight: 800;
+      margin: 0 0 14px;
+    }
+
+    section p {
+      color: #4d586b;
+      margin: 0 0 14px;
+      font-size: 0.98rem;
+    }
+
+    /* Dependencies Grid */
+    .dep-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .dep-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px 18px;
+      background: #f8fafc;
+    }
+
+    .dep-card strong {
+      display: block;
+      color: var(--ink);
+      font-size: 0.92rem;
+      margin-bottom: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .dep-card p {
+      margin: 0;
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88em;
+      background: #edf1f7;
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #25334a;
+    }
+
+    pre {
+      background: var(--code);
+      color: #e7edf7;
+      padding: 18px 22px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: .85rem;
+      line-height: 1.7;
+      margin: 14px 0;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+
+    /* Clean Footer */
+    footer {
+      border-top: 1px solid var(--line);
+      background: #fafbfe;
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    @media(max-width:620px) {
+      .wrap {
+        width: min(100% - 28px, 1180px);
+      }
+
+      .hero {
+        padding: 38px 0 28px;
+      }
+
+      .repo-nav {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Hero Section with Short Story & Navigation Buttons -->
+  <header class="hero">
+    <div class="wrap">
+      <div class="top-crumbs">
+        <a href="../../index.html">dom-builder</a>
+        <span class="sep">/</span>
+        <a href="../index.html">json-renderers</a>
+        <span class="sep">/</span>
+        <span class="current">json-renderers-build</span>
+      </div>
+
+      <h1>json-renderers-build</h1>
+      <div class="subtitle">Headless Specification Compiler: From Data to JSON Tag Trees</div>
+
+      <p class="intro">
+        <code>json-renderers-build</code> is the headless compiler of the <code>json-renderers</code> ecosystem.
+        When <code>json-renderers</code> receives a render request, it delegates the specification synthesis to this engine.
+        It takes raw data records, column definitions, and UI blueprints &mdash; and compiles them into a pure, abstract
+        JSON tag specification tree (AST) specifying the exact DOM hierarchy, attributes, and alignment.
+      </p>
+
+      <div class="note">
+        <strong>How json-renderers Uses It:</strong> <code>json-renderers</code> coordinates the pipeline: it runs validation, calls <code>json-renderers-build</code> to get the abstract JSON specification, and hands that specification over to <code>json-to-tag</code> to mount live native HTML elements into <code>targetHtmlId</code>.
+      </div>
+
+      <!-- Section Kicker & 3 Navigation Buttons (Matching Screenshot) -->
+      <div class="section-kicker">Deep-Dive Documentation</div>
+      <p style="color: var(--muted); font-size: 0.95rem; margin: 0 0 14px;">
+        Explore the focused guides for building, integrating, and using json-renderers-build:
+      </p>
+
+      <nav class="repo-nav" aria-label="Documentation Guides">
+        <!-- Button 01: How It Builds -->
+        <a class="nav-link" href="how-it-builds.html">
+          <span class="nav-number">01</span>
+          <span>
+            <strong>How It Builds</strong>
+            <small>Compiler pipeline &amp; AST transformation</small>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+
+        <!-- Button 02: Using CDN -->
+        <a class="nav-link cdn" href="cdn-guide.html">
+          <span class="nav-number">02</span>
+          <span>
+            <strong>Using CDN</strong>
+            <small>Direct browser ES Module import via jsDelivr</small>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+
+        <!-- Button 03: Clean Examples -->
+        <a class="nav-link examples" href="examples.html">
+          <span class="nav-number">03</span>
+          <span>
+            <strong>Clean Examples</strong>
+            <small>Concise 30-line code for Table, Select &amp; Datalist</small>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <!-- Section 1: Dependencies Story -->
+    <section>
+      <div class="section-kicker">Core Dependencies</div>
+      <h2>What powers json-renderers-build under the hood</h2>
+      <p>
+        <code>json-renderers-build</code> is designed with strict separation of concerns. It relies on a few key modular packages to execute its compiler tasks:
+      </p>
+
+      <div class="dep-grid">
+        <div class="dep-card">
+          <strong>json-renderers-guard</strong>
+          <p>Validates the incoming request contract (verifying compulsory fields like <code>type</code> and <code>data</code>) before compilation begins.</p>
+        </div>
+
+        <div class="dep-card">
+          <strong>json-to-spec</strong>
+          <p>Compiles component skeletons and templates by expanding row loops and binding data keys into spec objects.</p>
+        </div>
+
+        <div class="dep-card">
+          <strong>Component Archetypes</strong>
+          <p>Modular builders (<code>json-renderers-build-table</code>, <code>json-renderers-build-options</code>) that provide layout rules and footer arithmetic.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Headless Transformation in 30 Seconds -->
+    <section>
+      <div class="section-kicker">Functional Transformation</div>
+      <h2>Pure input to output in under 30 seconds</h2>
+      <p>
+        Because the builder is 100% headless (never accessing <code>document</code> or the window), it executes synchronously with blazing speed:
+      </p>
+
+      <pre><code>import render from "json-renderers-build";
+
+// 1. Send intent
+const spec = render({
+  type: "table",
+  columns: ["item", "qty"],
+  data: [{ item: "Copper Rod", qty: 50 }]
+});
+
+// 2. Returns pure JSON Tag Tree (specAsJsonToDom)
+// Ready for json-to-tag or SSR rendering!</code></pre>
+    </section>
+  </main>
+
+  <!-- Clean Minimal Footer -->
+  <footer>
+    <div class="wrap">
+      <div>
+        <strong>dom-builder</strong> &bull; <span>json-renderers-build Documentation</span>
+      </div>
+      <div>
+        <a href="../index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">json-renderers Hub</a>
+        <a href="../../index.html" style="color: var(--purple); text-decoration: none; font-weight: 600;">dom-builder Home ↗</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
