@@ -45,7 +45,7 @@
     }
 
     .wrap {
-      width: min(100% - 40px, 900px);
+      width: min(100% - 40px, 1180px);
       margin: 0 auto;
     }
 
@@ -92,11 +92,11 @@
     }
 
     h1 {
-      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      font-size: clamp(1.4rem, 5vw, 2.8rem);
       line-height: 1.08;
       letter-spacing: -.05em;
       margin: 10px 0 14px;
-      font-weight: 850;
+      font-weight: 750;
       color: var(--ink);
     }
 
@@ -255,20 +255,112 @@
       margin: 20px 0;
     }
 
+    .grid-cards-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin: 22px 0;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-cards-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 580px) {
+      .grid-cards-4 {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .card-box {
       border: 1px solid var(--line);
       border-radius: 14px;
-      padding: 22px;
+      padding: 22px 20px;
       background: #ffffff;
-      transition: border-color .18s, transform .18s, box-shadow .18s;
+      transition: all .2s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     .card-box:hover {
-      border-color: #cbd5e1;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+    }
+
+    .card-box.theme-blue {
+      border-top: 3.5px solid var(--blue);
+    }
+
+    .card-box.theme-blue:hover {
+      border-color: #bfdbfe;
+      border-top-color: var(--blue);
+    }
+
+    .card-box.theme-green {
+      border-top: 3.5px solid var(--green);
+    }
+
+    .card-box.theme-green:hover {
+      border-color: #bbf7d0;
+      border-top-color: var(--green);
+    }
+
+    .card-box.theme-purple {
+      border-top: 3.5px solid var(--purple);
+    }
+
+    .card-box.theme-purple:hover {
+      border-color: #e9d5ff;
+      border-top-color: var(--purple);
+    }
+
+    .card-box.theme-amber {
+      border-top: 3.5px solid var(--amber);
+    }
+
+    .card-box.theme-amber:hover {
+      border-color: #fef08a;
+      border-top-color: var(--amber);
+    }
+
+    .card-box h3 {
+      font-size: 1.05rem;
+      font-weight: 750;
+      color: #0f172a;
+      letter-spacing: -.02em;
+      margin: 4px 0 8px;
+      line-height: 1.35;
+    }
+
+    .card-box .card-desc {
+      font-size: 0.85rem;
+      color: #475569;
+      line-height: 1.55;
+      margin: 0 0 14px;
+    }
+
+    .card-box .type-tag {
+      margin-top: auto;
+      margin-bottom: 14px;
+      font-size: 0.77rem;
+      color: #64748b;
+    }
+
+    .card-box .type-tag .type-label {
+      font-weight: 600;
+      color: #94a3b8;
+      margin-right: 4px;
+    }
+
+    .card-box .type-tag code {
+      font-size: 0.86em;
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: #f1f5f9;
+      color: #1e293b;
     }
 
     .card-btn {
@@ -503,7 +595,6 @@
         <span class="current">json-renderers</span>
       </div>
 
-      <div class="eyebrow">KeshavSoft · Component Runtime</div>
       <h1>json-renderers</h1>
       <div class="section-kicker">A simple story</div>
       <h2>Where Data + Columns + Type Become Native DOM</h2>
@@ -518,7 +609,11 @@
         <strong>The Mental Model:</strong> <code>type</code> (intent) + <code>data</code> (raw facts) +
         <code>columns</code> (the story about data) + <code>targetHtmlId</code> (where it mounts).
       </div>
-
+      <div class="section-kicker">Deep-Dive Documentation</div>
+      <p>
+        Each repository in the <code>json-renderers</code> ecosystem has its own dedicated documentation page in this
+        same clean layout:
+      </p>
       <nav class="repo-nav" aria-label="Ecosystem Architecture Navigation">
         <a class="nav-link guard" href="guard/">
           <span class="nav-number">01</span>
@@ -661,58 +756,58 @@
         pattern:
       </p>
 
-      <div class="grid-cards">
-        <div class="card-box">
+      <div class="grid-cards-4">
+        <div class="card-box theme-blue">
           <span class="pill blue">Table Builds</span>
           <h3>Tables (Simple &amp; withFooter)</h3>
-          <p>
-            Builds complete <code>&lt;table&gt;</code> structures with <code>&lt;thead&gt;</code>,
-            <code>&lt;tbody&gt;</code>, automated row numbering (<code>#</code>), right-aligned numeric columns, and
-            <code>&lt;tfoot&gt;</code> summary totals.
+          <p class="card-desc">
+            Builds complete <code>&lt;table&gt;</code> structures with auto-numbering (<code>#</code>), right-aligned
+            numeric columns, and summary footers.
           </p>
-          <p><small class="text-muted">Types: <code>table.simple</code>, <code>table.withFooter</code></small></p>
+          <div class="type-tag"><span class="type-label">Types:</span> <code>table.simple</code>,
+            <code>table.withFooter</code>
+          </div>
           <a href="examples/table.html" class="card-btn blue" id="btn-example-table">
             <span>View Table Example</span>
             <span aria-hidden="true">&rarr;</span>
           </a>
         </div>
 
-        <div class="card-box">
+        <div class="card-box theme-green">
           <span class="pill green">Datalist Builds</span>
           <h3>HTML5 Autocomplete Datalists</h3>
-          <p>
-            Builds a native <code>&lt;input list="..."&gt;</code> paired with an HTML5 <code>&lt;datalist&gt;</code>
-            containing <code>&lt;option&gt;</code> entries for instant, zero-dependency search suggestions.
+          <p class="card-desc">
+            Builds native <code>&lt;input&gt;</code> and <code>&lt;datalist&gt;</code> pairs with
+            <code>&lt;option&gt;</code> entries for instant search suggestions.
           </p>
-          <p><small class="text-muted">Type: <code>datalist</code></small></p>
+          <div class="type-tag"><span class="type-label">Type:</span> <code>datalist</code></div>
           <a href="examples/datalist.html" class="card-btn green" id="btn-example-datalist">
             <span>View Datalist Example</span>
             <span aria-hidden="true">&rarr;</span>
           </a>
         </div>
 
-        <div class="card-box">
+        <div class="card-box theme-purple">
           <span class="pill purple">Select Builds</span>
           <h3>Dropdown Select Menus</h3>
-          <p>
+          <p class="card-desc">
             Generates standard <code>&lt;select&gt;</code> elements with mapped <code>value</code> and label attributes
-            for clean form selections.
+            for clean form controls.
           </p>
-          <p><small class="text-muted">Type: <code>select</code></small></p>
+          <div class="type-tag"><span class="type-label">Type:</span> <code>select</code></div>
           <a href="examples/select.html" class="card-btn purple" id="btn-example-select">
             <span>View Select Example</span>
             <span aria-hidden="true">&rarr;</span>
           </a>
         </div>
 
-        <div class="card-box">
+        <div class="card-box theme-amber">
           <span class="pill amber">Form Builds</span>
           <h3>Composite Input Controls</h3>
-          <p>
-            Generates paired input groups, descriptive labels, and structured input controls bound to configuration
-            schemas.
+          <p class="card-desc">
+            Generates paired input groups, descriptive labels, and structured input controls bound to schema configs.
           </p>
-          <p><small class="text-muted">Type: <code>form</code></small></p>
+          <div class="type-tag"><span class="type-label">Type:</span> <code>form</code></div>
           <a href="examples/form.html" class="card-btn amber" id="btn-example-form">
             <span>View Form Example</span>
             <span aria-hidden="true">&rarr;</span>
@@ -754,48 +849,6 @@
         • <code>columns</code>: Names the columns in order: item, quantity, amount.<br />
         • <code>data</code>: The raw business rows.<br />
         • <code>targetHtmlId</code>: The ID of the HTML element where the table will be mounted.
-      </div>
-    </section>
-
-    <!-- Section 5: Dedicated Dependency Documentation -->
-    <section>
-      <div class="section-kicker">Deep-Dive Documentation</div>
-      <h2>Explore the internal dependencies</h2>
-      <p>
-        Each repository in the <code>json-renderers</code> ecosystem has its own dedicated documentation page in this
-        same clean layout:
-      </p>
-
-      <div class="grid-cards">
-        <a class="card-box text-decoration-none" href="guard.html" style="color: inherit;">
-          <span class="pill amber">Dependency 01</span>
-          <h3>json-renderers-guard</h3>
-          <p>
-            Learn how the guard layer validates schema, enforces compulsory keys, protects against missing target DOM
-            IDs, and handles diagnostics.
-          </p>
-          <strong style="color: var(--blue);">Read Guard Documentation →</strong>
-        </a>
-
-        <a class="card-box text-decoration-none" href="build.html" style="color: inherit;">
-          <span class="pill purple">Dependency 02</span>
-          <h3>json-renderers-build</h3>
-          <p>
-            Explore how raw tabular data is compiled into JSON tag trees headlessly for tables, datalists, selects, and
-            footer calculation logic.
-          </p>
-          <strong style="color: var(--purple);">Read Build Documentation →</strong>
-        </a>
-
-        <a class="card-box text-decoration-none" href="json-to-tag.html" style="color: inherit;">
-          <span class="pill green">Dependency 03</span>
-          <h3>json-to-tag</h3>
-          <p>
-            Discover the native DOM generation engine that turns abstract JSON tag specifications into live browser DOM
-            elements.
-          </p>
-          <strong style="color: var(--green);">Read Tag Engine Documentation →</strong>
-        </a>
       </div>
     </section>
   </main>

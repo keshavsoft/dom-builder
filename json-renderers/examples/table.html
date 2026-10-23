@@ -121,12 +121,11 @@
     }
 
     h1 {
-      font-size: clamp(2.1rem, 5vw, 3.2rem);
-      line-height: 1.12;
+      font-size: clamp(1.1rem, 3vw, 2.1rem);
+      line-height: 1.1;
       letter-spacing: -.04em;
       margin: 8px 0 14px;
-      font-weight: 850;
-      color: var(--ink);
+      font-weight: 750;
     }
 
     .intro {
@@ -214,7 +213,8 @@
       font-family: 'JetBrains Mono', Consolas, monospace;
     }
 
-    p code, .feature-card code {
+    p code,
+    .feature-card code {
       background: #edf1f7;
       padding: 2px 6px;
       border-radius: 4px;
@@ -368,7 +368,8 @@
       font-size: 0.88rem;
     }
 
-    .table-spec th, .table-spec td {
+    .table-spec th,
+    .table-spec td {
       padding: 10px 14px;
       border-bottom: 1px solid var(--line);
       text-align: left;
@@ -395,9 +396,6 @@
   <!-- Hero & Navigation Header -->
   <header class="hero">
     <div class="wrap">
-      <a href="../index.html" class="back-btn" id="btn-back-overview">
-        &larr; Back to json-renderers Overview
-      </a>
 
       <div class="top-crumbs">
         <a href="../../index.html">dom-builder</a>
@@ -407,7 +405,6 @@
         <span class="current">Examples &bull; Table Builds</span>
       </div>
 
-      <span class="pill blue">Component Build #01</span>
       <h1>Table Builds (Simple &amp; withFooter)</h1>
       <p class="intro">
         Build high-performance, accessible enterprise data tables with automated serial indexing (<code>#</code>),
@@ -431,19 +428,24 @@
       <div class="feature-list">
         <div class="feature-card">
           <strong>1. Zero String Concatenation</strong>
-          <p>Instantiates native browser DOM elements (<code>createElement</code>) via <code>json-to-tag</code>, preventing XSS and memory leaks.</p>
+          <p>Instantiates native browser DOM elements (<code>createElement</code>) via <code>json-to-tag</code>,
+            preventing XSS and memory leaks.</p>
         </div>
         <div class="feature-card">
           <strong>2. Automated Serial Numbering (#)</strong>
-          <p>Prepends a 1-based sequential row counter column automatically so your backend does not need to compute row positions.</p>
+          <p>Prepends a 1-based sequential row counter column automatically so your backend does not need to compute row
+            positions.</p>
         </div>
         <div class="feature-card">
           <strong>3. Right-Aligned Numeric Values</strong>
-          <p>Inspects column values dynamically; numeric currencies and quantities are right-aligned following accounting guidelines.</p>
+          <p>Inspects column values dynamically; numeric currencies and quantities are right-aligned following
+            accounting guidelines.</p>
         </div>
         <div class="feature-card">
           <strong>4. Automated Total Calculations</strong>
-          <p>When using <code>table.withFooter</code>, mathematical column totals are computed and placed in <code>&lt;tfoot&gt;</code> automatically.</p>
+          <p>When using <code>table.withFooter</code>, mathematical column totals are computed and placed in
+            <code>&lt;tfoot&gt;</code> automatically.
+          </p>
         </div>
       </div>
     </section>
@@ -492,7 +494,8 @@
             <td><code>type</code></td>
             <td><code>string</code></td>
             <td>Yes</td>
-            <td>Use <code>"table.withFooter"</code> for tables with summary footers, or <code>"table.simple"</code> for standard tables.</td>
+            <td>Use <code>"table.withFooter"</code> for tables with summary footers, or <code>"table.simple"</code> for
+              standard tables.</td>
           </tr>
           <tr>
             <td><code>columns</code></td>
@@ -521,7 +524,8 @@
       <div class="section-kicker">Interactive Playground</div>
       <h2>Live Working Demonstration</h2>
       <p>
-        The table below is rendered in real-time by <code>json-renderers</code>. Test switching table modes, adding rows, or resetting data:
+        The table below is rendered in real-time by <code>json-renderers</code>. Test switching table modes, adding
+        rows, or resetting data:
       </p>
 
       <div class="playground">
@@ -617,7 +621,7 @@
       executeRender();
     });
 
-    window.copyCode = function(id) {
+    window.copyCode = function (id) {
       const text = document.getElementById(id).textContent;
       navigator.clipboard.writeText(text).then(() => {
         alert("Code copied to clipboard!");
