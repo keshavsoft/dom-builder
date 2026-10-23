@@ -345,13 +345,17 @@
 
       <p class="intro">
         <code>json-renderers-build</code> is the headless compiler of the <code>json-renderers</code> ecosystem.
-        When <code>json-renderers</code> receives a render request, it delegates the specification synthesis to this engine.
+        When <code>json-renderers</code> receives a render request, it delegates the specification synthesis to this
+        engine.
         It takes raw data records, column definitions, and UI blueprints &mdash; and compiles them into a pure, abstract
         JSON tag specification tree (AST) specifying the exact DOM hierarchy, attributes, and alignment.
       </p>
 
       <div class="note">
-        <strong>How json-renderers Uses It:</strong> <code>json-renderers</code> coordinates the pipeline: it runs validation, calls <code>json-renderers-build</code> to get the abstract JSON specification, and hands that specification over to <code>json-to-tag</code> to mount live native HTML elements into <code>targetHtmlId</code>.
+        <strong>How json-renderers Uses It:</strong> <code>json-renderers</code> coordinates the pipeline: it runs
+        validation, calls <code>json-renderers-build</code> to get the abstract JSON specification, and hands that
+        specification over to <code>json-to-tag</code> to mount live native HTML elements into
+        <code>targetHtmlId</code>.
       </div>
 
       <!-- Section Kicker & 3 Navigation Buttons (Matching Screenshot) -->
@@ -400,23 +404,21 @@
       <div class="section-kicker">Core Dependencies</div>
       <h2>What powers json-renderers-build under the hood</h2>
       <p>
-        <code>json-renderers-build</code> is designed with strict separation of concerns. It relies on a few key modular packages to execute its compiler tasks:
+        <code>json-renderers-build</code> is designed with strict separation of concerns. It relies on a few key modular
+        packages to execute its compiler tasks:
       </p>
 
       <div class="dep-grid">
         <div class="dep-card">
           <strong>json-renderers-guard</strong>
-          <p>Validates the incoming request contract (verifying compulsory fields like <code>type</code> and <code>data</code>) before compilation begins.</p>
-        </div>
-
-        <div class="dep-card">
-          <strong>json-to-spec</strong>
-          <p>Compiles component skeletons and templates by expanding row loops and binding data keys into spec objects.</p>
+          <p>Validates the incoming request contract (verifying compulsory fields like <code>type</code> and
+            <code>data</code>) before compilation begins.</p>
         </div>
 
         <div class="dep-card">
           <strong>Component Archetypes</strong>
-          <p>Modular builders (<code>json-renderers-build-table</code>, <code>json-renderers-build-options</code>) that provide layout rules and footer arithmetic.</p>
+          <p>Modular builders (<code>json-renderers-build-table</code>, <code>json-renderers-build-options</code>) that
+            provide layout rules and footer arithmetic.</p>
         </div>
       </div>
     </section>
@@ -426,7 +428,8 @@
       <div class="section-kicker">Functional Transformation</div>
       <h2>Pure input to output in under 30 seconds</h2>
       <p>
-        Because the builder is 100% headless (never accessing <code>document</code> or the window), it executes synchronously with blazing speed:
+        Because the builder is 100% headless (never accessing <code>document</code> or the window), it executes
+        synchronously with blazing speed:
       </p>
 
       <pre><code>import render from "json-renderers-build";
@@ -450,8 +453,10 @@ const spec = render({
         <strong>dom-builder</strong> &bull; <span>json-renderers-build Documentation</span>
       </div>
       <div>
-        <a href="../index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">json-renderers Hub</a>
-        <a href="../../index.html" style="color: var(--purple); text-decoration: none; font-weight: 600;">dom-builder Home ↗</a>
+        <a href="../index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">json-renderers
+          Hub</a>
+        <a href="../../index.html" style="color: var(--purple); text-decoration: none; font-weight: 600;">dom-builder
+          Home ↗</a>
       </div>
     </div>
   </footer>

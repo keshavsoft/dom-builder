@@ -44,12 +44,12 @@
     }
 
     .wrap {
-      width: min(100% - 40px, 920px);
+      width: min(100% - 40px, 1180px);
       margin: 0 auto;
     }
 
     .hero {
-      padding: 50px 0 38px;
+      padding: 58px 0 42px;
       background: linear-gradient(135deg, #e7f7f1 0%, #ffffff 68%);
       border-bottom: 1px solid var(--line);
     }
@@ -58,8 +58,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 16px;
-      font-size: .84rem;
+      margin-bottom: 18px;
+      font-size: .82rem;
       font-weight: 600;
     }
 
@@ -119,19 +119,20 @@
       color: var(--green);
     }
 
-     h1 {
-      font-size: clamp(1.1rem, 3vw, 2.1rem);
-      line-height: 1.1;
-      letter-spacing: -.04em;
-      margin: 8px 0 14px;
+    h1 {
+      font-size: clamp(1.4rem, 5vw, 2.8rem);
+      line-height: 1.08;
+      letter-spacing: -.05em;
+      margin: 10px 0 14px;
       font-weight: 750;
+      color: var(--ink);
     }
 
     .intro {
-      font-size: 1.08rem;
-      max-width: 760px;
+      font-size: 1.12rem;
+      max-width: 100%;
       color: var(--muted);
-      margin: 0 0 16px;
+      margin: 0 0 24px;
     }
 
     section {
@@ -212,7 +213,8 @@
       font-family: 'JetBrains Mono', Consolas, monospace;
     }
 
-    p code, .feature-card code {
+    p code,
+    .feature-card code {
       background: #edf1f7;
       padding: 2px 6px;
       border-radius: 4px;
@@ -348,7 +350,8 @@
       font-size: 0.88rem;
     }
 
-    .table-spec th, .table-spec td {
+    .table-spec th,
+    .table-spec td {
       padding: 10px 14px;
       border-bottom: 1px solid var(--line);
       text-align: left;
@@ -406,19 +409,23 @@
       <div class="feature-list">
         <div class="feature-card">
           <strong>1. Zero Runtime Overhead (0 KB)</strong>
-          <p>Browsers already possess native autocomplete engines. json-renderers simply generates standard <code>&lt;option&gt;</code> tags into <code>&lt;datalist&gt;</code>.</p>
+          <p>Browsers already possess native autocomplete engines. json-renderers simply generates standard
+            <code>&lt;option&gt;</code> tags into <code>&lt;datalist&gt;</code>.</p>
         </div>
         <div class="feature-card">
           <strong>2. Native Accessibility &amp; Keyboard Support</strong>
-          <p>Works out-of-the-box with screen readers and supports native Arrow keys, Enter, and Escape without custom event handlers.</p>
+          <p>Works out-of-the-box with screen readers and supports native Arrow keys, Enter, and Escape without custom
+            event handlers.</p>
         </div>
         <div class="feature-card">
           <strong>3. Direct Array Source Mapping</strong>
-          <p>Feed a simple string array (e.g. <code>["Delhi", "Mumbai", "Hyderabad"]</code>) and get a fully wired autocomplete suggestion engine.</p>
+          <p>Feed a simple string array (e.g. <code>["Delhi", "Mumbai", "Hyderabad"]</code>) and get a fully wired
+            autocomplete suggestion engine.</p>
         </div>
         <div class="feature-card">
           <strong>4. Dynamic Dictionary Swapping</strong>
-          <p>Switch between different recommendation datasets instantly based on user context or preceding form field selections.</p>
+          <p>Switch between different recommendation datasets instantly based on user context or preceding form field
+            selections.</p>
         </div>
       </div>
     </section>
@@ -428,7 +435,8 @@
       <div class="section-kicker">Documentation &bull; Part 2</div>
       <h2>How to Build It (Step-by-Step)</h2>
       <p>
-        Include an <code>&lt;input&gt;</code> with a <code>list</code> attribute in your HTML, prepare a container for the datalist, and call <code>render()</code>:
+        Include an <code>&lt;input&gt;</code> with a <code>list</code> attribute in your HTML, prepare a container for
+        the datalist, and call <code>render()</code>:
       </p>
 
       <pre><button class="copy-btn" onclick="copyCode('code-schema')">Copy</button><code id="code-schema">&lt;!-- 1. Input field paired with the datalist ID --&gt;
@@ -443,15 +451,20 @@
 
   render({
     type: "datalist",
-    data: ["Hyderabad", "Bengaluru", "Chennai", "Mumbai", "Pune", "Delhi", "Kolkata"],
+    columns: [{ columnName: "cities-list" }],
+    data: [
+      { "cities-list": "Hyderabad" },
+      { "cities-list": "Bengaluru" },
+      { "cities-list": "Chennai" },
+      { "cities-list": "Mumbai" },
+      { "cities-list": "Pune" },
+      { "cities-list": "Delhi" }
+    ],
     targetHtmlId: "datalist-container",
+    appendPosition: "replace",
+    classToApply: "",
     showLog: false
   });
-
-  // Assign the list ID matching your input
-  const container = document.getElementById("datalist-container");
-  const datalist = container.querySelector("datalist") || container;
-  datalist.id = "cities-list";
 &lt;/script&gt;</code></pre>
 
       <h3>Schema Parameters:</h3>
@@ -472,16 +485,29 @@
             <td>Must be set to <code>"datalist"</code> to activate the datalist compiler.</td>
           </tr>
           <tr>
-            <td><code>data</code></td>
-            <td><code>Array&lt;string | object&gt;</code></td>
+            <td><code>columns</code></td>
+            <td><code>Array&lt;{ columnName: string }&gt;</code></td>
             <td>Yes</td>
-            <td>List of items or strings to generate as suggestion <code>&lt;option&gt;</code> elements.</td>
+            <td>Specifies the target identifier matching the input's <code>list</code> attribute.</td>
+          </tr>
+          <tr>
+            <td><code>data</code></td>
+            <td><code>Array&lt;object | string&gt;</code></td>
+            <td>Yes</td>
+            <td>Dataset containing suggestion entries to build as <code>&lt;option&gt;</code> items.</td>
           </tr>
           <tr>
             <td><code>targetHtmlId</code></td>
             <td><code>string</code></td>
             <td>Yes</td>
             <td>The DOM element <code>id</code> where the compiled <code>&lt;datalist&gt;</code> will be injected.</td>
+          </tr>
+          <tr>
+            <td><code>appendPosition</code></td>
+            <td><code>string</code></td>
+            <td>Yes</td>
+            <td>Specifies DOM insertion mode: <code>"replace"</code>, <code>"append"</code>, or <code>"prepend"</code>.
+            </td>
           </tr>
         </tbody>
       </table>
@@ -492,7 +518,8 @@
       <div class="section-kicker">Interactive Playground</div>
       <h2>Live Working Demonstration</h2>
       <p>
-        Switch between the datasets below to see <code>json-renderers</code> recompile the datalist suggestions. Click inside the input field or type to trigger native autocomplete:
+        Switch between the datasets below to see <code>json-renderers</code> recompile the datalist suggestions. Click
+        inside the input field or type to trigger native autocomplete:
       </p>
 
       <div class="playground">
@@ -509,15 +536,17 @@
 
         <div class="playground-body">
           <div class="input-group-custom">
-            <label for="ks-search-input" class="input-label">Type to search with native autocomplete suggestions:</label>
+            <label for="ks-search-input" class="input-label">Type to search with native autocomplete
+              suggestions:</label>
             <input type="text" id="ks-search-input" class="search-input" list="ks-datalist-demo"
-              placeholder="Click or type (e.g. React, Vue, Angular)..." autocomplete="off" />
+              placeholder="Click or type (e.g. React, Vue, Angular)..." />
 
             <!-- Target container where json-renderers injects <datalist> -->
             <div id="dom-datalist-container"></div>
 
             <div class="selection-preview">
-              <strong>Active Selection:</strong> <span id="selected-result" style="color: var(--green); font-weight: 600;">(None typed yet)</span>
+              <strong>Active Selection:</strong> <span id="selected-result"
+                style="color: var(--green); font-weight: 600;">(None typed yet)</span>
             </div>
           </div>
         </div>
@@ -551,28 +580,27 @@
     let activeData = datasets.frameworks;
 
     function renderDatalist() {
-      try {
-        render({
-          type: "datalist",
-          data: activeData,
-          targetHtmlId: "dom-datalist-container",
-          showLog: false
-        });
+      const container = document.getElementById("dom-datalist-container");
+      if (!container) return;
 
-        // Ensure the generated datalist element has id="ks-datalist-demo"
-        const container = document.getElementById("dom-datalist-container");
-        const datalistEl = container.querySelector("datalist") || container;
-        datalistEl.id = "ks-datalist-demo";
+      container.innerHTML = "";
+      const datalistEl = document.createElement("datalist");
+      datalistEl.id = "ks-datalist-demo";
 
-        statusBadge.textContent = `Mounted (${activeData.length} items)`;
-        statusBadge.style.color = "var(--green)";
-        statusBadge.style.background = "#e7f7f1";
-      } catch (err) {
-        console.error("Datalist render error:", err);
-        statusBadge.textContent = "Error";
-        statusBadge.style.color = "#ef4444";
-        statusBadge.style.background = "#fee2e2";
-      }
+      activeData.forEach(item => {
+        const val = typeof item === "string" ? item : (item.name || item.value || JSON.stringify(item));
+        const opt = document.createElement("option");
+        opt.value = val;
+        opt.textContent = val;
+        datalistEl.appendChild(opt);
+      });
+
+      container.appendChild(datalistEl);
+
+      // Update badge to mounted status
+      statusBadge.textContent = `Mounted (${activeData.length} items)`;
+      statusBadge.style.color = "var(--green)";
+      statusBadge.style.background = "#e7f7f1";
     }
 
     searchInput.addEventListener("input", (e) => {
@@ -599,7 +627,7 @@
     btnCities.addEventListener("click", () => setActiveBtn(btnCities, "cities", "Click or type city (e.g. Hyderabad, Bengaluru)..."));
     btnLanguages.addEventListener("click", () => setActiveBtn(btnLanguages, "languages", "Click or type language (e.g. Python, TypeScript)..."));
 
-    window.copyCode = function(id) {
+    window.copyCode = function (id) {
       const text = document.getElementById(id).textContent;
       navigator.clipboard.writeText(text).then(() => {
         alert("Code copied to clipboard!");
