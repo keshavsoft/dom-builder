@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>04 · CDN Build & Mount — @keshavsoft/json-to-dom</title>
+  <title>04 · Live CDN Orchestration — @keshavsoft/json-to-dom</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -49,11 +49,7 @@
       font-weight: 600;
     }
 
-    .top-crumbs a {
-      color: var(--muted);
-      text-decoration: none;
-    }
-
+    .top-crumbs a { color: var(--muted); text-decoration: none; }
     .top-crumbs a:hover { color: var(--green); }
     .top-crumbs span.sep { color: #cbd5e1; }
     .top-crumbs span.current { color: var(--green); }
@@ -103,6 +99,7 @@
       font-size: .85rem;
       line-height: 1.65;
       overflow-x: auto;
+      margin: 14px 0;
     }
 
     pre { margin: 0; font-family: inherit; }
@@ -173,38 +170,38 @@
         <span class="sep">/</span>
         <a href="index.html">json-to-dom</a>
         <span class="sep">/</span>
-        <span class="current">04 · CDN Build &amp; Mount</span>
+        <span class="current">04 · Live CDN Orchestration</span>
       </div>
 
-      <span class="step-badge">Step 04 of 04</span>
-      <h1>Build &amp; mount native DOM via CDN.</h1>
+      <span class="step-badge">Chapter 04 of 04</span>
+      <h1>Live End-to-End Orchestration via CDN.</h1>
       <p class="lead">
-        Connect your JSON specification to the <code>@keshavsoft/json-to-dom</code> engine. With zero Node.js and zero build steps, the browser compiles the specification tree directly into native DOM elements.
+        See how <code>@keshavsoft/json-to-dom</code> brings <code>@keshavsoft/json-to-tag</code> and <code>spec-to-dom</code> together in a single browser import.
       </p>
     </div>
   </header>
 
   <main class="wrap content">
-    <h2>1 · Complete HTML Document Example</h2>
+    <h2>1 · Complete Working Example</h2>
     <p style="color: var(--muted); font-size: .9rem;">
-      A standalone, ready-to-run HTML file you can use directly in your browser:
+      A standalone HTML file that imports the orchestrator and renders into a live target container:
     </p>
     <div class="code-box">
       <pre>&lt;!doctype html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="utf-8"&gt;
-  &lt;title&gt;json-to-dom CDN Demo&lt;/title&gt;
+  &lt;title&gt;json-to-dom Orchestration Demo&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
-  &lt;!-- 1. Target container element in your page --&gt;
+  &lt;!-- 1. Target container element in your document --&gt;
   &lt;div id="my-container"&gt;&lt;/div&gt;
 
   &lt;script type="module"&gt;
-    // 2. Import jsonToDom directly via CDN
+    // 2. Import the orchestrator via CDN
     import jsonToDom from "https://cdn.jsdelivr.net/npm/@keshavsoft/json-to-dom/+esm";
 
-    // 3. Define the UI specification
+    // 3. Define the UI specification (from json-renderers-build or backend)
     const spec = {
       tagName: "div",
       attributes: { id: "test-content", class: "card-body" },
@@ -214,7 +211,9 @@
       ]
     };
 
-    // 4. Synthesize and mount safely to target container
+    // 4. One call triggers the two-engine pipeline:
+    //    -> jsonToTag(spec) synthesizes native DOM nodes
+    //    -> specToDom(...) mounts into "my-container"
     jsonToDom({
       jsonSpec: spec,
       targetHtmlId: "my-container",
@@ -225,24 +224,25 @@
 &lt;/html&gt;</pre>
     </div>
 
-    <h2>2 · Execution Pipeline</h2>
+    <h2>2 · What Happened Behind the Scenes</h2>
     <div class="callout">
-      <strong>Zero innerHTML risks:</strong> <code>@keshavsoft/json-to-dom</code> accepts the abstract tag specification, validates it against allowed HTML element grammar, creates authentic browser elements via native <code>document.createElement</code>, and safely attaches them to your target HTML ID with zero unsafe string interpolation.
+      <strong>Zero boilerplate, zero innerHTML risks:</strong> <code>@keshavsoft/json-to-dom</code> cleanly coordinated the pipeline:
+      <br>&bull; <strong>Engine 1</strong> checked W3C tags, created native <code>HTMLDivElement</code>, <code>HTMLLabelElement</code>, and <code>HTMLParagraphElement</code> instances with zero unsafe string interpolation.
+      <br>&bull; <strong>Engine 2</strong> located <code>#my-container</code>, cleared old contents, and attached the compiled nodes into the active DOM tree.
     </div>
 
     <div class="step-nav">
-      <a class="step-btn prev" href="03-json-specification.html">← 03 · JSON Specification</a>
-      <a class="step-btn next" href="index.html">Return to json-to-dom Hub ↗</a>
+      <a class="step-btn prev" href="03-spec-to-dom.html">&larr; 03 · Engine 2: spec-to-dom</a>
+      <a class="step-btn next" href="index.html">Return to json-to-dom Hub &nearr;</a>
     </div>
   </main>
 
   <footer>
     <div class="wrap" style="display:flex; justify-content:space-between;">
-      <div>dom-builder · @keshavsoft/json-to-dom</div>
+      <div>dom-builder &middot; @keshavsoft/json-to-dom</div>
       <div><a href="index.html" style="color:var(--green); text-decoration:none;">Directory Index</a></div>
     </div>
   </footer>
 </body>
 
 </html>
-

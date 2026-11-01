@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>02 · Vanilla JavaScript — @keshavsoft/json-to-dom</title>
+  <title>02 · Engine 1: json-to-tag — @keshavsoft/json-to-dom</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -15,6 +15,7 @@
       --ink: #172033;
       --muted: #5d687b;
       --line: #e3e8f0;
+      --blue: #315de8;
       --green: #0d8c68;
       --code: #101827;
       --pale: #f8fafc;
@@ -36,7 +37,7 @@
 
     .hero {
       padding: 48px 0 32px;
-      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 70%);
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 70%);
       border-bottom: 1px solid var(--line);
     }
 
@@ -49,14 +50,10 @@
       font-weight: 600;
     }
 
-    .top-crumbs a {
-      color: var(--muted);
-      text-decoration: none;
-    }
-
-    .top-crumbs a:hover { color: var(--green); }
+    .top-crumbs a { color: var(--muted); text-decoration: none; }
+    .top-crumbs a:hover { color: var(--blue); }
     .top-crumbs span.sep { color: #cbd5e1; }
-    .top-crumbs span.current { color: var(--green); }
+    .top-crumbs span.current { color: var(--blue); }
 
     .step-badge {
       display: inline-block;
@@ -66,8 +63,8 @@
       text-transform: uppercase;
       padding: 3px 10px;
       border-radius: 9999px;
-      background: #e7f7f1;
-      color: var(--green);
+      background: #dbeafe;
+      color: var(--blue);
       margin-bottom: 8px;
     }
 
@@ -103,48 +100,38 @@
       font-size: .85rem;
       line-height: 1.65;
       overflow-x: auto;
+      margin: 14px 0;
     }
 
     pre { margin: 0; font-family: inherit; }
 
-    .preview-box {
-      background: #ffffff;
+    .step-card {
       border: 1px solid var(--line);
       border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      background: var(--pale);
     }
 
-    .preview-box label {
+    .step-card strong {
+      color: var(--blue);
       display: block;
-      font-size: .9rem;
-      font-weight: 700;
-      margin-bottom: 6px;
+      font-size: .95rem;
+      margin-bottom: 4px;
     }
 
-    .preview-box p {
+    .step-card p {
       margin: 0;
-      color: var(--muted);
-      font-size: .9rem;
-    }
-
-    .tree-box {
-      background: #f8fafc;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 16px 20px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .84rem;
-      line-height: 1.7;
-      color: #334155;
+      font-size: .88rem;
+      color: #475569;
     }
 
     .callout {
-      border-left: 3px solid #d97706;
-      background: #fffbeb;
+      border-left: 3px solid var(--blue);
+      background: #eff6ff;
       padding: 14px 18px;
       border-radius: 0 10px 10px 0;
-      color: #92400e;
+      color: #1e40af;
       font-size: .92rem;
       margin: 20px 0;
     }
@@ -178,8 +165,8 @@
     }
 
     .step-btn.next {
-      background: #e7f7f1;
-      color: var(--green);
+      background: #dbeafe;
+      color: var(--blue);
       margin-left: auto;
     }
 
@@ -205,74 +192,63 @@
         <span class="sep">/</span>
         <a href="index.html">json-to-dom</a>
         <span class="sep">/</span>
-        <span class="current">02 · Vanilla JavaScript</span>
+        <span class="current">02 · Engine 1: json-to-tag</span>
       </div>
 
-      <span class="step-badge">Step 02 of 04</span>
-      <h1>Create the same UI with plain JavaScript.</h1>
+      <span class="step-badge">Chapter 02 of 04</span>
+      <h1>Engine 1: @keshavsoft/json-to-tag</h1>
       <p class="lead">
-        This second approach creates the exact same visual piece without HTML strings, using native browser DOM APIs like <code>document.createElement()</code>, <code>textContent</code>, and <code>append()</code>.
+        The first internal engine invoked by <code>json-to-dom</code>: converting abstract JSON blueprints into verified native DOM element trees.
       </p>
     </div>
   </header>
 
   <main class="wrap content">
-    <h2>1 · JavaScript Build Code</h2>
-    <p style="color: var(--muted); font-size: .9rem;">
-      Imperative JavaScript code that manually instantiates each node in memory:
-    </p>
+    <h2>The Hand-Off in src/v42/index.js</h2>
     <div class="code-box">
-      <pre>// 1. Create the outer container element
-const wrapper = document.createElement("div");
-wrapper.id = "test-content";
-
-// 2. Create the child label
-const label = document.createElement("label");
-label.textContent = "Name";
-
-// 3. Create the child paragraph
-const text = document.createElement("p");
-text.textContent = "Test Content";
-
-// 4. Assemble the tree and mount into the page
-wrapper.append(label, text);
-document.querySelector("#browser-output").replaceChildren(wrapper);</pre>
+      <pre><code>// Line 7: Hand off to Engine 1
+const buildSpec = jsonToTag(jsonSpec);</code></pre>
     </div>
 
-    <h2>2 · Live Browser Output</h2>
+    <h2>What Engine 1 Executes</h2>
     <p style="color: var(--muted); font-size: .9rem;">
-      The element rendered dynamically by the script above:
+      <code>@keshavsoft/json-to-tag</code> is a zero-dependency compiler designed specifically for tag tree validation and instantiation:
     </p>
-    <div class="preview-box">
-      <div id="browser-output">
-        <label>Name</label>
-        <p>Test Content</p>
-      </div>
+
+    <div class="step-card">
+      <strong>1. W3C Tag Catalog Validation</strong>
+      <p>Checks tag names against <code>tags.json</code>. Enforces HTML grammar rules &mdash; ensuring void tags (like <code>&lt;input&gt;</code>, <code>&lt;hr&gt;</code>) never receive invalid children.</p>
     </div>
 
-    <h2>3 · Resulting DOM Tree</h2>
-    <p style="color: var(--muted); font-size: .9rem;">
-      The resulting DOM structure is 100% identical to the normal HTML version:
-    </p>
-    <div class="tree-box">div#test-content
-  ├─ label → "Name"
-  └─ p → "Test Content"</div>
+    <div class="step-card">
+      <strong>2. Native Node Instantiation</strong>
+      <p>Creates genuine browser element instances via <code>document.createElement(spec.tagName)</code> &mdash; never string parsing or <code>innerHTML</code>.</p>
+    </div>
 
-    <h2>The Challenge with Manual DOM Construction</h2>
+    <div class="step-card">
+      <strong>3. Attribute &amp; Class Filtration</strong>
+      <p>Safely binds attributes (e.g. <code>colspan</code>, <code>type</code>, <code>id</code>) and applies classes from strings or token arrays without breaking event listeners.</p>
+    </div>
+
+    <div class="step-card">
+      <strong>4. Recursive Child Traversal</strong>
+      <p>Recursively traverses <code>spec.children</code>, constructing nested hierarchies (like <code>table &rarr; thead &rarr; tr &rarr; th</code>) in a single fast, deterministic pass.</p>
+    </div>
+
     <div class="callout">
-      <strong>Imperative Overhead:</strong> While vanilla JavaScript gives direct DOM control with zero external libraries, constructing nested UI trees requires repetitive calls to <code>createElement</code>, manual attribute setting, and child appending. It cannot be serialized over a network and cannot be cleanly stored in databases or JSON payloads.
+      <strong>Output of Engine 1:</strong> A fully instantiated native in-memory DOM element tree (or DocumentFragment) stored in <code>buildSpec</code>, completely ready to be mounted into a web page container.
     </div>
 
     <div class="step-nav">
-      <a class="step-btn prev" href="01-normal-html.html">← 01 · Normal HTML</a>
-      <a class="step-btn next" href="03-json-specification.html">Next: 03 · JSON Specification →</a>
+      <a class="step-btn prev" href="01-why-orchestrate.html">&larr; 01 · The Motivation</a>
+      <a class="step-btn next" href="03-spec-to-dom.html">Next: Engine 2 · spec-to-dom &rarr;</a>
     </div>
   </main>
 
   <footer>
     <div class="wrap" style="display:flex; justify-content:space-between;">
-      <div>dom-builder · @keshavsoft/json-to-dom</div>
-      <div><a href="index.html" style="color:var(--green); text-decoration:none;">Directory Index</a></div>
+      <div>dom-builder &middot; @keshavsoft/json-to-dom</div>
+      <div><a href="index.html" style="color:var(--blue); text-decoration:none;">Directory Index</a></div>
     </div>
   </footer>
 </body>

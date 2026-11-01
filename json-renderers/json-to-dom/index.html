@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>@keshavsoft/json-to-dom | KeshavSoft Technical Documentation</title>
   <meta name="description"
-    content="A clean story explaining how @keshavsoft/json-to-dom compiles declarative JSON specifications into live browser DOM element trees." />
+    content="The architectural orchestrator: how @keshavsoft/json-to-dom coordinates @keshavsoft/json-to-tag and spec-to-dom to synthesize and mount live browser DOM." />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,13 +28,8 @@
       --code: #101827;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -70,17 +65,9 @@
       transition: color .15s;
     }
 
-    .top-crumbs a:hover {
-      color: var(--green);
-    }
-
-    .top-crumbs span.sep {
-      color: #cbd5e1;
-    }
-
-    .top-crumbs span.current {
-      color: var(--green);
-    }
+    .top-crumbs a:hover { color: var(--green); }
+    .top-crumbs span.sep { color: #cbd5e1; }
+    .top-crumbs span.current { color: var(--green); }
 
     .eyebrow,
     .section-kicker {
@@ -92,11 +79,11 @@
     }
 
     h1 {
-      font-size: clamp(1.4rem, 5vw, 2.8rem);
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
       line-height: 1.08;
       letter-spacing: -.05em;
       margin: 10px 0 14px;
-      font-weight: 750;
+      font-weight: 800;
       color: var(--ink);
     }
 
@@ -107,49 +94,126 @@
       margin: 0 0 24px;
     }
 
+    .orchestrator-banner {
+      background: linear-gradient(135deg, #101827 0%, #1e293b 100%);
+      color: #e2e8f0;
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin: 24px 0;
+      border: 1px solid #334155;
+    }
+
+    .orchestrator-banner h3 {
+      color: #38bdf8;
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+
+    .orchestrator-banner p {
+      color: #cbd5e1;
+      margin: 0 0 16px;
+      font-size: .95rem;
+    }
+
+    .pipeline-diagram {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+      margin-top: 18px;
+      padding: 16px;
+      background: #0f172a;
+      border-radius: 12px;
+      border: 1px solid #1e293b;
+    }
+
+    .diagram-step {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .diagram-step.center {
+      background: #064e3b;
+      border-color: #059669;
+    }
+
+    .diagram-step .badge {
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .diagram-step strong {
+      font-size: .88rem;
+      color: #ffffff;
+      display: block;
+    }
+
+    .diagram-step small {
+      font-size: .75rem;
+      color: #94a3b8;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .diagram-arrow {
+      color: #38bdf8;
+      font-size: 1.4rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
     .repo-nav {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 14px;
-      margin-top: 20px;
+      margin-top: 24px;
     }
 
     .nav-link {
       display: flex;
       align-items: center;
       gap: 13px;
-      padding: 16px 18px;
+      padding: 18px 20px;
       border: 1px solid var(--line);
       border-radius: 14px;
       background: #ffffff;
       color: var(--ink);
       text-decoration: none;
-      transition: border-color .18s, transform .18s, box-shadow .18s;
+      transition: all .2s ease;
     }
 
     .nav-link:hover {
       transform: translateY(-2px);
       border-color: #86efac;
-      color: var(--ink);
-      box-shadow: 0 4px 14px rgba(13, 140, 104, 0.08);
+      box-shadow: 0 6px 16px rgba(13, 140, 104, 0.1);
     }
 
     .nav-number {
       display: grid;
       place-items: center;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 10px;
       background: #e7f7f1;
       color: var(--green);
       font-weight: 800;
-      font-size: .82rem;
+      font-size: .85rem;
       flex: none;
     }
 
     .nav-link strong {
       display: block;
-      font-size: 0.95rem;
+      font-size: .95rem;
+      color: #0f172a;
     }
 
     .nav-link small {
@@ -176,10 +240,6 @@
       border-bottom: 1px solid var(--line);
     }
 
-    .section-kicker {
-      margin-bottom: 7px;
-    }
-
     h2 {
       font-size: clamp(1.5rem, 3.5vw, 1.95rem);
       letter-spacing: -.035em;
@@ -192,111 +252,19 @@
       margin: 0 0 14px;
     }
 
-    strong {
-      color: var(--ink);
-    }
-
-    .approaches {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 18px;
-      margin: 22px 0;
-    }
-
-    .approach-card {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: #ffffff;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: all .2s ease;
-    }
-
-    .approach-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
-      border-color: #86efac;
-    }
-
-    .approach-head {
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--line);
-      background: #f8fafc;
-    }
-
-    .approach-num {
-      font-size: .72rem;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--green);
-    }
-
-    .approach-head h3 {
-      font-size: 1.05rem;
-      font-weight: 750;
-      margin: 4px 0 2px;
-      color: #0f172a;
-    }
-
-    .approach-head p {
-      font-size: .8rem;
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .approach-code {
-      padding: 16px 20px;
+    .code-box {
       background: var(--code);
       color: #e2e8f0;
-      min-height: 140px;
-    }
-
-    .approach-code pre {
-      margin: 0;
+      padding: 20px 24px;
+      border-radius: 14px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: .8rem;
-      line-height: 1.6;
-      color: #e2e8f0;
+      font-size: .88rem;
+      line-height: 1.7;
       overflow-x: auto;
+      margin: 18px 0;
     }
 
-    .approach-out {
-      padding: 16px 20px;
-      background: #f8fafc;
-      border-top: 1px solid var(--line);
-      margin-top: auto;
-    }
-
-    .out-label {
-      font-size: .72rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      font-weight: 800;
-      letter-spacing: .06em;
-      margin-bottom: 8px;
-    }
-
-    .preview-box {
-      background: #ffffff;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 12px 14px;
-    }
-
-    .preview-box label {
-      display: block;
-      font-size: .82rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .preview-box p {
-      margin: 0;
-      font-size: .82rem;
-      color: var(--muted);
-    }
+    pre { margin: 0; font-family: inherit; }
 
     .note {
       padding: 15px 18px;
@@ -306,6 +274,64 @@
       color: #065f46;
       font-size: .93rem;
       margin: 16px 0;
+    }
+
+    .two-repos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    .repo-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 24px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .repo-card.engine-1 {
+      border-top: 4px solid var(--blue);
+    }
+
+    .repo-card.engine-2 {
+      border-top: 4px solid var(--purple);
+    }
+
+    .repo-card .card-kicker {
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .repo-card.engine-1 .card-kicker { color: var(--blue); }
+    .repo-card.engine-2 .card-kicker { color: var(--purple); }
+
+    .repo-card h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin: 0 0 10px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .repo-card p {
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0 0 14px;
+    }
+
+    .repo-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #475569;
+      font-size: .84rem;
+      line-height: 1.7;
     }
 
     footer {
@@ -323,16 +349,13 @@
       flex-wrap: wrap;
     }
 
-    @media(max-width:620px) {
-      .wrap {
-        width: min(100% - 28px, 1180px);
-      }
-      .hero {
-        padding: 42px 0 30px;
-      }
-      .repo-nav,
-      .approaches {
+    @media(max-width:800px) {
+      .pipeline-diagram {
         grid-template-columns: 1fr;
+      }
+      .diagram-arrow {
+        transform: rotate(90deg);
+        padding: 4px 0;
       }
     }
   </style>
@@ -350,162 +373,167 @@
       </div>
 
       <h1>@keshavsoft/json-to-dom</h1>
-      <div class="section-kicker">A simple story</div>
-      <h2>One UI. Three Approaches.</h2>
+      <div class="section-kicker">The Architectural Orchestrator</div>
       <p class="intro">
-        Every web interface ultimately becomes nodes in the browser's Document Object Model (DOM).
-        <code>@keshavsoft/json-to-dom</code> is the engine that interprets abstract JSON tag specifications and converts
-        them into real, native HTML elements mounted into the target container with zero <code>innerHTML</code> risks.
+        <code>@keshavsoft/json-to-dom</code> is not a monolithic script &mdash; <strong>it is an orchestrator</strong>.
+        It delegates DOM synthesis and mounting to two specialized, battle-tested sibling repositories:
+        <strong><code>@keshavsoft/json-to-tag</code></strong> (the tag compilation engine) and
+        <strong><code>spec-to-dom</code></strong> (the target element mounting engine).
       </p>
 
-      <div class="note">
-        <strong>The Execution Chain:</strong> <code>JSON Specification</code> &rarr; <code>@keshavsoft/json-to-dom</code> &rarr;
-        <code>Native Browser HTML DOM</code>.
+      <!-- Orchestrator Blueprint -->
+      <div class="orchestrator-banner">
+        <h3>The Orchestration Pipeline in src/v42/index.js</h3>
+        <p>A sleek, 12-line master function that connects synthesis to mounting:</p>
+        <div class="pipeline-diagram">
+          <div class="diagram-step">
+            <span class="badge" style="color: #94a3b8;">Input</span>
+            <strong>jsonSpec</strong>
+            <small>Abstract Tag Blueprint</small>
+          </div>
+          <div class="diagram-arrow">&rarr;</div>
+          <div class="diagram-step">
+            <span class="badge" style="color: #60a5fa;">Engine 01</span>
+            <strong>@keshavsoft/json-to-tag</strong>
+            <small>W3C Grammar &amp; Node Synthesis</small>
+          </div>
+          <div class="diagram-arrow">&rarr;</div>
+          <div class="diagram-step center">
+            <span class="badge" style="color: #a7f3d0;">Engine 02</span>
+            <strong>spec-to-dom</strong>
+            <small>Target Resolution &amp; Mount</small>
+          </div>
+        </div>
       </div>
 
-      <div class="section-kicker">The 4-Step Walkthrough</div>
+      <div class="section-kicker">Interactive Story Walkthrough</div>
       <p style="color: var(--muted); font-size: 0.95rem; margin: 0 0 14px;">
-        Follow the sequential story explaining how we evolved from raw markup to declarative DOM compilation:
+        Explore each chapter of the architecture from the baseline problem to the two delegated engines:
       </p>
 
-      <nav class="repo-nav" aria-label="Step Navigation">
-        <a class="nav-link" href="01-normal-html.html">
+      <nav class="repo-nav" aria-label="Documentation Chapters">
+        <a class="nav-link" href="01-why-orchestrate.html">
           <span class="nav-number">01</span>
-          <span><strong>Normal HTML</strong><small>Write direct markup for the browser</small></span>
-          <span class="arrow">→</span>
+          <span><strong>The Motivation</strong><small>Normal HTML vs Vanilla JS vs Declarative Specs</small></span>
+          <span class="arrow">&rarr;</span>
         </a>
 
-        <a class="nav-link" href="02-vanilla-javascript.html">
+        <a class="nav-link" href="02-json-to-tag.html">
           <span class="nav-number">02</span>
-          <span><strong>Vanilla JavaScript</strong><small>Create nodes manually via createElement</small></span>
-          <span class="arrow">→</span>
+          <span><strong>Engine 1: json-to-tag</strong><small>W3C tag validation &amp; recursive tree synthesis</small></span>
+          <span class="arrow">&rarr;</span>
         </a>
 
-        <a class="nav-link" href="03-json-specification.html">
+        <a class="nav-link" href="03-spec-to-dom.html">
           <span class="nav-number">03</span>
-          <span><strong>JSON Specification</strong><small>Model UI as a pure serializable tree</small></span>
-          <span class="arrow">→</span>
+          <span><strong>Engine 2: spec-to-dom</strong><small>Target resolution &amp; append/prepend mounting</small></span>
+          <span class="arrow">&rarr;</span>
         </a>
 
         <a class="nav-link" href="04-cdn-build.html">
           <span class="nav-number">04</span>
-          <span><strong>CDN Build &amp; Mount</strong><small>Zero-dependency live DOM synthesis</small></span>
-          <span class="arrow">→</span>
+          <span><strong>Live CDN Orchestration</strong><small>Zero-dependency browser execution</small></span>
+          <span class="arrow">&rarr;</span>
         </a>
       </nav>
     </div>
   </header>
 
   <main class="wrap content">
-    <!-- Comparison Grid -->
+    <!-- Section: The Two Engines -->
     <section>
-      <div class="section-kicker">Side-By-Side Comparison</div>
-      <h2>Same browser output. Different construction method.</h2>
+      <div class="section-kicker">The Two Delegated Engines</div>
+      <h2>How the two sibling repositories divide the work</h2>
       <p>
-        Compare how the exact same component is authored across the three paradigms:
+        Instead of coupling tag validation, element creation, and DOM mounting into a heavy single package,
+        <code>@keshavsoft/json-to-dom</code> cleanly splits responsibilities between two focused engines:
       </p>
 
-      <div class="approaches">
-        <!-- Approach 1 -->
-        <article class="approach-card">
-          <div class="approach-head">
-            <span class="approach-num">01 · Original HTML</span>
-            <h3>Write the markup</h3>
-            <p>The browser parses HTML directly from strings.</p>
-          </div>
-          <div class="approach-code">
-            <pre>&lt;div id="test-content"&gt;
-  &lt;label&gt;Name&lt;/label&gt;
-  &lt;p&gt;Test Content&lt;/p&gt;
-&lt;/div&gt;</pre>
-          </div>
-          <div class="approach-out">
-            <div class="out-label">Browser output</div>
-            <div class="preview-box">
-              <label>Name</label>
-              <p>Test Content</p>
-            </div>
-          </div>
-        </article>
+      <div class="two-repos-grid">
+        <div class="repo-card engine-1">
+          <span class="card-kicker">Engine 01 · Synthesis</span>
+          <h3>@keshavsoft/json-to-tag</h3>
+          <p>
+            The W3C grammar compiler. It inspects every element in your specification tree and instantiates real DOM nodes safely.
+          </p>
+          <ul>
+            <li>Validates element tag names against HTML standards (void vs container).</li>
+            <li>Recursively converts nested children without risky <code>innerHTML</code>.</li>
+            <li>Applies classes, properties, and standard attributes safely.</li>
+            <li>Outputs a ready-to-mount <code>buildSpec</code> element or DocumentFragment.</li>
+          </ul>
+        </div>
 
-        <!-- Approach 2 -->
-        <article class="approach-card">
-          <div class="approach-head">
-            <span class="approach-num">02 · Vanilla JavaScript</span>
-            <h3>Create nodes manually</h3>
-            <p>Native DOM APIs create and append each node.</p>
-          </div>
-          <div class="approach-code">
-            <pre>const div = document.createElement("div");
-const label = document.createElement("label");
-const text = document.createElement("p");
-
-label.textContent = "Name";
-text.textContent = "Test Content";
-div.append(label, text);</pre>
-          </div>
-          <div class="approach-out">
-            <div class="out-label">Browser output</div>
-            <div class="preview-box">
-              <label>Name</label>
-              <p>Test Content</p>
-            </div>
-          </div>
-        </article>
-
-        <!-- Approach 3 -->
-        <article class="approach-card">
-          <div class="approach-head">
-            <span class="approach-num">03 · JSON to DOM</span>
-            <h3>Describe, then build</h3>
-            <p>JSON describes the tree; engine compiles to native DOM.</p>
-          </div>
-          <div class="approach-code">
-            <pre>const spec = {
-  tagName: "div",
-  children: [
-    { tagName: "label", textContent: "Name" },
-    { tagName: "p", textContent: "Test Content" }
-  ]
-};
-
-jsonToDom({ jsonSpec: spec, targetHtmlId: "app" });</pre>
-          </div>
-          <div class="approach-out">
-            <div class="out-label">Browser output</div>
-            <div class="preview-box">
-              <label>Name</label>
-              <p>Test Content</p>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <div class="note">
-        <strong>Key insight:</strong> The visual result is 100% identical. The third approach converts the UI description into portable JSON data, allowing backend APIs, database catalogs, or pipelines to generate rich interfaces without frontend code churn.
+        <div class="repo-card engine-2">
+          <span class="card-kicker">Engine 02 · Mounting</span>
+          <h3>spec-to-dom</h3>
+          <p>
+            The DOM target mount specialist. It handles all mechanics related to the live webpage container.
+          </p>
+          <ul>
+            <li>Resolves target HTML elements via <code>document.getElementById(targetHtmlId)</code>.</li>
+            <li>Differentiates between single element nodes and node collections.</li>
+            <li>Supports flexible mounting modes: <code>prepend</code>, <code>append</code>, or clean container reset.</li>
+            <li>Returns the live, mounted DOM container back to the caller.</li>
+          </ul>
+        </div>
       </div>
     </section>
 
-    <!-- Navigation Back -->
+    <!-- Section: The Code Pipeline -->
     <section>
-      <div class="section-kicker">The Complete Picture</div>
-      <h2>How the 3 repositories unite</h2>
+      <div class="section-kicker">Source Code Truth</div>
+      <h2>The complete orchestration logic in 12 lines</h2>
+      <p>
+        This is the actual production orchestrator from <code>json-to-dom/src/v42/index.js</code>:
+      </p>
+
+      <div class="code-box">
+        <pre><code>import registerGlobal from "./register/index.js";
+import jsonToTag from "@keshavsoft/json-to-tag"; // Engine 1: Synthesis
+import specToDom from "spec-to-dom";             // Engine 2: Mounting
+
+const startFunc = ({ jsonSpec, targetHtmlId, appendPosition, showLog }) => {
+
+    // 1. Hand off to @keshavsoft/json-to-tag: parse spec & synthesize DOM nodes
+    const buildSpec = jsonToTag(jsonSpec);
+
+    // 2. Hand off to spec-to-dom: resolve target container & mount
+    const container = specToDom({ buildSpec, targetHtmlId, appendPosition, showLog });
+
+    return container;
+};
+
+registerGlobal(startFunc);
+
+export default startFunc;</code></pre>
+      </div>
+
+      <div class="note">
+        <strong>Why this design wins:</strong> If you need headless tag synthesis on a server (SSR with jsdom), you use <code>@keshavsoft/json-to-tag</code> alone. If you already have elements and just need robust container mounting, you use <code>spec-to-dom</code> alone. <code>@keshavsoft/json-to-dom</code> provides the unified browser experience.
+      </div>
+    </section>
+
+    <!-- Section: Return to Hub -->
+    <section>
+      <div class="section-kicker">Ecosystem Positioning</div>
+      <h2>Where json-to-dom fits in the bigger picture</h2>
       <p>
         Together with <strong>json-renderers-guard</strong> and <strong>json-renderers-build</strong>,
-        <strong>@keshavsoft/json-to-dom</strong> forms the foundation of KeshavSoft's declarative UI architecture:
+        <strong>@keshavsoft/json-to-dom</strong> completes the runtime:
       </p>
 
       <div class="repo-nav">
         <a class="nav-link" href="../index.html">
           <span class="nav-number">Hub</span>
           <span><strong>Return to json-renderers Hub</strong><small>Explore component suites and full story</small></span>
-          <span class="arrow">↑</span>
+          <span class="arrow">&uarr;</span>
         </a>
 
         <a class="nav-link" href="../../playground.html" target="_blank" rel="noopener noreferrer">
-          <span class="nav-number">⚡</span>
-          <span><strong>Open Playground</strong><small>Edit JSON and test live DOM rendering</small></span>
-          <span class="arrow">↗</span>
+          <span class="nav-number">&#9889;</span>
+          <span><strong>Open Playground</strong><small>Edit JSON and inspect live mounted DOM</small></span>
+          <span class="arrow">&nearr;</span>
         </a>
       </div>
     </section>
@@ -514,13 +542,13 @@ jsonToDom({ jsonSpec: spec, targetHtmlId: "app" });</pre>
   <footer>
     <div class="wrap">
       <div>
-        <strong>dom-builder</strong> · <span>@keshavsoft/json-to-dom Documentation</span>
+        <strong>dom-builder</strong> &middot; <span>@keshavsoft/json-to-dom Documentation</span>
       </div>
       <div>
         <a href="../index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">json-renderers Hub</a>
         <a href="../../index.html" style="color: var(--muted); text-decoration: none; margin-right: 14px;">Portal Home</a>
         <a href="https://github.com/keshavsoft/json-to-dom" target="_blank" rel="noopener noreferrer"
-          style="color: var(--green); text-decoration: none; font-weight: 600;">GitHub ↗</a>
+          style="color: var(--green); text-decoration: none; font-weight: 600;">GitHub &nearr;</a>
       </div>
     </div>
   </footer>

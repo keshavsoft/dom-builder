@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>01 · Normal HTML — @keshavsoft/json-to-dom</title>
+  <title>01 · The Motivation — @keshavsoft/json-to-dom</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -49,11 +49,7 @@
       font-weight: 600;
     }
 
-    .top-crumbs a {
-      color: var(--muted);
-      text-decoration: none;
-    }
-
+    .top-crumbs a { color: var(--muted); text-decoration: none; }
     .top-crumbs a:hover { color: var(--green); }
     .top-crumbs span.sep { color: #cbd5e1; }
     .top-crumbs span.current { color: var(--green); }
@@ -103,6 +99,7 @@
       font-size: .85rem;
       line-height: 1.65;
       overflow-x: auto;
+      margin: 14px 0;
     }
 
     pre { margin: 0; font-family: inherit; }
@@ -113,6 +110,7 @@
       border-radius: 12px;
       padding: 20px;
       box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+      margin: 14px 0;
     }
 
     .preview-box label {
@@ -126,17 +124,6 @@
       margin: 0;
       color: var(--muted);
       font-size: .9rem;
-    }
-
-    .tree-box {
-      background: #f8fafc;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 16px 20px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .84rem;
-      line-height: 1.7;
-      color: #334155;
     }
 
     .callout {
@@ -205,21 +192,21 @@
         <span class="sep">/</span>
         <a href="index.html">json-to-dom</a>
         <span class="sep">/</span>
-        <span class="current">01 · Normal HTML</span>
+        <span class="current">01 · The Motivation</span>
       </div>
 
-      <span class="step-badge">Step 01 of 04</span>
-      <h1>Write direct markup for the browser.</h1>
+      <span class="step-badge">Chapter 01 of 04</span>
+      <h1>One UI. Three Construction Paradigms.</h1>
       <p class="lead">
-        This is the baseline approach: writing traditional HTML markup that the browser parses directly into native DOM elements.
+        To understand why KeshavSoft built a dedicated DOM orchestrator, we must look at how UI has traditionally been constructed &mdash; and where imperative approaches fail at enterprise scale.
       </p>
     </div>
   </header>
 
   <main class="wrap content">
-    <h2>1 · HTML Source</h2>
+    <h2>1 · Approach 1: Original HTML Markup</h2>
     <p style="color: var(--muted); font-size: .9rem;">
-      Raw HTML markup written in a standard <code>.html</code> template:
+      Writing raw HTML strings directly into templates:
     </p>
     <div class="code-box">
       <pre>&lt;div id="test-content"&gt;
@@ -227,38 +214,63 @@
   &lt;p&gt;Test Content&lt;/p&gt;
 &lt;/div&gt;</pre>
     </div>
-
-    <h2>2 · Browser Output</h2>
-    <p style="color: var(--muted); font-size: .9rem;">
-      What the user visually sees when the browser renders this markup:
-    </p>
     <div class="preview-box">
       <label>Name</label>
       <p>Test Content</p>
     </div>
-
-    <h2>3 · Resulting DOM Tree</h2>
-    <p style="color: var(--muted); font-size: .9rem;">
-      The native in-memory node hierarchy created by the browser's C++ HTML parser:
+    <p style="color: #64748b; font-size: .88rem;">
+      <strong>The Limitation:</strong> Static markup works for brochures, but modern enterprise UIs are data-driven. Constructing complex markup via string interpolation invites catastrophic Cross-Site Scripting (XSS) vulnerabilities.
     </p>
-    <div class="tree-box">div#test-content
-  ├─ label → "Name"
-  └─ p → "Test Content"</div>
 
-    <h2>How It Works</h2>
+    <h2>2 · Approach 2: Vanilla JavaScript (Imperative DOM)</h2>
+    <p style="color: var(--muted); font-size: .9rem;">
+      Creating each node imperatively using browser DOM APIs:
+    </p>
+    <div class="code-box">
+      <pre>const div = document.createElement("div");
+div.id = "test-content";
+
+const label = document.createElement("label");
+label.textContent = "Name";
+
+const text = document.createElement("p");
+text.textContent = "Test Content";
+
+div.append(label, text);
+document.getElementById("container").replaceChildren(div);</pre>
+    </div>
+    <p style="color: #64748b; font-size: .88rem;">
+      <strong>The Pain:</strong> 10x code bloat. Building a 20-row table with badges and action buttons requires hundreds of repetitive, error-prone <code>createElement</code> commands that cannot be serialized or transferred over an API.
+    </p>
+
+    <h2>3 · Approach 3: The Declarative Specification</h2>
+    <p style="color: var(--muted); font-size: .9rem;">
+      Model the intended structure as serializable JSON data:
+    </p>
+    <div class="code-box">
+      <pre>{
+  "tagName": "div",
+  "attributes": { "id": "test-content" },
+  "children": [
+    { "tagName": "label", "textContent": "Name" },
+    { "tagName": "p", "textContent": "Test Content" }
+  ]
+}</pre>
+    </div>
+
     <div class="callout">
-      <strong>Browser Execution:</strong> The browser streams HTML characters, tokenizes opening and closing tags, creates native DOM node objects (such as <code>HTMLDivElement</code>, <code>HTMLLabelElement</code>, and <code>HTMLParagraphElement</code>), and appends them into the live document tree.
+      <strong>The Breakthrough:</strong> By separating <em>what</em> to build (JSON data) from <em>how</em> to build it (compiler engines), our UI becomes portable data. Now we need an engine to synthesize that JSON into DOM &mdash; and another to mount it.
     </div>
 
     <div class="step-nav">
-      <a class="step-btn prev" href="index.html">← Overview</a>
-      <a class="step-btn next" href="02-vanilla-javascript.html">Next: 02 · Vanilla JavaScript →</a>
+      <a class="step-btn prev" href="index.html">&larr; Orchestrator Hub</a>
+      <a class="step-btn next" href="02-json-to-tag.html">Next: Engine 1 · json-to-tag &rarr;</a>
     </div>
   </main>
 
   <footer>
     <div class="wrap" style="display:flex; justify-content:space-between;">
-      <div>dom-builder · @keshavsoft/json-to-dom</div>
+      <div>dom-builder &middot; @keshavsoft/json-to-dom</div>
       <div><a href="index.html" style="color:var(--green); text-decoration:none;">Directory Index</a></div>
     </div>
   </footer>

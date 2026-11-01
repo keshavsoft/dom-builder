@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>03 · JSON Specification — @keshavsoft/json-to-dom</title>
+  <title>03 · Engine 2: spec-to-dom — @keshavsoft/json-to-dom</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -15,6 +15,7 @@
       --ink: #172033;
       --muted: #5d687b;
       --line: #e3e8f0;
+      --purple: #7c3aed;
       --green: #0d8c68;
       --code: #101827;
       --pale: #f8fafc;
@@ -36,7 +37,7 @@
 
     .hero {
       padding: 48px 0 32px;
-      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 70%);
+      background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 70%);
       border-bottom: 1px solid var(--line);
     }
 
@@ -49,14 +50,10 @@
       font-weight: 600;
     }
 
-    .top-crumbs a {
-      color: var(--muted);
-      text-decoration: none;
-    }
-
-    .top-crumbs a:hover { color: var(--green); }
+    .top-crumbs a { color: var(--muted); text-decoration: none; }
+    .top-crumbs a:hover { color: var(--purple); }
     .top-crumbs span.sep { color: #cbd5e1; }
-    .top-crumbs span.current { color: var(--green); }
+    .top-crumbs span.current { color: var(--purple); }
 
     .step-badge {
       display: inline-block;
@@ -66,8 +63,8 @@
       text-transform: uppercase;
       padding: 3px 10px;
       border-radius: 9999px;
-      background: #e7f7f1;
-      color: var(--green);
+      background: #ede9fe;
+      color: var(--purple);
       margin-bottom: 8px;
     }
 
@@ -103,52 +100,38 @@
       font-size: .85rem;
       line-height: 1.65;
       overflow-x: auto;
+      margin: 14px 0;
     }
 
     pre { margin: 0; font-family: inherit; }
 
-    .keys-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
-      margin: 18px 0;
-    }
-
-    .key-card {
+    .step-card {
       border: 1px solid var(--line);
       border-radius: 12px;
-      padding: 16px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
       background: var(--pale);
     }
 
-    .key-num {
-      font-size: .72rem;
-      font-weight: 800;
-      letter-spacing: .08em;
-      color: var(--green);
-      text-transform: uppercase;
+    .step-card strong {
+      color: var(--purple);
+      display: block;
+      font-size: .95rem;
+      margin-bottom: 4px;
     }
 
-    .key-card h3 {
-      font-size: 1.05rem;
-      font-weight: 750;
-      margin: 4px 0 4px;
-      font-family: 'JetBrains Mono', monospace;
-      color: #0f172a;
-    }
-
-    .key-card p {
-      font-size: .84rem;
-      color: var(--muted);
+    .step-card p {
       margin: 0;
+      font-size: .88rem;
+      color: #475569;
     }
 
     .callout {
-      border-left: 3px solid var(--green);
-      background: #f0fdf4;
+      border-left: 3px solid var(--purple);
+      background: #f5f3ff;
       padding: 14px 18px;
       border-radius: 0 10px 10px 0;
-      color: #065f46;
+      color: #5b21b6;
       font-size: .92rem;
       margin: 20px 0;
     }
@@ -182,8 +165,8 @@
     }
 
     .step-btn.next {
-      background: #e7f7f1;
-      color: var(--green);
+      background: #ede9fe;
+      color: var(--purple);
       margin-left: auto;
     }
 
@@ -209,72 +192,71 @@
         <span class="sep">/</span>
         <a href="index.html">json-to-dom</a>
         <span class="sep">/</span>
-        <span class="current">03 · JSON Specification</span>
+        <span class="current">03 · Engine 2: spec-to-dom</span>
       </div>
 
-      <span class="step-badge">Step 03 of 04</span>
-      <h1>Model UI as a declarative JSON tree.</h1>
+      <span class="step-badge">Chapter 03 of 04</span>
+      <h1>Engine 2: spec-to-dom</h1>
       <p class="lead">
-        Instead of writing imperative commands, <code>@keshavsoft/json-to-dom</code> represents components as pure, serializable JSON specifications that any environment can generate, send, or store.
+        The second internal engine invoked by <code>json-to-dom</code>: resolving the target HTML element and safely mounting the synthesized DOM.
       </p>
     </div>
   </header>
 
   <main class="wrap content">
-    <h2>1 · The JSON Specification</h2>
-    <p style="color: var(--muted); font-size: .9rem;">
-      Standard serializable JSON object describing structure and hierarchy:
-    </p>
+    <h2>The Hand-Off in src/v42/index.js</h2>
     <div class="code-box">
-      <pre>{
-  "tagName": "div",
-  "attributes": { "id": "test-content" },
-  "children": [
-    { "tagName": "label", "textContent": "Name" },
-    { "tagName": "p", "textContent": "Test Content" }
-  ]
-}</pre>
+      <pre><code>// Line 9: Hand off to Engine 2
+const container = specToDom({
+    buildSpec,
+    targetHtmlId,
+    appendPosition,
+    showLog
+});</code></pre>
     </div>
 
-    <h2>2 · Key Specification Fields</h2>
+    <h2>What Engine 2 Executes</h2>
     <p style="color: var(--muted); font-size: .9rem;">
-      Every specification node uses simple, standardized keys:
+      Inside <code>spec-to-dom/src/v2/index.js</code>, the <code>appendToDom</code> logic focuses entirely on container manipulation:
     </p>
-    <div class="keys-grid">
-      <div class="key-card">
-        <span class="key-num">01 · Element</span>
-        <h3>tagName</h3>
-        <p>The native HTML tag to instantiate (e.g. <code>"div"</code>, <code>"label"</code>, <code>"table"</code>, <code>"button"</code>).</p>
-      </div>
 
-      <div class="key-card">
-        <span class="key-num">02 · Attributes</span>
-        <h3>attributes</h3>
-        <p>Key-value map of HTML attributes like <code>id</code>, <code>class</code>, <code>type</code>, or <code>colspan</code>.</p>
-      </div>
-
-      <div class="key-card">
-        <span class="key-num">03 · Children</span>
-        <h3>children</h3>
-        <p>An array of nested specifications. Each child is processed recursively using the exact same contract.</p>
-      </div>
+    <div class="step-card">
+      <strong>1. Container Target Resolution</strong>
+      <p>Locates the target HTML container using <code>document.getElementById(targetHtmlId)</code>. Fails gracefully if the element does not exist.</p>
     </div>
 
-    <h2>The Architectural Shift: UI as Data</h2>
+    <div class="step-card">
+      <strong>2. Collection Detection</strong>
+      <p>Detects whether <code>buildSpec</code> is a single DOM node or a multi-element collection (e.g. <code>Array</code>, <code>NodeList</code>, or <code>HTMLCollection</code>) to apply proper spread mounting.</p>
+    </div>
+
+    <div class="step-card">
+      <strong>3. Flexible Mount Positioning</strong>
+      <p>Evaluates <code>appendPosition</code>:
+        <br>&bull; <code>"prepend"</code> &rarr; Inserts at the top via <code>container.prepend()</code>.
+        <br>&bull; Default / replace &rarr; Clears container and attaches via <code>container.append()</code>.
+      </p>
+    </div>
+
+    <div class="step-card">
+      <strong>4. Returns Mounted Instance</strong>
+      <p>Returns the live container element directly, enabling immediate inspection or event attachment by the caller.</p>
+    </div>
+
     <div class="callout">
-      <strong>Decoupled from Frameworks:</strong> Instead of coupling your UI structure to client-side templates or heavy JSX compilers, your UI is now valid, standard JSON. It can be sent over HTTP APIs, generated dynamically on backend servers, stored in databases, or loaded from flat configuration files.
+      <strong>Output of Engine 2:</strong> The fully mounted, interactive DOM element now living inside your web page at <code>targetHtmlId</code>.
     </div>
 
     <div class="step-nav">
-      <a class="step-btn prev" href="02-vanilla-javascript.html">← 02 · Vanilla JavaScript</a>
-      <a class="step-btn next" href="04-cdn-build.html">Next: 04 · CDN Build &amp; Mount →</a>
+      <a class="step-btn prev" href="02-json-to-tag.html">&larr; 02 · Engine 1: json-to-tag</a>
+      <a class="step-btn next" href="04-cdn-build.html">Next: Live CDN Orchestration &rarr;</a>
     </div>
   </main>
 
   <footer>
     <div class="wrap" style="display:flex; justify-content:space-between;">
-      <div>dom-builder · @keshavsoft/json-to-dom</div>
-      <div><a href="index.html" style="color:var(--green); text-decoration:none;">Directory Index</a></div>
+      <div>dom-builder &middot; @keshavsoft/json-to-dom</div>
+      <div><a href="index.html" style="color:var(--purple); text-decoration:none;">Directory Index</a></div>
     </div>
   </footer>
 </body>
