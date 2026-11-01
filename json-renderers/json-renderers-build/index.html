@@ -354,7 +354,7 @@
       <div class="note">
         <strong>How json-renderers Uses It:</strong> <code>json-renderers</code> coordinates the pipeline: it runs
         validation, calls <code>json-renderers-build</code> to get the abstract JSON specification, and hands that
-        specification over to <code>json-to-tag</code> to mount live native HTML elements into
+        specification over to <code>@keshavsoft/json-to-dom</code> to mount live native HTML elements into
         <code>targetHtmlId</code>.
       </div>
 
@@ -442,7 +442,7 @@ const spec = render({
 });
 
 // 2. Returns pure JSON Tag Tree (specAsJsonToDom)
-// Ready for json-to-tag or SSR rendering!</code></pre>
+// Ready for @keshavsoft/json-to-dom or SSR rendering!</code></pre>
     </section>
   </main>
 
