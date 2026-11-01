@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>04 · CDN Build & Mount — @keshavsoft/json-to-dom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #e3e8f0;
+      --green: #0d8c68;
+      --code: #101827;
+      --pale: #f8fafc;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 860px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 48px 0 32px;
+      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 70%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: .82rem;
+      font-weight: 600;
+    }
+
+    .top-crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .top-crumbs a:hover { color: var(--green); }
+    .top-crumbs span.sep { color: #cbd5e1; }
+    .top-crumbs span.current { color: var(--green); }
+
+    .step-badge {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: #e7f7f1;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      line-height: 1.15;
+      letter-spacing: -.035em;
+      margin: 6px 0 12px;
+      font-weight: 800;
+    }
+
+    p.lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin: 0 0 10px;
+    }
+
+    .content { padding: 32px 0 58px; }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 750;
+      letter-spacing: -.02em;
+      margin: 28px 0 10px;
+    }
+
+    .code-box {
+      background: var(--code);
+      color: #e2e8f0;
+      padding: 18px 22px;
+      border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .85rem;
+      line-height: 1.65;
+      overflow-x: auto;
+    }
+
+    pre { margin: 0; font-family: inherit; }
+
+    .callout {
+      border-left: 3px solid var(--green);
+      background: #f0fdf4;
+      padding: 14px 18px;
+      border-radius: 0 10px 10px 0;
+      color: #065f46;
+      font-size: .92rem;
+      margin: 20px 0;
+    }
+
+    .step-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 36px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .step-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: .86rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all .15s ease;
+    }
+
+    .step-btn.prev {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .step-btn.next {
+      background: #e7f7f1;
+      color: var(--green);
+      margin-left: auto;
+    }
+
+    .step-btn:hover { transform: translateY(-1px); }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: #fafbfe;
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="top-crumbs">
+        <a href="../../index.html">dom-builder</a>
+        <span class="sep">/</span>
+        <a href="../index.html">json-renderers</a>
+        <span class="sep">/</span>
+        <a href="index.html">json-to-dom</a>
+        <span class="sep">/</span>
+        <span class="current">04 · CDN Build &amp; Mount</span>
+      </div>
+
+      <span class="step-badge">Step 04 of 04</span>
+      <h1>Build &amp; mount native DOM via CDN.</h1>
+      <p class="lead">
+        Connect your JSON specification to the <code>@keshavsoft/json-to-dom</code> engine. With zero Node.js and zero build steps, the browser compiles the specification tree directly into native DOM elements.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <h2>1 · Complete HTML Document Example</h2>
+    <p style="color: var(--muted); font-size: .9rem;">
+      A standalone, ready-to-run HTML file you can use directly in your browser:
+    </p>
+    <div class="code-box">
+      <pre>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;title&gt;json-to-dom CDN Demo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- 1. Target container element in your page --&gt;
+  &lt;div id="my-container"&gt;&lt;/div&gt;
+
+  &lt;script type="module"&gt;
+    // 2. Import jsonToDom directly via CDN
+    import jsonToDom from "https://cdn.jsdelivr.net/npm/@keshavsoft/json-to-dom/+esm";
+
+    // 3. Define the UI specification
+    const spec = {
+      tagName: "div",
+      attributes: { id: "test-content", class: "card-body" },
+      children: [
+        { tagName: "label", textContent: "Name" },
+        { tagName: "p", textContent: "Test Content" }
+      ]
+    };
+
+    // 4. Synthesize and mount safely to target container
+    jsonToDom({
+      jsonSpec: spec,
+      targetHtmlId: "my-container",
+      appendPosition: "beforeend"
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    </div>
+
+    <h2>2 · Execution Pipeline</h2>
+    <div class="callout">
+      <strong>Zero innerHTML risks:</strong> <code>@keshavsoft/json-to-dom</code> accepts the abstract tag specification, validates it against allowed HTML element grammar, creates authentic browser elements via native <code>document.createElement</code>, and safely attaches them to your target HTML ID with zero unsafe string interpolation.
+    </div>
+
+    <div class="step-nav">
+      <a class="step-btn prev" href="03-json-specification.html">← 03 · JSON Specification</a>
+      <a class="step-btn next" href="index.html">Return to json-to-dom Hub ↗</a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap" style="display:flex; justify-content:space-between;">
+      <div>dom-builder · @keshavsoft/json-to-dom</div>
+      <div><a href="index.html" style="color:var(--green); text-decoration:none;">Directory Index</a></div>
+    </div>
+  </footer>
+</body>
+
+</html>
+
