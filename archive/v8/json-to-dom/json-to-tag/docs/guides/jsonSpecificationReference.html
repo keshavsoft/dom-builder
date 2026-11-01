@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JSON to Tag — Specification Reference</title>
+    <style>
+        body {
+            font: 16px/1.65 system-ui, sans-serif;
+            max-width: 850px;
+            margin: 36px auto;
+            padding: 0 20px;
+            color: #202938
+        }
+
+        h1 {
+            line-height: 1.2
+        }
+
+        h2 {
+            margin-top: 28px
+        }
+
+        p,
+        li {
+            color: #526074
+        }
+
+        pre {
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 10px;
+            overflow: auto
+        }
+
+        code {
+            font-family: ui-monospace, monospace
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0
+        }
+
+        th,
+        td {
+            border: 1px solid #dbe2ec;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top
+        }
+
+        th {
+            background: #f5f8fc
+        }
+
+        .note {
+            border-left: 4px solid #2457c5;
+            padding: 12px 16px;
+            background: #f5f8fc
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Understanding a JSON to Tag Specification</h1>
+    <p>A specification is a plain JavaScript object (and can be represented as JSON when its values are serializable)
+        that describes an element and the information needed to construct it.</p>
+    <h2>Common fields</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Meaning</th>
+                <th>Example</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>tagName</code></td>
+                <td>The element tag to create. Required for an ordinary element specification.</td>
+                <td><code>"button"</code></td>
+            </tr>
+            <tr>
+                <td><code>textContent</code></td>
+                <td>Text to place inside the element.</td>
+                <td><code>"Save"</code></td>
+            </tr>
+            <tr>
+                <td><code>classList</code></td>
+                <td>CSS class names, supplied as a string or supported array form.</td>
+                <td><code>"btn primary"</code></td>
+            </tr>
+            <tr>
+                <td><code>attributes</code></td>
+                <td>HTML attributes to apply to the element.</td>
+                <td><code>{"type":"button"}</code></td>
+            </tr>
+            <tr>
+                <td><code>properties</code></td>
+                <td>DOM properties to assign directly to the element.</td>
+                <td><code>{"value":"Ada"}</code></td>
+            </tr>
+            <tr>
+                <td><code>children</code></td>
+                <td>Nested element specifications or supported text/node values.</td>
+                <td><code>[{"tagName":"span","textContent":"Hi"}]</code></td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>How the fields work together</h2>
+    <pre><code>{
+  "tagName": "div",
+  "classList": "card",
+  "children": [
+    {
+      "tagName": "h2",
+      "textContent": "Profile"
+    },
+    {
+      "tagName": "p",
+      "textContent": "Account details"
+    }
+  ]
+}</code></pre>
+    <p>The outer object describes a <code>div</code>. Its <code>children</code> array describes a heading and paragraph.
+        The library builds those child elements and attaches them to the parent.</p>
+    <h2>JSON, HTML, and DOM are different</h2>
+    <ul>
+        <li><strong>JSON specification:</strong> data describing the intended structure.</li>
+        <li><strong>HTML:</strong> markup syntax commonly used to describe document structure.</li>
+        <li><strong>DOM:</strong> the live object tree exposed by the browser.</li>
+    </ul>
+    <p>JSON to Tag bridges the specification and the live DOM. Its output is a browser DOM node, not an HTML string.</p>
+    <div class="note"><strong>Standards note:</strong> HTML and DOM standards define browser elements, attributes,
+        properties, and node behavior. The JSON field names above belong to this library's specification format; they
+        are not standard HTML attributes themselves.</div>
+    <p>For the complete supported schema, special cases, and version-specific behavior, consult the repository README
+        and the source for the package's active entry point.</p>
+</body>
+
+</html>

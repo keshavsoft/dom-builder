@@ -4,8 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>dom-builder | json-renderers Guide</title>
-  <meta name="description" content="A simple story explaining how json-renderers builds UI from a component request." />
+  <title>dom-builder | Declarative DOM Ecosystem & Documentation</title>
+  <meta name="description"
+    content="The master portal and architectural guide for KeshavSoft's declarative JSON-to-DOM compilation ecosystem." />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -14,425 +15,391 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
 
-  <!-- Bootstrap 5 CSS & Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-
   <style>
     :root {
-      --ks-primary: #2563eb;
-      --ks-primary-dark: #1d4ed8;
-      --ks-emerald: #10b981;
-      --ks-bg-surface: #ffffff;
-      --ks-bg-subtle: #f8fafc;
-      --ks-text-main: #0f172a;
-      --ks-text-muted: #64748b;
-      --ks-border-color: #e2e8f0;
-      --ks-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --ks-font-mono: 'JetBrains Mono', monospace;
-    }
-
-    body {
-      font-family: var(--ks-font-sans);
-      color: var(--ks-text-main);
-      background-color: #ffffff;
-      line-height: 1.6;
-    }
-
-    pre,
-    code {
-      font-family: var(--ks-font-mono);
-    }
-
-    /* Minimal Navbar */
-    .site-nav {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--ks-border-color);
-    }
-
-    /* Hero */
-    .hero-section {
-      background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
-        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-      padding: 4.5rem 0 3.5rem;
-      border-bottom: 1px solid var(--ks-border-color);
-    }
-
-    .hero-title {
-      font-size: clamp(2.4rem, 5vw, 3.75rem);
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 1.15;
-      color: #0f172a;
-    }
-
-    .card-clean {
-      background: #ffffff;
-      border-radius: 1.25rem;
-      border: 1px solid var(--ks-border-color);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-
-    .card-clean:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.07);
-    }
-
-    .card-pillar-renderers:hover {
-      border-color: #10b981;
-    }
-
-    .card-pillar-tag:hover {
-      border-color: #2563eb;
-    }
-
-    .code-dark {
-      background: #0f172a;
-      color: #e2e8f0;
-      border-radius: 0.75rem;
-      padding: 1.25rem;
-      font-size: 0.84rem;
-      overflow-x: auto;
-    }
-
-    .flow-badge {
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-    }
-  </style>
-
-  <style>
-    :root {
-      --ink: #172033;
-      --muted: #5d687b;
-      --line: #e3e8f0;
-      --blue: #315de8;
-      --green: #0d8c68;
-      --pale: #f6f8fc;
-      --code: #101827
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --green: #10b981;
+      --green-light: #ecfdf5;
+      --cyan: #0891b2;
+      --cyan-light: #ecfeff;
+      --purple: #7c3aed;
+      --purple-light: #f5f3ff;
+      --amber: #f59e0b;
+      --pale: #f8fafc;
+      --code: #0f172a;
     }
 
     * {
-      box-sizing: border-box
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     html {
-      scroll-behavior: smooth
+      scroll-behavior: smooth;
     }
 
     body {
-      margin: 0;
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: var(--ink);
-      background: #fff;
-      line-height: 1.7
+      background: #ffffff;
+      line-height: 1.65;
+    }
+
+    pre, code {
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .wrap {
-      width: min(100% - 40px, 1180px);
-      margin: 0 auto
+      width: min(100% - 40px, 1140px);
+      margin: 0 auto;
     }
 
+    /* Hero */
     .hero {
-      padding: 58px 0 42px;
-      background: linear-gradient(135deg, #f5f8ff 0%, #fff 68%);
-      border-bottom: 1px solid var(--line)
+      padding: 58px 0 46px;
+      background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
+                  linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+      border-bottom: 1px solid var(--line);
     }
 
-    .eyebrow,
-    .section-kicker {
-      font-size: .75rem;
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: .14em;
+      letter-spacing: 0.14em;
       font-weight: 800;
-      color: var(--blue)
+      color: var(--blue);
+      background: var(--blue-light);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 14px;
     }
 
     h1 {
-      font-size: clamp(1.6rem, 6vw, 3.1rem);
-      line-height: 1.05;
-      letter-spacing: -.055em;
-      margin: 12px 0 16px;
-      font-weight: 750
+      font-size: clamp(2.2rem, 5.5vw, 3.4rem);
+      line-height: 1.1;
+      letter-spacing: -0.045em;
+      font-weight: 850;
+      color: var(--ink);
+      margin-bottom: 14px;
     }
 
     .intro {
-      font-size: 1.12rem;
-      max-width: 700px;
+      font-size: 1.15rem;
       color: var(--muted);
-      margin: 0 0 28px
+      max-width: 820px;
+      margin-bottom: 30px;
     }
 
+    /* Navigation Grid */
     .repo-nav {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
     }
 
     .nav-link {
       display: flex;
       align-items: center;
-      gap: 13px;
-      padding: 17px 18px;
+      gap: 14px;
+      padding: 18px 20px;
       border: 1px solid var(--line);
       border-radius: 14px;
-      background: #fff;
+      background: #ffffff;
       color: var(--ink);
       text-decoration: none;
-      transition: border-color .18s, transform .18s
+      transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
     }
 
     .nav-link:hover {
       transform: translateY(-2px);
-      border-color: #b6c6fa;
-      color: var(--ink)
+      border-color: var(--blue);
+      box-shadow: 0 8px 16px -4px rgba(37, 99, 235, 0.1);
     }
 
     .nav-number {
       display: grid;
       place-items: center;
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 10px;
-      background: #edf2ff;
+      background: var(--blue-light);
       color: var(--blue);
       font-weight: 800;
-      font-size: .82rem;
-      flex: none
+      font-size: 0.82rem;
+      flex: none;
     }
 
-    .nav-link.tag .nav-number {
-      background: #e7f7f1;
-      color: var(--green)
+    .nav-link.renderers .nav-number {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .nav-link.story .nav-number {
+      background: var(--purple-light);
+      color: var(--purple);
+    }
+
+    .nav-link.playground .nav-number {
+      background: #fef3c7;
+      color: var(--amber);
     }
 
     .nav-link strong {
       display: block;
-      font-size: 1rem
+      font-size: 1.02rem;
+      font-weight: 750;
     }
 
     .nav-link small {
       display: block;
       color: var(--muted);
-      font-size: .79rem;
+      font-size: 0.8rem;
       line-height: 1.4;
-      margin-top: 2px
+      margin-top: 2px;
     }
 
     .arrow {
       margin-left: auto;
       font-size: 1.1rem;
-      color: var(--muted)
+      color: var(--muted);
     }
 
+    /* Content Area */
     .content {
-      padding-top: 10px;
-      padding-bottom: 58px
+      padding: 40px 0 60px;
     }
 
     section {
-      padding: 35px 0;
-      border-bottom: 1px solid var(--line)
+      padding: 40px 0;
+      border-bottom: 1px solid var(--line);
     }
 
     .section-kicker {
-      margin-bottom: 7px
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 8px;
     }
 
     h2 {
-      font-size: clamp(1.55rem, 4vw, 2rem);
-      letter-spacing: -.035em;
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+      letter-spacing: -0.035em;
       font-weight: 800;
-      margin: 0 0 14px
+      margin-bottom: 14px;
     }
 
-    section p {
-      color: #4d586b;
-      margin: 0 0 12px
+    p {
+      color: #334155;
+      margin-bottom: 14px;
     }
 
-    strong {
-      color: var(--ink)
-    }
-
-    .steps {
-      margin-top: 22px;
-      border-top: 1px solid var(--line)
-    }
-
-    .step {
-      display: grid;
-      grid-template-columns: 52px 1fr;
-      gap: 16px;
-      padding: 22px 0;
-      border-bottom: 1px solid var(--line)
-    }
-
-    .step-index {
-      width: 40px;
-      height: 40px;
-      display: grid;
-      place-items: center;
-      border-radius: 12px;
+    /* Tree View Box */
+    .tree-box {
       background: var(--pale);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 28px;
+      margin: 24px 0;
+    }
+
+    .tree-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .tree-card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px;
+      text-decoration: none;
+      color: var(--ink);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .tree-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--blue);
+      box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.1);
+    }
+
+    .tree-card-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--blue-light);
       color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    .tree-card h4 {
+      font-size: 1.15rem;
       font-weight: 800;
-      font-size: .82rem
+      margin-bottom: 6px;
     }
 
-    h3 {
-      font-size: 1.08rem;
-      letter-spacing: -.015em;
-      font-weight: 750;
-      margin: 0 0 5px
+    .tree-card p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 14px;
     }
 
-    .step p,
-    .responsibility p {
-      margin: 0
+    .tree-card-action {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--blue);
     }
 
     pre {
-      margin: 18px 0 14px;
       background: var(--code);
-      color: #e7edf7;
+      color: #f1f5f9;
       padding: 22px 24px;
       border-radius: 14px;
       overflow-x: auto;
-      font-size: .88rem;
-      line-height: 1.75
-    }
-
-    code {
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      font-size: .92em
-    }
-
-    p code,
-    .note code {
-      background: #edf1f7;
-      padding: 2px 5px;
-      border-radius: 5px;
-      color: #25334a
+      font-size: 0.88rem;
+      line-height: 1.75;
+      margin: 18px 0 14px;
     }
 
     .note {
-      padding: 15px 17px;
-      border-left: 3px solid var(--blue);
-      background: #f5f7fc;
+      padding: 16px 18px;
+      border-left: 4px solid var(--blue);
+      background: var(--blue-light);
       border-radius: 0 10px 10px 0;
-      color: var(--muted);
-      font-size: .93rem
-    }
-
-    .responsibility {
-      padding: 16px 0;
-      border-bottom: 1px solid var(--line)
-    }
-
-    .closing {
-      margin-top: 22px !important;
-      font-weight: 650;
-      color: var(--ink) !important
+      color: #1e40af;
+      font-size: 0.93rem;
+      margin: 18px 0;
     }
 
     footer {
       border-top: 1px solid var(--line);
-      background: #fafbfe;
-      padding: 22px 0;
+      background: var(--pale);
+      padding: 26px 0;
       color: var(--muted);
-      font-size: .85rem
+      font-size: 0.85rem;
     }
 
-    footer .wrap {
+    .footer-wrap {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
       gap: 14px;
-      flex-wrap: wrap
-    }
-
-    footer strong {
-      letter-spacing: -.02em
-    }
-
-    @media(max-width:620px) {
-      .wrap {
-        width: min(100% - 28px, 1180px)
-      }
-
-      .hero {
-        padding: 42px 0 30px
-      }
-
-      .repo-nav {
-        grid-template-columns: 1fr
-      }
-
-      .nav-link {
-        padding: 14px
-      }
-
-      .step {
-        grid-template-columns: 42px 1fr;
-        gap: 12px
-      }
-
-      pre {
-        padding: 17px;
-        font-size: .8rem
-      }
     }
   </style>
-
 </head>
 
 <body>
+  <!-- Hero -->
   <header class="hero">
     <div class="wrap">
-      <div class="eyebrow">KeshavSoft · Technical Documentation</div>
+      <div class="eyebrow">KeshavSoft · Architecture & Documentation</div>
       <h1>dom-builder</h1>
-      <p><strong>json-renderers:</strong> UI from JSON: define the structure, connect it to a target element, and render
-        the result as native HTML.
+      <p class="intro">
+        The master documentation hub and presentation site for the KeshavSoft Declarative DOM ecosystem. Explore how declarative JSON specifications transform into live browser UI without virtual DOM overhead.
       </p>
-      <p>when you want to build a configured component from a render request. You provide a
-        component
-        <code>type</code>, <code>data</code>, <code>columns</code> when needed, and a target HTML element ID. The
-        renderer uses these inputs to build the requested component, such as a table or another supported data-driven
-        UI.
-      </p>
-      <div class="note"><strong>Typical request:</strong> component type + data + columns (when needed) + target HTML
-        ID.</div><br>
 
-      <nav class="repo-nav" aria-label="Repository">
-        <a class="nav-link renderers" href="json-renderers/" target="_blank" rel="noopener noreferrer">
-          <span class="nav-number">Open</span>
-          <span><strong>json-renderers</strong><small>Open the source repository & runtime</small></span>
-          <span class="arrow">↗</span>
+      <!-- Portals Menu -->
+      <nav class="repo-nav" aria-label="Ecosystem Portals">
+        <a class="nav-link" href="json-to-dom/index.html">
+          <span class="nav-number">01</span>
+          <span><strong>json-to-dom/</strong><small>Ecosystem Master Orchestrator & Dependency Tree</small></span>
+          <span class="arrow">→</span>
+        </a>
+        <a class="nav-link renderers" href="json-renderers/">
+          <span class="nav-number">02</span>
+          <span><strong>json-renderers/</strong><small>Composite UI: Tables, Forms & Datalists</small></span>
+          <span class="arrow">→</span>
+        </a>
+        <a class="nav-link story" href="story.html">
+          <span class="nav-number">03</span>
+          <span><strong>The Story</strong><small>Why HTML is Hard & The Declarative Solution</small></span>
+          <span class="arrow">→</span>
+        </a>
+        <a class="nav-link playground" href="playground.html">
+          <span class="nav-number">04</span>
+          <span><strong>Playground</strong><small>Live Interactive Declarative Sandbox</small></span>
+          <span class="arrow">→</span>
         </a>
       </nav>
     </div>
   </header>
 
   <main class="wrap content">
+    <!-- NPM Dependency Hierarchy Section -->
     <section>
-      <div class="section-kicker">The main idea</div>
-      <h2>Describe what you want to display</h2>
-      <p>Imagine you have a list of products and want to show them in a table. Instead of manually creating every table
-        row, you send json-renderers a request describing the component, the data, the columns, and the HTML element
-        where the result should appear.</p>
+      <div class="section-kicker">The Architectural Tree</div>
+      <h2>NPM Dependency Hierarchy</h2>
+      <p>
+        Rather than a flat collection of packages, our DOM compilation ecosystem follows a strict, layered dependency hierarchy. Each subfolder represents a focused package in the chain:
+      </p>
+
+      <div class="tree-box">
+        <div style="font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">
+          Explore by Level
+        </div>
+        <div class="tree-grid">
+          <!-- json-to-dom -->
+          <a class="tree-card" href="json-to-dom/">
+            <div>
+              <span class="tree-card-badge">Level 1 Master Orchestrator</span>
+              <h4>json-to-dom/</h4>
+              <p>Top-level facade coordinating <code>json-to-tag</code> and <code>spec-to-dom</code> into a single function call.</p>
+            </div>
+            <div class="tree-card-action">
+              <span>Step Inside json-to-dom</span>
+              <span>→</span>
+            </div>
+          </a>
+
+          <!-- json-renderers -->
+          <a class="tree-card" href="json-renderers/">
+            <div>
+              <span class="tree-card-badge" style="background: var(--green-light); color: var(--green);">Consumer Application Tier</span>
+              <h4>json-renderers/</h4>
+              <p>High-level declarative components: Tables with footers/alignments, dynamic Datalists, Selects, and Forms.</p>
+            </div>
+            <div class="tree-card-action" style="color: var(--green);">
+              <span>Open Component Suites</span>
+              <span>→</span>
+            </div>
+          </a>
+        </div>
+      </div>
     </section>
 
+    <!-- Example Section -->
     <section>
-      <div class="section-kicker">Example</div>
-      <h2>Build a table from data</h2>
-      <p>This request displays two product rows in a table and places the result inside <code>my-table</code>.</p>
+      <div class="section-kicker">Quick Example</div>
+      <h2>Build a Table From Data</h2>
+      <p>
+        Define a component type, columns, and data &mdash; render cleanly into target element <code>#my-table</code>:
+      </p>
       <pre><code>&lt;div id="my-table"&gt;&lt;/div&gt;
 
 &lt;script type="module"&gt;
@@ -448,38 +415,21 @@
     targetHtmlId: "my-table"
   });
 &lt;/script&gt;</code></pre>
-      <div class="note"><strong>Field meanings</strong><br>
-        <code>type</code> selects the component.<br>
-        <code>columns</code> defines the table fields.<br>
-        <code>data</code> supplies the row values.<br>
-        <code>targetHtmlId</code> identifies where to render the result.
+      <div class="note">
+        <strong>Field Meanings:</strong><br />
+        <code>type</code> selects the component structure.<br />
+        <code>columns</code> defines visible headers and keys.<br />
+        <code>data</code> supplies row values.<br />
+        <code>targetHtmlId</code> identifies the DOM container to mount into.
       </div>
-    </section>
-
-    <section class="responsibilities">
-      <div class="section-kicker">Live JSON-to-DOM Playground</div>
-      <h2>playground</h2>
-      <div class="responsibility">
-        <p>
-          Edit declarative JSON configurations in real-time and inspect mounted DOM output immediately. Includes instant
-          presets for tables, datalists, and select menus with error diagnostics.
-        </p>
-      </div>
-      <nav class="repo-nav" aria-label="Repository documentation">
-        <a class="nav-link renderers" href="playground.html" target="_blank" rel="noopener noreferrer">
-          <span class="nav-number">Open</span>
-          <span><strong>interactive playground</strong><small>Real-time and inspect mounted DOM
-              output</small></span>
-          <span class="arrow">↗</span>
-        </a>
-
-      </nav>
-
     </section>
   </main>
 
   <footer>
-    <div class="wrap"><strong>dom-builder</strong><span>json-renderers · Request → UI</span></div>
+    <div class="wrap footer-wrap">
+      <div><strong>dom-builder</strong> · KeshavSoft</div>
+      <div>Declarative JSON-to-DOM Architecture</div>
+    </div>
   </footer>
 </body>
 

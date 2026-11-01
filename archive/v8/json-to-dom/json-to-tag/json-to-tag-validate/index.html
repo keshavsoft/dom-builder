@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>json-to-tag-validate | Recursive Tree Validator & Diagnostics</title>
+  <meta name="description"
+    content="Structural validator for JSON tag specifications against spec-repo with exact node-path error pinpointing." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --emerald: #059669;
+      --emerald-light: #ecfdf5;
+      --amber: #f59e0b;
+      --pale: #f8fafc;
+      --code: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.65;
+    }
+
+    pre, code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 1140px);
+      margin: 0 auto;
+    }
+
+    /* Top Breadcrumbs */
+    .crumb-bar {
+      background: var(--pale);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 0;
+      font-size: 0.82rem;
+    }
+
+    .crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .crumbs a:hover {
+      color: var(--blue);
+    }
+
+    .crumbs .sep {
+      color: #cbd5e1;
+      font-size: 0.75rem;
+    }
+
+    .crumbs .current {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 48px 0 36px;
+      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 70%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+      color: var(--emerald);
+      background: var(--emerald-light);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 2.85rem);
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+      font-weight: 850;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 780px;
+      margin-bottom: 24px;
+    }
+
+    .badge-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--pale);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .pill:hover {
+      border-color: var(--emerald);
+      color: var(--emerald);
+    }
+
+    /* Subfolder Menu Cards */
+    .menu-section {
+      background: #fafcff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 28px;
+      margin: 36px 0;
+    }
+
+    .menu-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    .menu-heading {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .subfolder-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #ffffff;
+      text-decoration: none;
+      color: var(--ink);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .subfolder-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--emerald);
+      box-shadow: 0 10px 20px -5px rgba(5, 150, 105, 0.1);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .folder-icon {
+      font-size: 1.4rem;
+    }
+
+    .card-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--emerald-light);
+      color: var(--emerald);
+    }
+
+    .subfolder-card h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .subfolder-card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .card-action {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--emerald);
+    }
+
+    /* Main Content */
+    .content {
+      padding: 20px 0 60px;
+    }
+
+    section {
+      margin-bottom: 48px;
+    }
+
+    .section-kicker {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 1.65rem;
+      letter-spacing: -0.03em;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #334155;
+      margin-bottom: 14px;
+    }
+
+    pre {
+      background: var(--code);
+      color: #f1f5f9;
+      padding: 20px 22px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: 0.86rem;
+      line-height: 1.7;
+      margin: 16px 0;
+    }
+
+    .note {
+      padding: 16px 18px;
+      border-left: 4px solid var(--emerald);
+      background: var(--emerald-light);
+      border-radius: 0 10px 10px 0;
+      color: #065f46;
+      font-size: 0.92rem;
+      margin: 18px 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: var(--pale);
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .footer-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Breadcrumbs -->
+  <nav class="crumb-bar" aria-label="Breadcrumbs">
+    <div class="wrap crumbs">
+      <a href="../../../../index.html">dom-builder</a>
+      <span class="sep">/</span>
+      <a href="../../../index.html">json-to-dom</a>
+      <span class="sep">/</span>
+      <a href="../../index.html">json-to-tag</a>
+      <span class="sep">/</span>
+      <span class="current">json-to-tag-validate</span>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Level 3 Subordinate · Quality Guard</div>
+      <h1>json-to-tag-validate</h1>
+      <p class="subtitle">
+        Deep recursive structural validator for JSON tag specifications against <code>spec-repo</code>. Catches syntax, attribute, and nesting errors early with exact node-path diagnostics.
+      </p>
+
+      <div class="badge-bar">
+        <span class="pill"><strong>Package:</strong> json-to-tag-validate</span>
+        <span class="pill"><strong>Role:</strong> Tree Validator & Diagnostics</span>
+        <a class="pill" href="https://github.com/keshavsoft/json-to-tag-validate" target="_blank" rel="noopener">GitHub ↗</a>
+        <a class="pill" href="https://www.npmjs.com/package/json-to-tag-validate" target="_blank" rel="noopener">npm ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <!-- Subfolders Menu -->
+    <div class="menu-section">
+      <div class="menu-title">Child Dependencies at this Location</div>
+      <div class="menu-heading">Explore Subordinate Repositories</div>
+      <div class="menu-grid">
+        <a class="subfolder-card" href="spec-repo/index.html">
+          <div>
+            <div class="card-top">
+              <span class="folder-icon">📦</span>
+              <span class="card-badge">Level 4 Dependency</span>
+            </div>
+            <h3>spec-repo/</h3>
+            <p>The canonical Single Source of Truth catalog containing pure serializable JSON representations of HTML tags and dynamic placeholders.</p>
+          </div>
+          <div class="card-action">
+            <span>Open spec-repo Story & Catalog</span>
+            <span>→</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- The Story -->
+    <section>
+      <div class="section-kicker">The Story</div>
+      <h2>Why Validate Before Compiling?</h2>
+      <p>
+        When building deep UI trees (such as <code>table &gt; colgroup &gt; thead &gt; tbody &gt; tr &gt; td</code>), a silent error in a JSON spec &mdash; like a typo in <code>tagName</code>, a malformed attribute dictionary, or an illegal nesting &mdash; can cause browser runtime crashes that are painful to debug.
+      </p>
+      <p>
+        <strong><code>json-to-tag-validate</code> solves this completely:</strong> it traverses the nested spec before any DOM instantiation occurs, verifying nodes against the standards defined in <code>spec-repo</code>.
+      </p>
+
+      <div class="note">
+        <strong>Pinpoint Diagnostics:</strong> When something fails, the validator doesn't just return <code>false</code>. It pinpoints the exact node path (e.g. <code>root.children[1].children[0]</code>) and the reason for the failure.
+      </div>
+    </section>
+
+    <!-- Code Example -->
+    <section>
+      <div class="section-kicker">API Example</div>
+      <h2>Validating Nested Component Trees</h2>
+      <pre><code>import { validate } from "json-to-tag-validate";
+
+const tableSpec = {
+  tagName: "table",
+  attributes: { class: "table table-hover" },
+  children: [
+    {
+      tagName: "tbody",
+      children: [
+        {
+          tagName: "tr",
+          children: [
+            { tagName: "td", textContent: "Valid Cell" }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+const result = validate({ inJson: tableSpec });
+console.log(result);
+// { isValid: true, errors: [] }</code></pre>
+    </section>
+
+    <!-- Parent Link -->
+    <section>
+      <div class="section-kicker">Lineage</div>
+      <h2>Parent Compiler</h2>
+      <p>
+        <a href="../index.html" style="color: var(--blue); font-weight: 600; text-decoration: none;">
+          ← Return to parent: <strong>json-to-tag</strong>
+        </a>
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-wrap">
+      <div><strong>dom-builder</strong> · json-to-tag-validate</div>
+      <div>Level 3 Structural Guard</div>
+    </div>
+  </footer>
+</body>
+
+</html>
+

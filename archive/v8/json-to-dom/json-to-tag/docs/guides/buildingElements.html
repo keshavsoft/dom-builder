@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JSON to Tag — Building Elements</title>
+    <style>
+        body {
+            font: 16px/1.65 system-ui, sans-serif;
+            max-width: 850px;
+            margin: 36px auto;
+            padding: 0 20px;
+            color: #202938
+        }
+
+        h1 {
+            line-height: 1.2
+        }
+
+        h2 {
+            margin-top: 28px
+        }
+
+        p,
+        li {
+            color: #526074
+        }
+
+        pre {
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 10px;
+            overflow: auto
+        }
+
+        code {
+            font-family: ui-monospace, monospace
+        }
+
+        .note {
+            border-left: 4px solid #2457c5;
+            padding: 12px 16px;
+            background: #f5f8fc
+        }
+    </style>
+</head>
+
+<body>
+    <h1>How JSON to Tag Builds HTML Elements</h1>
+    <p>Once the specification identifies an element, the library creates a native DOM element and applies the
+        information described in that specification.</p>
+    <h2>One element, several responsibilities</h2>
+    <ol>
+        <li><strong>Create the tag:</strong> use the requested tag name to create an HTML element. Special handling can
+            be used for aliases or SVG elements.</li>
+        <li><strong>Apply text:</strong> set the element's text content when text is supplied.</li>
+        <li><strong>Apply properties:</strong> assign DOM properties such as an input's value where the implementation
+            supports them.</li>
+        <li><strong>Apply attributes:</strong> set the element's HTML attributes.</li>
+        <li><strong>Apply classes:</strong> add the requested CSS class names.</li>
+        <li><strong>Append children:</strong> resolve child specifications into nodes and attach them in order.</li>
+    </ol>
+    <h2>A small specification</h2>
+    <pre><code>{
+  "tagName": "button",
+  "textContent": "Submit",
+  "classList": "primary",
+  "attributes": {
+    "type": "button"
+  }
+}</code></pre>
+    <p>This describes a button tag, its visible text, a CSS class, and an HTML attribute. The builder returns a native
+        DOM element that can be appended to the document.</p>
+    <h2>Why separate these steps?</h2>
+    <p>Each step has a focused responsibility. The traversal logic decides what node to process; element-building
+        helpers create and configure it; child resolution connects nested specifications to the resulting DOM tree. This
+        separation makes the pipeline easier to understand and maintain than repeatedly writing DOM APIs throughout an
+        application.</p>
+    <div class="note"><strong>Important:</strong> JSON describes the desired structure; it is not itself a DOM node. The
+        library performs the conversion into browser objects.</div>
+    <p>Use the repository's README and active source version as the authority for the exact supported fields and
+        processing order.</p>
+</body>
+
+</html>

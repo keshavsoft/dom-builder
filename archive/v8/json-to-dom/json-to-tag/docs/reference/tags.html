@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Tag Spec &amp; Content Generator | dom-builder</title>
+    <meta name="description"
+        content="Interactive Tag Specification & Content Generator powered by json-to-dom tags.json. Explore allowed attributes, text rules, and generate valid declarative JSON.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- json-to-dom Engine (v6) -->
+    <script type="module" src="https://cdn.jsdelivr.net/gh/keshavsoft/json-to-dom/docs/dist/v6/min.js"></script>
+
+    <style>
+        :root {
+            --ks-primary: #2563eb;
+            --ks-primary-dark: #1d4ed8;
+            --ks-accent: #06b6d4;
+            --ks-success: #10b981;
+            --ks-danger: #ef4444;
+            --ks-warning: #f59e0b;
+            --ks-bg-surface: #ffffff;
+            --ks-bg-subtle: #f8fafc;
+            --ks-text-main: #0f172a;
+            --ks-text-muted: #64748b;
+            --ks-border-color: #e2e8f0;
+            --ks-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --ks-font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            font-family: var(--ks-font-sans);
+            color: var(--ks-text-main);
+            background-color: #f8fafc;
+            line-height: 1.6;
+        }
+
+        pre, code {
+            font-family: var(--ks-font-mono);
+        }
+
+        .hero-banner {
+            background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+                linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            border-bottom: 1px solid var(--ks-border-color);
+            padding: 4.5rem 0 3rem;
+        }
+
+        .card-custom {
+            background: #ffffff;
+            border-radius: 1rem;
+            border: 1px solid var(--ks-border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
+        }
+
+        .code-container {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+
+        .tag-pill {
+            cursor: pointer;
+            padding: 0.4rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.82rem;
+            font-family: var(--ks-font-mono);
+            font-weight: 600;
+            border: 1px solid var(--ks-border-color);
+            background: #ffffff;
+            color: #334155;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+        .tag-pill:hover {
+            border-color: var(--ks-primary);
+            color: var(--ks-primary);
+            background: #eff6ff;
+            transform: translateY(-1px);
+        }
+
+        .tag-pill.active {
+            background: var(--ks-primary);
+            border-color: var(--ks-primary);
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+        }
+
+        .attr-badge {
+            background: #f1f5f9;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            font-family: var(--ks-font-mono);
+            font-size: 0.78rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.375rem;
+            display: inline-block;
+        }
+
+        .demo-window {
+            background: #ffffff;
+            border-radius: 1rem;
+            border: 1px solid var(--ks-border-color);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        .demo-header {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 0.85rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background-color: #ef4444; }
+        .dot-yellow { background-color: #f59e0b; }
+        .dot-green { background-color: #10b981; }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom border-secondary border-opacity-25">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html">
+                <div class="rounded-3 bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+                    style="width: 32px; height: 32px; font-size: 0.9rem;">DB</div>
+                <span class="fw-bold tracking-tight">dom-builder</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                    <li class="nav-item"><a class="nav-link" href="../../index.html">The Story</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../../index.html"><i class="bi bi-easel2 me-1 text-primary"></i> Slide Deck</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../../index.html">Composite Table</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../../index.html">Composite Form</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="tags.html"><i class="bi bi-filetype-json me-1 text-info"></i> Tag Generator</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="https://keshavsoft.github.io/json-to-dom/tags/tags.json" target="_blank" class="btn btn-sm btn-outline-light font-mono text-xs">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> tags.json URL
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Banner -->
+    <header class="hero-banner text-center">
+        <div class="container">
+            <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill bg-info-subtle border border-info-subtle text-info-emphasis small fw-semibold mb-3">
+                <i class="bi bi-cpu"></i> Powered by json-to-dom v6
+            </div>
+            <h1 class="fw-bold mb-3 display-5">HTML Tag Spec &amp; Content Generator</h1>
+            <p class="lead text-muted mx-auto mb-4" style="max-width: 740px;">
+                Every element created by <code>json-to-dom</code> is verified against <strong>tags.json</strong> &mdash; 
+                the declarative dictionary defining allowed text, children, and legal attributes for all 14 composite Table &amp; Form tags.
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <div class="p-2.5 px-3 bg-white border rounded-3 font-monospace small text-secondary d-flex align-items-center gap-2 shadow-sm">
+                    <i class="bi bi-link-45deg text-primary fs-5"></i>
+                    <span id="endpoint-url" class="text-truncate" style="max-width: 320px;">https://keshavsoft.github.io/json-to-dom/tags/tags.json</span>
+                    <button id="copy-endpoint-btn" class="btn btn-sm btn-light border py-0 px-2 text-xs" title="Copy URL">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workbench -->
+    <main class="py-5">
+        <div class="container">
+
+            <!-- Tag Selector Pills -->
+            <div class="card-custom p-4 mb-4">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                    <h5 class="fw-bold mb-0">Select an HTML Tag to Inspect &amp; Generate</h5>
+                    <span class="badge bg-secondary-subtle text-secondary small font-mono" id="tag-count-badge">14 Supported Tags</span>
+                </div>
+
+                <!-- Table Family -->
+                <div class="mb-3">
+                    <span class="text-uppercase text-muted fw-bold text-xs tracking-wide d-block mb-2">
+                        <i class="bi bi-table text-primary me-1"></i> Composite Table Family (7 tags)
+                    </span>
+                    <div class="d-flex flex-wrap gap-2" id="table-tags-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Form Family -->
+                <div>
+                    <span class="text-uppercase text-muted fw-bold text-xs tracking-wide d-block mb-2">
+                        <i class="bi bi-ui-checks text-info me-1"></i> Composite Form Family (7 tags)
+                    </span>
+                    <div class="d-flex flex-wrap gap-2" id="form-tags-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Tag Details & Generator Grid -->
+            <div class="row g-4">
+                <!-- Left: Rules & Spec Definition -->
+                <div class="col-lg-6">
+                    <div class="card-custom p-4 h-100 d-flex flex-column">
+                        <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-primary fs-6 font-mono" id="active-tag-name">&lt;input&gt;</span>
+                                <span class="text-muted small">W3C HTML Specification Rules</span>
+                            </div>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle" id="validation-status">
+                                <i class="bi bi-shield-check me-1"></i> Valid Tag
+                            </span>
+                        </div>
+
+                        <!-- Rule Cards -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded-3 border text-center">
+                                    <div class="text-xs text-muted text-uppercase fw-bold mb-1">allowsTextContent</div>
+                                    <div id="rule-text-content" class="fw-bold font-mono text-danger">
+                                        <i class="bi bi-x-circle me-1"></i> false
+                                    </div>
+                                    <div class="text-xs text-secondary mt-1" id="rule-text-desc">Cannot hold text node</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded-3 border text-center">
+                                    <div class="text-xs text-muted text-uppercase fw-bold mb-1">allowsChildren</div>
+                                    <div id="rule-children" class="fw-bold font-mono text-danger">
+                                        <i class="bi bi-x-circle me-1"></i> false
+                                    </div>
+                                    <div class="text-xs text-secondary mt-1" id="rule-children-desc">Void element (no children)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Allowed Attributes List -->
+                        <div class="mb-4 flex-grow-1">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <label class="fw-bold small text-secondary">
+                                    <i class="bi bi-check2-all text-success me-1"></i> Allowed Attributes (<span id="attr-count">0</span>):
+                                </label>
+                                <span class="text-muted text-xs">Defined in tags.json</span>
+                            </div>
+                            <div class="d-flex flex-wrap gap-1.5 p-3 bg-light rounded-3 border" id="allowed-attributes-box">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Generated JSON Spec -->
+                        <div>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <label class="fw-bold small text-secondary">
+                                    <i class="bi bi-filetype-json text-warning me-1"></i> Generated Declarative JSON Spec:
+                                </label>
+                                <button id="copy-spec-btn" class="btn btn-sm btn-outline-secondary text-xs py-0.5">
+                                    <i class="bi bi-clipboard me-1"></i> Copy JSON
+                                </button>
+                            </div>
+                            <div class="code-container mb-0" style="max-height: 220px;">
+                                <pre class="mb-0"><code id="spec-code-view">// Spec will appear here</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Live DOM Compilation & Validator Test -->
+                <div class="col-lg-6">
+                    <div class="demo-window h-100 d-flex flex-column shadow-sm">
+                        <div class="demo-header">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="window-dots">
+                                    <span class="dot dot-red"></span>
+                                    <span class="dot dot-yellow"></span>
+                                    <span class="dot dot-green"></span>
+                                </div>
+                                <span class="small font-monospace text-secondary">live-compiled-dom.html</span>
+                            </div>
+                            <span class="badge bg-info text-dark small font-mono">json-to-dom v6</span>
+                        </div>
+
+                        <div class="p-4 bg-light flex-grow-1 d-flex flex-column">
+                            <div class="mb-3">
+                                <span class="small fw-bold text-secondary text-uppercase">Rendered DOM Element:</span>
+                                <div id="live-rendered-container" class="p-4 bg-white rounded-3 border shadow-sm mt-2 min-vh-25 d-flex align-items-center justify-content-center">
+                                    <!-- Rendered Element Placed Here -->
+                                </div>
+                            </div>
+
+                            <!-- Live Filter Demonstration Callout -->
+                            <div class="mt-auto p-3 bg-white rounded-3 border">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <i class="bi bi-shield-shaded text-primary"></i>
+                                    <span class="fw-bold small text-secondary">filterAttributes.js in Action:</span>
+                                </div>
+                                <p class="text-xs text-muted mb-2">
+                                    If an invalid attribute (e.g. <code>colspan</code> on an <code>&lt;input&gt;</code>) is passed in JSON, 
+                                    <code>json-to-dom</code> compares it with <code>tags.json</code> and silently purges it before reaching the DOM.
+                                </p>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button id="test-invalid-attr-btn" class="btn btn-xs btn-outline-danger text-xs px-2.5 py-1">
+                                        <i class="bi bi-bug me-1"></i> Test Invalid Attribute Filter
+                                    </button>
+                                    <span id="filter-test-result" class="text-xs font-mono text-muted"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 border-top border-secondary border-opacity-25 mt-5">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2">
+                <div class="rounded-2 bg-primary text-white d-flex align-items-center justify-content-center fw-bold small"
+                    style="width: 24px; height: 24px;">DB</div>
+                <span class="small text-secondary">dom-builder &bull; KeshavSoft UI Architecture</span>
+            </div>
+            <div class="d-flex gap-3 small text-secondary">
+                <a href="../../index.html" class="text-secondary text-decoration-none">The Story</a>
+                <a href="../../index.html" class="text-secondary text-decoration-none">Slide Deck</a>
+                <a href="../../index.html" class="text-secondary text-decoration-none">Composite Table</a>
+                <a href="../../index.html" class="text-secondary text-decoration-none">Composite Form</a>
+                <a href="tags.html" class="text-secondary text-decoration-none active">Tag Generator</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Main Logic Script adhering strictly to { in* } mapped to local* -->
+    <script type="module">
+        import { buildSpecElement } from "https://cdn.jsdelivr.net/gh/keshavsoft/json-to-dom/docs/dist/v6/min.js";
+
+        // Embedded canonical tags dictionary fallback
+        const DEFAULT_TAGS = {
+            "div": { "allowsTextContent": false, "allowsChildren": true, "allowedAttributes": ["class", "id", "style", "title", "role"] },
+            "input": { "allowsTextContent": false, "allowsChildren": false, "allowedAttributes": ["type", "placeholder", "value", "name", "disabled", "readonly", "required", "class", "id", "list"] },
+            "checkbox": { "allowsTextContent": false, "allowsChildren": false, "allowedAttributes": ["type", "checked", "name", "value", "disabled", "required", "class", "id"] },
+            "label": { "allowsTextContent": true, "allowsChildren": true, "allowedAttributes": ["for", "class", "id"] },
+            "button": { "allowsTextContent": true, "allowsChildren": true, "allowedAttributes": ["type", "disabled", "class", "id", "name", "value"] },
+            "table": { "allowsTextContent": false, "allowsChildren": true, "allowedAttributes": ["class", "id", "style", "border", "cellpadding", "cellspacing"] },
+            "thead": { "allowsTextContent": false, "allowsChildren": true, "allowedAttributes": ["class", "id"] },
+            "tbody": { "allowsTextContent": false, "allowsChildren": true, "allowedAttributes": ["class", "id"] },
+            "tfoot": { "allowsTextContent": false, "allowsChildren": true, "allowedAttributes": ["class", "id"] },
+            "tr": { "allowsTextContent": false, "allowsChildren": true, "allowedAttributes": ["class", "id"] },
+            "th": { "allowsTextContent": true, "allowsChildren": true, "allowedAttributes": ["class", "id", "scope", "colspan", "rowspan"] },
+            "td": { "allowsTextContent": true, "allowsChildren": true, "allowedAttributes": ["class", "id", "colspan", "rowspan"] },
+            "datalist": { "allowsTextContent": false, "allowsChildren": true, "allowedAttributes": ["id", "class"] },
+            "option": { "allowsTextContent": true, "allowsChildren": false, "allowedAttributes": ["value", "label", "selected", "disabled"] }
+        };
+
+        const TABLE_TAG_NAMES = ["table", "thead", "tbody", "tfoot", "tr", "th", "td"];
+        const FORM_TAG_NAMES = ["div", "input", "checkbox", "label", "button", "datalist", "option"];
+
+        let currentTags = DEFAULT_TAGS;
+        let selectedTag = "input";
+
+        // Function adhering strictly to { in* } mapped to local*
+        const fetchTagsDefinition = async ({ inUrl }) => {
+            const localUrl = inUrl;
+            try {
+                const response = await fetch(localUrl);
+                if (!response.ok) throw new Error("HTTP error " + response.status);
+                const data = await response.json();
+                return data;
+            } catch (err) {
+                console.warn("[dom-builder] Using embedded fallback for tags.json:", err.message);
+                return DEFAULT_TAGS;
+            }
+        };
+
+        // Render tag pill buttons
+        const renderTagPills = ({ inTags, inActiveTag }) => {
+            const localTags = inTags;
+            const localActiveTag = inActiveTag;
+
+            const tableContainer = document.getElementById("table-tags-container");
+            const formContainer = document.getElementById("form-tags-container");
+            if (!tableContainer || !formContainer) return;
+
+            tableContainer.innerHTML = "";
+            formContainer.innerHTML = "";
+
+            TABLE_TAG_NAMES.forEach(tag => {
+                if (localTags[tag]) {
+                    const btn = document.createElement("button");
+                    btn.className = `tag-pill ${tag === localActiveTag ? "active" : ""}`;
+                    btn.textContent = `<${tag}>`;
+                    btn.onclick = () => selectTag({ inTagName: tag });
+                    tableContainer.appendChild(btn);
+                }
+            });
+
+            FORM_TAG_NAMES.forEach(tag => {
+                if (localTags[tag]) {
+                    const btn = document.createElement("button");
+                    btn.className = `tag-pill ${tag === localActiveTag ? "active" : ""}`;
+                    btn.textContent = `<${tag}>`;
+                    btn.onclick = () => selectTag({ inTagName: tag });
+                    formContainer.appendChild(btn);
+                }
+            });
+        };
+
+        // Select and display details for a tag
+        const selectTag = ({ inTagName }) => {
+            const localTagName = inTagName;
+            selectedTag = localTagName;
+
+            renderTagPills({ inTags: currentTags, inActiveTag: localTagName });
+
+            const tagDef = currentTags[localTagName];
+            if (!tagDef) return;
+
+            // Update Header Name
+            document.getElementById("active-tag-name").textContent = `<${localTagName}>`;
+
+            // Update textContent rule
+            const textRuleElem = document.getElementById("rule-text-content");
+            const textDescElem = document.getElementById("rule-text-desc");
+            if (tagDef.allowsTextContent) {
+                textRuleElem.innerHTML = '<i class="bi bi-check-circle me-1 text-success"></i> true';
+                textRuleElem.className = "fw-bold font-mono text-success";
+                textDescElem.textContent = "Can hold text node (textContent)";
+            } else {
+                textRuleElem.innerHTML = '<i class="bi bi-x-circle me-1 text-danger"></i> false';
+                textRuleElem.className = "fw-bold font-mono text-danger";
+                textDescElem.textContent = "Disallows raw textContent";
+            }
+
+            // Update children rule
+            const childRuleElem = document.getElementById("rule-children");
+            const childDescElem = document.getElementById("rule-children-desc");
+            if (tagDef.allowsChildren) {
+                childRuleElem.innerHTML = '<i class="bi bi-check-circle me-1 text-success"></i> true';
+                childRuleElem.className = "fw-bold font-mono text-success";
+                childDescElem.textContent = "Can contain nested child elements";
+            } else {
+                childRuleElem.innerHTML = '<i class="bi bi-x-circle me-1 text-danger"></i> false';
+                childRuleElem.className = "fw-bold font-mono text-danger";
+                childDescElem.textContent = "Void element (no children allowed)";
+            }
+
+            // Update allowed attributes badges
+            const attrBox = document.getElementById("allowed-attributes-box");
+            attrBox.innerHTML = "";
+            document.getElementById("attr-count").textContent = tagDef.allowedAttributes.length;
+
+            tagDef.allowedAttributes.forEach(attr => {
+                const badge = document.createElement("span");
+                badge.className = "attr-badge";
+                badge.textContent = attr;
+                attrBox.appendChild(badge);
+            });
+
+            // Generate sample spec and compile to DOM
+            generateAndCompileSpec({ inTagName: localTagName, inTagDef: tagDef });
+        };
+
+        // Generate JSON specification and compile DOM
+        const generateAndCompileSpec = ({ inTagName, inTagDef, inExtraInvalidAttr = null }) => {
+            const localTagName = inTagName;
+            const localTagDef = inTagDef;
+            const localExtraInvalidAttr = inExtraInvalidAttr;
+
+            let sampleSpec = { tagName: localTagName };
+
+            if (localTagName === "input") {
+                sampleSpec = {
+                    tagName: "input",
+                    attributes: {
+                        type: "text",
+                        placeholder: "Enter item description...",
+                        class: "form-control"
+                    }
+                };
+            } else if (localTagName === "button") {
+                sampleSpec = {
+                    tagName: "button",
+                    textContent: "Submit Form",
+                    attributes: {
+                        type: "button",
+                        class: "btn btn-primary"
+                    }
+                };
+            } else if (localTagName === "checkbox") {
+                sampleSpec = {
+                    tagName: "checkbox",
+                    attributes: {
+                        checked: true,
+                        class: "form-check-input"
+                    }
+                };
+            } else if (localTagName === "label") {
+                sampleSpec = {
+                    tagName: "label",
+                    textContent: "Customer Phone Number",
+                    attributes: {
+                        for: "cust-phone",
+                        class: "form-label fw-semibold"
+                    }
+                };
+            } else if (localTagName === "table") {
+                sampleSpec = {
+                    tagName: "table",
+                    attributes: { class: "table table-bordered table-sm mb-0" },
+                    children: [
+                        {
+                            tagName: "thead",
+                            attributes: { class: "table-light" },
+                            children: [
+                                {
+                                    tagName: "tr",
+                                    children: [
+                                        { tagName: "th", textContent: "#", attributes: { scope: "col" } },
+                                        { tagName: "th", textContent: "Product Name", attributes: { scope: "col" } },
+                                        { tagName: "th", textContent: "Rate", attributes: { scope: "col" } }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                };
+            } else if (localTagName === "th") {
+                sampleSpec = {
+                    tagName: "th",
+                    textContent: "Header Cell",
+                    attributes: { scope: "col", class: "table-primary p-2" }
+                };
+            } else if (localTagName === "td") {
+                sampleSpec = {
+                    tagName: "td",
+                    textContent: "Data Cell Value",
+                    attributes: { class: "p-2 border" }
+                };
+            } else if (localTagName === "datalist") {
+                sampleSpec = {
+                    tagName: "datalist",
+                    attributes: { id: "sample-list" },
+                    children: [
+                        { tagName: "option", attributes: { value: "Option 1" } },
+                        { tagName: "option", attributes: { value: "Option 2" } }
+                    ]
+                };
+            } else if (localTagName === "option") {
+                sampleSpec = {
+                    tagName: "option",
+                    textContent: "Selected Dropdown Item",
+                    attributes: { value: "val1" }
+                };
+            } else {
+                sampleSpec = {
+                    tagName: localTagName,
+                    attributes: { class: "p-3 bg-light border rounded text-secondary" }
+                };
+                if (localTagDef.allowsTextContent) {
+                    sampleSpec.textContent = `Sample <${localTagName}> content`;
+                }
+            }
+
+            // If an invalid attribute test is requested
+            if (localExtraInvalidAttr) {
+                sampleSpec.attributes = {
+                    ...sampleSpec.attributes,
+                    ...localExtraInvalidAttr
+                };
+            }
+
+            // Display formatted JSON code
+            document.getElementById("spec-code-view").textContent = JSON.stringify(sampleSpec, null, 2);
+
+            // Compile into Live DOM
+            const container = document.getElementById("live-rendered-container");
+            container.innerHTML = "";
+            try {
+                const domNode = buildSpecElement({ inSpec: sampleSpec });
+                if (domNode) {
+                    container.appendChild(domNode);
+                } else {
+                    container.innerHTML = `<span class="text-danger small">Compiler returned null</span>`;
+                }
+            } catch (err) {
+                container.innerHTML = `<span class="text-danger small font-mono">Error: ${err.message}</span>`;
+            }
+        };
+
+        // Initialize
+        const initPage = async () => {
+            const url = "https://keshavsoft.github.io/json-to-dom/tags/tags.json";
+            currentTags = await fetchTagsDefinition({ inUrl: url });
+            selectTag({ inTagName: "input" });
+
+            // Copy endpoint button
+            document.getElementById("copy-endpoint-btn")?.addEventListener("click", () => {
+                navigator.clipboard.writeText(url);
+                alert("Copied endpoint URL:\n" + url);
+            });
+
+            // Copy spec JSON button
+            document.getElementById("copy-spec-btn")?.addEventListener("click", () => {
+                const code = document.getElementById("spec-code-view")?.textContent || "";
+                navigator.clipboard.writeText(code);
+                alert("Copied JSON specification to clipboard!");
+            });
+
+            // Test invalid attribute filter button
+            document.getElementById("test-invalid-attr-btn")?.addEventListener("click", () => {
+                const invalidKey = "unsupportedAttribute";
+                const resultElem = document.getElementById("filter-test-result");
+                resultElem.textContent = `Injecting "${invalidKey}" into <${selectedTag}>...`;
+
+                generateAndCompileSpec({
+                    inTagName: selectedTag,
+                    inTagDef: currentTags[selectedTag],
+                    inExtraInvalidAttr: { [invalidKey]: "illegal_value" }
+                });
+
+                setTimeout(() => {
+                    resultElem.innerHTML = `<span class="text-success"><i class="bi bi-check-circle"></i> Purged by filterAttributes.js!</span>`;
+                }, 300);
+            });
+        };
+
+        initPage();
+    </script>
+</body>
+
+</html>

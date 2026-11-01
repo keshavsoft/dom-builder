@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JSON to Tag — Traversing the Specification</title>
+    <style>
+        body {
+            font: 16px/1.65 system-ui, sans-serif;
+            max-width: 850px;
+            margin: 36px auto;
+            padding: 0 20px;
+            color: #202938
+        }
+
+        h1 {
+            line-height: 1.2
+        }
+
+        h2 {
+            margin-top: 28px
+        }
+
+        p,
+        li {
+            color: #526074
+        }
+
+        pre {
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 10px;
+            overflow: auto
+        }
+
+        code {
+            font-family: ui-monospace, monospace
+        }
+
+        .note {
+            border-left: 4px solid #2457c5;
+            padding: 12px 16px;
+            background: #f5f8fc
+        }
+    </style>
+</head>
+
+<body>
+    <h1>How JSON to Tag Traverses a Specification</h1>
+    <p>A UI specification can contain nested elements: a parent has children, and those children can have children of
+        their own. The builder must visit each part and turn it into the corresponding DOM node.</p>
+    <h2>The traversal idea</h2>
+    <p>The traversal layer examines the kind of value it receives and routes it to the appropriate handling path. A
+        nested element specification leads to another traversal, so the same process can handle structures of different
+        depths.</p>
+    <pre><code>Specification
+  └─ parent element
+       ├─ child element
+       │    └─ nested child
+       └─ another child</code></pre>
+    <h2>Different kinds of input</h2>
+    <ul>
+        <li><strong>Object:</strong> treated as an element specification.</li>
+        <li><strong>Array:</strong> its entries are traversed as a sequence of child instructions.</li>
+        <li><strong>String or number:</strong> converted to a text node.</li>
+        <li><strong>Existing DOM Node:</strong> passed through as a node rather than rebuilt.</li>
+        <li><strong>Null or undefined:</strong> produces no node.</li>
+    </ul>
+    <h2>Why recursion helps</h2>
+    <p>The same traversal rule can be reused at every nesting level. The implementation does not need a separate
+        hand-written routine for a card, a list inside the card, or a label inside that list. The shape of the
+        specification determines how far traversal continues.</p>
+    <h2>Where iteration fits</h2>
+    <p>Arrays represent ordered groups of child instructions. Their entries are handled one by one, while nested objects
+        can lead back into traversal. In this way, iteration handles a sequence and recursion handles nested structure.
+    </p>
+    <div class="note"><strong>Key distinction:</strong> traversal decides how to interpret and visit the specification;
+        element construction and applying values are separate responsibilities.</div>
+    <p>For exact behavior, compare this explanation with the repository's active entry point and its traversal modules.
+        Versioned engines may differ.</p>
+</body>
+
+</html>

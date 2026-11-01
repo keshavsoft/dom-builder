@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@keshavsoft/json-to-dom | Master DOM Orchestrator</title>
+  <meta name="description"
+    content="Zero-dependency DOM orchestrator compiling JSON specifications into live browser DOM trees by coordinating json-to-tag and spec-to-dom." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --green: #10b981;
+      --green-light: #ecfdf5;
+      --cyan: #0891b2;
+      --cyan-light: #ecfeff;
+      --pale: #f8fafc;
+      --code: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.65;
+    }
+
+    pre, code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 1140px);
+      margin: 0 auto;
+    }
+
+    /* Top Breadcrumbs */
+    .crumb-bar {
+      background: var(--pale);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 0;
+      font-size: 0.82rem;
+    }
+
+    .crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .crumbs a:hover {
+      color: var(--blue);
+    }
+
+    .crumbs .sep {
+      color: #cbd5e1;
+      font-size: 0.75rem;
+    }
+
+    .crumbs .current {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 52px 0 40px;
+      background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
+                  linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+      color: var(--blue);
+      background: var(--blue-light);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+      font-weight: 850;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 1.18rem;
+      color: var(--muted);
+      max-width: 820px;
+      margin-bottom: 24px;
+    }
+
+    .badge-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--pale);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .pill:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    /* Subfolder Menu */
+    .menu-section {
+      background: #fafcff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 30px;
+      margin: 36px 0;
+    }
+
+    .menu-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    .menu-heading {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .subfolder-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #ffffff;
+      text-decoration: none;
+      color: var(--ink);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .subfolder-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.1);
+    }
+
+    .subfolder-card.engine-tag:hover {
+      border-color: var(--green);
+      box-shadow: 0 12px 24px -6px rgba(16, 185, 129, 0.15);
+    }
+
+    .subfolder-card.engine-mount:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 12px 24px -6px rgba(8, 145, 178, 0.15);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .folder-icon {
+      font-size: 1.5rem;
+    }
+
+    .card-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--pale);
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .subfolder-card h3 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .subfolder-card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .card-action {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    /* Content */
+    .content {
+      padding: 20px 0 60px;
+    }
+
+    section {
+      margin-bottom: 48px;
+    }
+
+    .section-kicker {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 1.65rem;
+      letter-spacing: -0.03em;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #334155;
+      margin-bottom: 14px;
+    }
+
+    pre {
+      background: var(--code);
+      color: #f1f5f9;
+      padding: 20px 22px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: 0.86rem;
+      line-height: 1.7;
+      margin: 16px 0;
+    }
+
+    .diagram-box {
+      background: var(--pale);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--ink);
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+
+    .note {
+      padding: 16px 18px;
+      border-left: 4px solid var(--blue);
+      background: var(--blue-light);
+      border-radius: 0 10px 10px 0;
+      color: #1e40af;
+      font-size: 0.92rem;
+      margin: 18px 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: var(--pale);
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .footer-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Breadcrumbs -->
+  <nav class="crumb-bar" aria-label="Breadcrumbs">
+    <div class="wrap crumbs">
+      <a href="../index.html">dom-builder</a>
+      <span class="sep">/</span>
+      <span class="current">json-to-dom</span>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Level 1 Master Orchestrator</div>
+      <h1>@keshavsoft/json-to-dom</h1>
+      <p class="subtitle">
+        Zero-dependency DOM orchestrator. Transforms declarative JSON specifications into live browser DOM trees by coordinating two specialized sibling engines: <strong>@keshavsoft/json-to-tag</strong> and <strong>spec-to-dom</strong>.
+      </p>
+
+      <div class="badge-bar">
+        <span class="pill"><strong>Package:</strong> @keshavsoft/json-to-dom</span>
+        <span class="pill"><strong>Role:</strong> Ecosystem Facade & Orchestrator</span>
+        <a class="pill" href="https://github.com/keshavsoft/json-to-dom" target="_blank" rel="noopener">GitHub ↗</a>
+        <a class="pill" href="https://www.npmjs.com/package/@keshavsoft/json-to-dom" target="_blank" rel="noopener">npm ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <!-- Subfolders Menu -->
+    <div class="menu-section">
+      <div class="menu-title">Child Dependencies at this Location</div>
+      <div class="menu-heading">The Two Subordinate Engines (In Execution Order)</div>
+      <div class="menu-grid">
+        <!-- 1st: json-to-tag (Synthesis) -->
+        <a class="subfolder-card engine-tag" href="json-to-tag/index.html">
+          <div>
+            <div class="card-top">
+              <span class="folder-icon">⚙️</span>
+              <span class="card-badge" style="background: var(--green-light); color: var(--green);">Step 1 · Synthesis</span>
+            </div>
+            <h3>json-to-tag/</h3>
+            <p><strong>The Synthesis Engine:</strong> Transforms declarative JSON specifications into live native W3C DOM elements via a 6-stage assembly pipeline (contains <code>json-traversal</code> & <code>json-to-tag-validate</code>).</p>
+          </div>
+          <div class="card-action" style="color: var(--green);">
+            <span>Open json-to-tag Story</span>
+            <span>→</span>
+          </div>
+        </a>
+
+        <!-- 2nd: spec-to-dom (Mount) -->
+        <a class="subfolder-card engine-mount" href="spec-to-dom/index.html">
+          <div>
+            <div class="card-top">
+              <span class="folder-icon">🎯</span>
+              <span class="card-badge" style="background: var(--cyan-light); color: var(--cyan);">Step 2 · Mounting</span>
+            </div>
+            <h3>spec-to-dom/</h3>
+            <p><strong>The Safe Mount Engine:</strong> Resolves target HTML container IDs and attaches synthesized DOM elements safely without destructive <code>innerHTML</code> injection.</p>
+          </div>
+          <div class="card-action" style="color: var(--cyan);">
+            <span>Open spec-to-dom Story</span>
+            <span>→</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Architecture Diagram -->
+    <section>
+      <div class="section-kicker">Architecture</div>
+      <h2>How the Two Engines Coordinate</h2>
+      <p>
+        Instead of coupling element creation and container mounting into a monolithic library, <code>json-to-dom</code> orchestrates them cleanly in two clear steps:
+      </p>
+
+      <div class="diagram-box">
+          JSON Specification (Data Contract)
+                         │
+                         ▼
+   ┌─────────────────────────────────────────────────────────┐
+   │            @keshavsoft/json-to-dom                      │
+   │                                                         │
+   │  1. jsonToTag(jsonSpec)                                 │
+   │     └──► @keshavsoft/json-to-tag                        │
+   │          (Step 1: W3C Node Synthesis & Validation)      │
+   │                                                         │
+   │  2. specToDom({ buildSpec, targetHtmlId, ... })         │
+   │     └──► spec-to-dom                                    │
+   │          (Step 2: Container Resolution & Safe Mount)    │
+   └─────────────────────────────────────────────────────────┘
+                         │
+                         ▼
+              Native Browser DOM Tree
+      </div>
+
+      <div class="note">
+        <strong>The Natural Execution Order:</strong> First <code>json-to-tag</code> synthesizes the native DOM elements in memory. Next <code>spec-to-dom</code> resolves the destination HTML container and mounts the elements cleanly.
+      </div>
+    </section>
+
+    <!-- Master API -->
+    <section>
+      <div class="section-kicker">Master API</div>
+      <h2>One-Line Invocation</h2>
+      <pre><code>import jsonToDom from "@keshavsoft/json-to-dom";
+
+jsonToDom({
+  jsonSpec: {
+    tagName: "div",
+    classList: "card shadow-sm p-4",
+    children: [
+      { tagName: "h3", textContent: "User Account" },
+      { tagName: "p", textContent: "Rendered dynamically without Virtual DOM." }
+    ]
+  },
+  targetHtmlId: "app"
+});</code></pre>
+    </section>
+
+    <!-- Return Link -->
+    <section>
+      <div class="section-kicker">Lineage</div>
+      <h2>Top-Level Portal</h2>
+      <p>
+        <a href="../index.html" style="color: var(--blue); font-weight: 600; text-decoration: none;">
+          ← Return to master portal: <strong>dom-builder</strong>
+        </a>
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-wrap">
+      <div><strong>dom-builder</strong> · json-to-dom</div>
+      <div>Level 1 Ecosystem Orchestrator</div>
+    </div>
+  </footer>
+</body>
+
+</html>

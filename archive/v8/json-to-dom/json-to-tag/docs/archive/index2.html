@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JSON to Tag | KeshavSoft</title>
+    <style>
+        body {
+            font: 16px/1.6 system-ui, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            color: #202938
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 8px
+        }
+
+        h2 {
+            margin-top: 28px
+        }
+
+        p,
+        li {
+            color: #526074
+        }
+
+        code,
+        pre {
+            background: #f1f5f9;
+            border-radius: 5px
+        }
+
+        code {
+            padding: 2px 5px
+        }
+
+        pre {
+            padding: 16px;
+            overflow: auto
+        }
+
+        a {
+            color: #2457c5
+        }
+
+        .intro {
+            font-size: 1.15rem
+        }
+
+        .links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>JSON to Tag</h1>
+        <p class="intro">Turn declarative JSON specifications into native HTML DOM elements.</p>
+        <p>A zero-dependency JavaScript library from KeshavSoft for building DOM elements from JSON and reviewing
+            specifications against an HTML tag catalog.</p>
+    </header>
+
+    <nav class="links">
+        <a href="https://www.npmjs.com/package/@keshavsoft/json-to-tag">npm Package</a>
+        <a href="../../index.html">Step-by-Step Guide</a>
+        <a href="../../index.html">HTML Tags Catalog</a>
+        <a href="../../index.html">Specification Summary</a>
+    </nav>
+
+    <h2>Quick Start</h2>
+    <p>Install the package:</p>
+    <pre><code>npm install @keshavsoft/json-to-tag</code></pre>
+
+    <p>Describe an HTML element using a JavaScript object:</p>
+    <pre><code>import { buildSpecElement } from "@keshavsoft/json-to-tag";
+
+const spec = {
+  tagName: "button",
+  textContent: "Submit",
+  classList: "primary-button",
+  attributes: { type: "button" }
+};
+
+const element = buildSpecElement({ inSpec: spec });
+document.body.appendChild(element);</code></pre>
+
+    <h2>How It Works</h2>
+    <ol>
+        <li>Define the desired HTML structure as a JSON-compatible specification.</li>
+        <li>Pass the specification to <code>buildSpecElement({ inSpec })</code>.</li>
+        <li>Receive a native DOM element and attach it to the document.</li>
+    </ol>
+
+    <h2>Review a Specification</h2>
+    <p>Use <code>reviewSpec({ inSpec })</code> to inspect tag usage and identify tags that are not recognized by the
+        catalog.</p>
+
+    <h2>Explore</h2>
+    <ul>
+        <li><a href="https://keshavsoft.github.io/json-to-tag/">Live Playground</a> — experiment with JSON-to-DOM.</li>
+        <li><a href="../../index.html">README</a> — installation, API details, schema and examples.</li>
+        <li><code>src/</code> — implementation and versioned engines.</li>
+        <li><code>docs/tags/tags.json</code> — tag catalog used by the project.</li>
+    </ul>
+
+    <footer>
+        <p>JSON to Tag — describe HTML as data, then build native DOM elements.</p>
+    </footer>
+</body>
+
+</html>

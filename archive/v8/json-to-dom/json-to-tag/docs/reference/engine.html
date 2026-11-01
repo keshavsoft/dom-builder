@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>json-to-dom | Low-Level Declarative Compiler</title>
+    <meta name="description"
+        content="Interactive guide and live compiler for json-to-dom: The zero-dependency native DOM engine.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- json-to-dom Engine CDN -->
+    <script type="module" src="https://cdn.jsdelivr.net/gh/keshavsoft/json-to-dom/docs/dist/v3/min.js"></script>
+
+    <style>
+        :root {
+            --ks-primary: #0284c7;
+            --ks-accent: #06b6d4;
+            --ks-bg-surface: #ffffff;
+            --ks-bg-subtle: #f8fafc;
+            --ks-text-main: #0f172a;
+            --ks-text-muted: #64748b;
+            --ks-border-color: #e2e8f0;
+            --ks-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --ks-font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            font-family: var(--ks-font-sans);
+            color: var(--ks-text-main);
+            background-color: #f8fafc;
+            line-height: 1.6;
+        }
+
+        pre, code {
+            font-family: var(--ks-font-mono);
+        }
+
+        .hero-banner {
+            background: radial-gradient(circle at 10% 20%, rgba(2, 132, 199, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+                linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            border-bottom: 1px solid var(--ks-border-color);
+            padding: 4.5rem 0 3rem;
+        }
+
+        .card-custom {
+            background: #ffffff;
+            border-radius: 1rem;
+            border: 1px solid var(--ks-border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+        }
+
+        .code-container {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+
+        .editor-box {
+            width: 100%;
+            height: 280px;
+            background: #090d16;
+            color: #38bdf8;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            font-family: var(--ks-font-mono);
+            font-size: 0.85rem;
+            resize: vertical;
+        }
+
+        .demo-window {
+            background: #ffffff;
+            border-radius: 1rem;
+            border: 1px solid var(--ks-border-color);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        .demo-header {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 0.85rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background-color: #ef4444; }
+        .dot-yellow { background-color: #f59e0b; }
+        .dot-green { background-color: #10b981; }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom border-secondary border-opacity-25">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html">
+                <div class="rounded-3 bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+                    style="width: 32px; height: 32px; font-size: 0.9rem;">DB</div>
+                <span class="fw-bold tracking-tight">dom-builder</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                    <li class="nav-item"><a class="nav-link" href="../../index.html">Overview</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../../index.html"><i class="bi bi-play-circle me-1 text-info"></i> The Story (Slides)</a></li>
+                    <li class="nav-item"><a class="nav-link" href="renderers.html">Renderers (Table &amp; Form)</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="engine.html">Engine (json-to-dom)</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../../index.html">QR &amp; Real-World App</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-info-subtle text-info border border-info-subtle px-2.5 py-1">Bound to: json-to-dom</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Banner -->
+    <header class="hero-banner text-center">
+        <div class="container">
+            <span class="badge bg-info text-dark px-3 py-1 mb-3 fw-bold">Tier 2 &bull; Low-Level Compiler Engine</span>
+            <h1 class="fw-bold mb-3 display-5">json-to-dom</h1>
+            <p class="lead text-muted mx-auto mb-4" style="max-width: 740px;">
+                The Declarative JSON-to-DOM Compiler. It has <strong>zero domain knowledge</strong> of tables or business vouchers. 
+                Its sole responsibility is translating a pure JSON element specification into native browser DOM nodes with blistering speed.
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="#playground" class="btn btn-info text-dark fw-semibold px-4 d-flex align-items-center gap-2">
+                    <i class="bi bi-terminal"></i> Try Live Spec Compiler
+                </a>
+                <a href="https://github.com/keshavsoft/json-to-dom" target="_blank" class="btn btn-outline-dark px-4 d-flex align-items-center gap-2">
+                    <i class="bi bi-github"></i> Repository
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Architecture Boundary Callout -->
+    <section class="py-5 bg-white border-bottom border-light-subtle">
+        <div class="container">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-6">
+                    <h3 class="fw-bold mb-3">The Architectural Boundary</h3>
+                    <p class="text-muted">
+                        In KeshavSoft's architecture, <code>json-to-dom</code> represents the physical boundary crossing:
+                    </p>
+                    <div class="p-3 bg-dark text-light rounded-3 font-monospace small mb-3">
+                        <span class="text-secondary">// The One-Line Boundary Crossing:</span><br>
+                        <span class="text-info">const</span> domElement = window.ks[<span class="text-warning">"json-to-dom"</span>].buildSpecElement({ <span class="text-success">inSpec</span> });
+                    </div>
+                    <ul class="small text-secondary ps-3 lh-lg mb-0">
+                        <li><strong>Input:</strong> Declarative JSON Specification (<code>inSpec</code>).</li>
+                        <li><strong>Recursion:</strong> Walks child nodes recursively, generating <code>document.createElement</code>.</li>
+                        <li><strong>Attributes:</strong> Sets attributes, adds class lists, maps inline styles, and attaches native event listeners.</li>
+                        <li><strong>Output:</strong> A real, living <code>HTMLElement</code> or <code>DocumentFragment</code>.</li>
+                    </ul>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card-custom p-4 bg-light">
+                        <h6 class="fw-bold mb-3 text-secondary text-uppercase small">Spec Schema Keys:</h6>
+                        <table class="table table-sm table-bordered bg-white small mb-0">
+                            <thead class="table-light">
+                                <tr><th>Key</th><th>Type</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>tagName</code></td><td>String</td><td>HTML tag (e.g. <code>"div"</code>, <code>"table"</code>)</td></tr>
+                                <tr><td><code>classList</code></td><td>Array</td><td>CSS classes (e.g. <code>["alert", "alert-info"]</code>)</td></tr>
+                                <tr><td><code>textContent</code></td><td>String</td><td>Inner text node content</td></tr>
+                                <tr><td><code>attributes</code></td><td>Object</td><td>DOM attributes (e.g. <code>{ id: "my-btn" }</code>)</td></tr>
+                                <tr><td><code>children</code></td><td>Array</td><td>Nested array of child spec objects</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Live Playground -->
+    <section id="playground" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="text-info fw-semibold text-uppercase small tracking-wide">Interactive Compiler</span>
+                <h2 class="fw-bold">Live JSON Spec Playground</h2>
+                <p class="text-muted mx-auto" style="max-width: 600px;">
+                    Edit the JSON specification below and click <strong>Compile Spec</strong> to watch <code>json-to-dom</code> build real browser elements instantly.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <!-- JSON Input Column -->
+                <div class="col-lg-6">
+                    <div class="demo-window h-100 d-flex flex-column shadow-sm">
+                        <div class="demo-header">
+                            <span class="small font-monospace text-secondary">spec.json (Input)</span>
+                            <button id="compile-btn" class="btn btn-sm btn-info text-dark fw-bold px-3">
+                                <i class="bi bi-play-fill"></i> Compile Spec
+                            </button>
+                        </div>
+                        <div class="p-3 bg-dark flex-grow-1">
+                            <textarea id="spec-editor" class="editor-box h-100" spellcheck="false"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DOM Output Column -->
+                <div class="col-lg-6">
+                    <div class="demo-window h-100 d-flex flex-column shadow-sm">
+                        <div class="demo-header">
+                            <span class="small font-monospace text-secondary">Native DOM (Compiled Output)</span>
+                            <span class="badge bg-success small">Live DOM</span>
+                        </div>
+                        <div class="p-4 bg-light flex-grow-1">
+                            <div id="compiler-output" class="p-3 bg-white rounded-3 border shadow-sm h-100">
+                                <!-- Compiled DOM will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 border-top border-secondary border-opacity-25">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2">
+                <div class="rounded-2 bg-primary text-white d-flex align-items-center justify-content-center fw-bold small"
+                    style="width: 24px; height: 24px;">DB</div>
+                <span class="small text-secondary">dom-builder &bull; json-to-dom</span>
+            </div>
+            <div class="d-flex gap-3 small text-secondary">
+                <a href="../../index.html" class="text-secondary text-decoration-none">Overview</a>
+                <a href="../../index.html" class="text-secondary text-decoration-none">Story Slides</a>
+                <a href="renderers.html" class="text-secondary text-decoration-none">Renderers</a>
+                <a href="../../index.html" class="text-secondary text-decoration-none">QR Scan</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Compiler Playground Script -->
+    <script type="module">
+        const initialSpec = {
+            tagName: "div",
+            classList: ["card", "p-4", "border-primary", "shadow-sm"],
+            children: [
+                {
+                    tagName: "h5",
+                    classList: ["card-title", "text-primary", "fw-bold"],
+                    textContent: "Hello from json-to-dom Engine!"
+                },
+                {
+                    tagName: "p",
+                    classList: ["card-text", "text-muted", "small"],
+                    textContent: "This card was compiled directly from declarative JSON into native DOM elements without Virtual DOM overhead."
+                },
+                {
+                    tagName: "button",
+                    classList: ["btn", "btn-sm", "btn-primary"],
+                    textContent: "Click Native Button",
+                    attributes: { id: "test-btn", type: "button" }
+                }
+            ]
+        };
+
+        const editor = document.getElementById("spec-editor");
+        const outputContainer = document.getElementById("compiler-output");
+        const compileBtn = document.getElementById("compile-btn");
+
+        editor.value = JSON.stringify(initialSpec, null, 2);
+
+        function compileCurrentSpec() {
+            try {
+                const parsedSpec = JSON.parse(editor.value);
+                const builder = window.ks?.["json-to-dom"]?.buildSpecElement;
+                if (typeof builder !== "function") {
+                    outputContainer.innerHTML = '<div class="alert alert-warning">Loading json-to-dom engine...</div>';
+                    return;
+                }
+
+                const domNode = builder({ inSpec: parsedSpec });
+                outputContainer.innerHTML = "";
+                if (Array.isArray(domNode)) {
+                    domNode.forEach(node => outputContainer.appendChild(node));
+                } else if (domNode) {
+                    outputContainer.appendChild(domNode);
+                }
+
+                // Add interactive listener to demonstrate event binding
+                const btn = outputContainer.querySelector("#test-btn");
+                if (btn) {
+                    btn.addEventListener("click", () => {
+                        alert("Native DOM Event Triggered from compiled element!");
+                    });
+                }
+            } catch (err) {
+                outputContainer.innerHTML = `<div class="alert alert-danger"><strong>JSON Syntax Error:</strong><br>${err.message}</div>`;
+            }
+        }
+
+        compileBtn.addEventListener("click", compileCurrentSpec);
+
+        // Auto compile once engine is ready
+        setTimeout(compileCurrentSpec, 300);
+    </script>
+</body>
+
+</html>

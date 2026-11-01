@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dom-builder — Understanding</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #172033;
+            --muted: #58657a;
+            --line: #dbe2ec;
+            --panel: #f5f8fc;
+            --blue: #2457c5;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font: 16px/1.6 system-ui, sans-serif;
+            color: var(--ink);
+            background: #fff;
+        }
+
+        main {
+            max-width: 980px;
+            margin: auto;
+            padding: 40px 22px 64px;
+        }
+
+        .eyebrow {
+            color: var(--blue);
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            font-size: .78rem;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            line-height: 1.12;
+            margin: .5rem 0 1rem;
+        }
+
+        h2 {
+            margin: 2rem 0 .5rem;
+            font-size: 1.35rem;
+        }
+
+        p {
+            color: var(--muted);
+        }
+
+        .lead {
+            font-size: 1.15rem;
+            max-width: 760px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .card {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 18px;
+            background: #fff;
+        }
+
+        .card h3 {
+            margin: 0 0 6px;
+            font-size: 1.05rem;
+        }
+
+        .card p {
+            margin: 0;
+            font-size: .95rem;
+        }
+
+        code {
+            background: #eef3fa;
+            border-radius: 5px;
+            padding: .12rem .35rem;
+            color: #243c69;
+        }
+
+        pre {
+            overflow: auto;
+            padding: 18px;
+            border-radius: 12px;
+            background: #111b2d;
+            color: #e7efff;
+        }
+
+        .note {
+            background: var(--panel);
+            border-left: 4px solid var(--blue);
+            padding: 14px 17px;
+            border-radius: 8px;
+        }
+
+        footer {
+            margin-top: 38px;
+            padding-top: 18px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: .9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="eyebrow">A working interpretation</div>
+
+        <h1>dom-builder</h1>
+
+        <p class="lead">
+            A browser-based demonstration and playground for understanding
+            how the existing KeshavSoft repositories can be used together
+            to turn declarative JSON into native HTML DOM.
+        </p>
+
+        <h2>What this project demonstrates</h2>
+
+        <div class="grid">
+            <section class="card">
+                <h3>1. Declare the UI in JSON</h3>
+                <p>
+                    Describe a component and its data as a JSON configuration
+                    instead of manually creating every HTML element.
+                </p>
+            </section>
+
+            <section class="card">
+                <h3>2. Reuse the renderer</h3>
+                <p>
+                    Use the existing json-renderers browser build rather than
+                    reimplementing its table, datalist, or select behavior here.
+                </p>
+            </section>
+
+            <section class="card">
+                <h3>3. See the result</h3>
+                <p>
+                    Mount the rendered output in the page, change a preset or
+                    JSON configuration, and inspect the browser result.
+                </p>
+            </section>
+        </div>
+
+        <h2>How the existing playground is intended to work</h2>
+
+        <pre><code>JSON configuration
+       ↓
+existing json-renderers build
+       ↓
+native HTML elements mounted in the target container
+       ↓
+visible browser output</code></pre>
+
+        <h2>Example of the intended usage</h2>
+
+        <pre><code>render({
+  type: "table.withFooter",
+  columns: ["product", "qty", "price"],
+  data: records,
+  targetHtmlId: "playground-target"
+});</code></pre>
+
+        <p>
+            This example illustrates the intended usage contract. It does
+            not claim that this exact function signature exists or that
+            every component has been runtime-tested.
+        </p>
+
+        <h2>What this page does not do</h2>
+
+        <div class="note">
+            This is an explanation page only. It does not replace the
+            existing index.html or playground.html, modify existing
+            repository files, or implement another renderer.
+        </div>
+
+        <h2>What should be verified in the browser</h2>
+
+        <p>
+            Confirm that the configured renderer bundle loads, each preset
+            renders, and interactive behavior—especially datalist
+            autocomplete—actually works. Reading the HTML source alone
+            cannot establish that runtime behavior is correct.
+        </p>
+
+        <footer>
+            Prepared as a single review file to communicate the intended
+            understanding of dom-builder. Existing project files are not modified.
+        </footer>
+    </main>
+</body>
+
+</html>

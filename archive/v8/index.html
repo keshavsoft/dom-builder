@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dom-builder | Declarative DOM Ecosystem & Documentation</title>
+  <meta name="description"
+    content="The master portal and architectural guide for KeshavSoft's declarative JSON-to-DOM compilation ecosystem." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --green: #10b981;
+      --green-light: #ecfdf5;
+      --cyan: #0891b2;
+      --cyan-light: #ecfeff;
+      --purple: #7c3aed;
+      --purple-light: #f5f3ff;
+      --amber: #f59e0b;
+      --pale: #f8fafc;
+      --code: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.65;
+    }
+
+    pre, code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 1140px);
+      margin: 0 auto;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 58px 0 46px;
+      background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
+                  linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 800;
+      color: var(--blue);
+      background: var(--blue-light);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 5.5vw, 3.4rem);
+      line-height: 1.1;
+      letter-spacing: -0.045em;
+      font-weight: 850;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+
+    .intro {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 820px;
+      margin-bottom: 30px;
+    }
+
+    /* Navigation Grid */
+    .repo-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #ffffff;
+      color: var(--ink);
+      text-decoration: none;
+      transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+    }
+
+    .nav-link:hover {
+      transform: translateY(-2px);
+      border-color: var(--blue);
+      box-shadow: 0 8px 16px -4px rgba(37, 99, 235, 0.1);
+    }
+
+    .nav-number {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-weight: 800;
+      font-size: 0.82rem;
+      flex: none;
+    }
+
+    .nav-link.renderers .nav-number {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .nav-link.story .nav-number {
+      background: var(--purple-light);
+      color: var(--purple);
+    }
+
+    .nav-link.playground .nav-number {
+      background: #fef3c7;
+      color: var(--amber);
+    }
+
+    .nav-link strong {
+      display: block;
+      font-size: 1.02rem;
+      font-weight: 750;
+    }
+
+    .nav-link small {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .arrow {
+      margin-left: auto;
+      font-size: 1.1rem;
+      color: var(--muted);
+    }
+
+    /* Content Area */
+    .content {
+      padding: 40px 0 60px;
+    }
+
+    section {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+      letter-spacing: -0.035em;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    p {
+      color: #334155;
+      margin-bottom: 14px;
+    }
+
+    /* Tree View Box */
+    .tree-box {
+      background: var(--pale);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 28px;
+      margin: 24px 0;
+    }
+
+    .tree-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .tree-card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px;
+      text-decoration: none;
+      color: var(--ink);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .tree-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--blue);
+      box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.1);
+    }
+
+    .tree-card-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--blue-light);
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    .tree-card h4 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .tree-card p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .tree-card-action {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    pre {
+      background: var(--code);
+      color: #f1f5f9;
+      padding: 22px 24px;
+      border-radius: 14px;
+      overflow-x: auto;
+      font-size: 0.88rem;
+      line-height: 1.75;
+      margin: 18px 0 14px;
+    }
+
+    .note {
+      padding: 16px 18px;
+      border-left: 4px solid var(--blue);
+      background: var(--blue-light);
+      border-radius: 0 10px 10px 0;
+      color: #1e40af;
+      font-size: 0.93rem;
+      margin: 18px 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: var(--pale);
+      padding: 26px 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .footer-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Hero -->
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">KeshavSoft · Architecture & Documentation</div>
+      <h1>dom-builder</h1>
+      <p class="intro">
+        The master documentation hub and presentation site for the KeshavSoft Declarative DOM ecosystem. Explore how declarative JSON specifications transform into live browser UI without virtual DOM overhead.
+      </p>
+
+      <!-- Portals Menu -->
+      <nav class="repo-nav" aria-label="Ecosystem Portals">
+        <a class="nav-link" href="json-to-dom/index.html">
+          <span class="nav-number">01</span>
+          <span><strong>json-to-dom/</strong><small>Ecosystem Master Orchestrator & Dependency Tree</small></span>
+          <span class="arrow">→</span>
+        </a>
+        <a class="nav-link renderers" href="json-renderers/">
+          <span class="nav-number">02</span>
+          <span><strong>json-renderers/</strong><small>Composite UI: Tables, Forms & Datalists</small></span>
+          <span class="arrow">→</span>
+        </a>
+        <a class="nav-link story" href="story.html">
+          <span class="nav-number">03</span>
+          <span><strong>The Story</strong><small>Why HTML is Hard & The Declarative Solution</small></span>
+          <span class="arrow">→</span>
+        </a>
+        <a class="nav-link playground" href="playground.html">
+          <span class="nav-number">04</span>
+          <span><strong>Playground</strong><small>Live Interactive Declarative Sandbox</small></span>
+          <span class="arrow">→</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <!-- NPM Dependency Hierarchy Section -->
+    <section>
+      <div class="section-kicker">The Architectural Tree</div>
+      <h2>NPM Dependency Hierarchy</h2>
+      <p>
+        Rather than a flat collection of packages, our DOM compilation ecosystem follows a strict, layered dependency hierarchy. Each subfolder represents a focused package in the chain:
+      </p>
+
+      <div class="tree-box">
+        <div style="font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">
+          Explore by Level
+        </div>
+        <div class="tree-grid">
+          <!-- json-to-dom -->
+          <a class="tree-card" href="json-to-dom/">
+            <div>
+              <span class="tree-card-badge">Level 1 Master Orchestrator</span>
+              <h4>json-to-dom/</h4>
+              <p>Top-level facade coordinating <code>json-to-tag</code> and <code>spec-to-dom</code> into a single function call.</p>
+            </div>
+            <div class="tree-card-action">
+              <span>Step Inside json-to-dom</span>
+              <span>→</span>
+            </div>
+          </a>
+
+          <!-- json-renderers -->
+          <a class="tree-card" href="json-renderers/">
+            <div>
+              <span class="tree-card-badge" style="background: var(--green-light); color: var(--green);">Consumer Application Tier</span>
+              <h4>json-renderers/</h4>
+              <p>High-level declarative components: Tables with footers/alignments, dynamic Datalists, Selects, and Forms.</p>
+            </div>
+            <div class="tree-card-action" style="color: var(--green);">
+              <span>Open Component Suites</span>
+              <span>→</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Example Section -->
+    <section>
+      <div class="section-kicker">Quick Example</div>
+      <h2>Build a Table From Data</h2>
+      <p>
+        Define a component type, columns, and data &mdash; render cleanly into target element <code>#my-table</code>:
+      </p>
+      <pre><code>&lt;div id="my-table"&gt;&lt;/div&gt;
+
+&lt;script type="module"&gt;
+  import render from "https://cdn.jsdelivr.net/gh/keshavsoft/json-renderers@main/docs/dist/v18/min.js";
+
+  render({
+    type: "table.withFooter",
+    columns: ["item", "qty", "amount"],
+    data: [
+      { item: "Rope", qty: 25, amount: 3000 },
+      { item: "Net",  qty: 10, amount: 1250 }
+    ],
+    targetHtmlId: "my-table"
+  });
+&lt;/script&gt;</code></pre>
+      <div class="note">
+        <strong>Field Meanings:</strong><br />
+        <code>type</code> selects the component structure.<br />
+        <code>columns</code> defines visible headers and keys.<br />
+        <code>data</code> supplies row values.<br />
+        <code>targetHtmlId</code> identifies the DOM container to mount into.
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-wrap">
+      <div><strong>dom-builder</strong> · KeshavSoft</div>
+      <div>Declarative JSON-to-DOM Architecture</div>
+    </div>
+  </footer>
+</body>
+
+</html>
