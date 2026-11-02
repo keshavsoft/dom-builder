@@ -24,6 +24,8 @@
       --blue-light: #eff6ff;
       --green: #10b981;
       --green-light: #ecfdf5;
+      --purple: #7c3aed;
+      --purple-light: #f5f3ff;
       --amber: #f59e0b;
       --amber-light: #fffbeb;
       --pale: #f8fafc;
@@ -148,13 +150,81 @@
       color: var(--green);
     }
 
+    /* Perspective Spotlight Cards */
+    .perspectives-section {
+      background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 26px 28px;
+      margin: 32px 0;
+    }
+
+    .perspective-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .perspective-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 22px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: #ffffff;
+      text-decoration: none;
+      color: var(--ink);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .perspective-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.1);
+    }
+
+    .perspective-card.arch:hover {
+      border-color: var(--green);
+      box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.15);
+    }
+
+    .perspective-card.dev:hover {
+      border-color: var(--blue);
+      box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.15);
+    }
+
+    .perspective-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .perspective-card h3 {
+      font-size: 1.18rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .perspective-card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
     /* Subfolder Menu */
     .menu-section {
       background: #fafcff;
       border: 1px solid var(--line);
       border-radius: 16px;
       padding: 28px;
-      margin: 36px 0;
+      margin: 32px 0 36px;
     }
 
     .menu-title {
@@ -372,6 +442,8 @@
       <div class="badge-bar">
         <span class="pill"><strong>Package:</strong> @keshavsoft/json-to-tag</span>
         <span class="pill"><strong>Role:</strong> W3C Node Synthesis</span>
+        <a class="pill" href="architecture.html" style="border-color: var(--green); color: var(--green); font-weight: 700;">🏛️ Architecture Deep-Dive →</a>
+        <a class="pill" href="developer.html" style="border-color: var(--blue); color: var(--blue); font-weight: 700;">💻 Developer Manual →</a>
         <a class="pill" href="https://github.com/keshavsoft/json-to-tag" target="_blank" rel="noopener">GitHub ↗</a>
         <a class="pill" href="https://www.npmjs.com/package/@keshavsoft/json-to-tag" target="_blank" rel="noopener">npm ↗</a>
         <a class="pill" href="docs/index.html">Existing Guides & Reference ↗</a>
@@ -380,6 +452,37 @@
   </header>
 
   <main class="wrap content">
+    <!-- Deep-Dive Perspectives Section -->
+    <div class="perspectives-section">
+      <div class="section-kicker">Core Perspectives</div>
+      <h2 style="font-size: 1.35rem; margin-bottom: 6px;">Choose Your Journey</h2>
+      <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 0;">
+        Explore the system mechanics under the hood or jump straight to function signatures and API usage:
+      </p>
+
+      <div class="perspective-grid">
+        <!-- Architecture -->
+        <a class="perspective-card arch" href="architecture.html">
+          <div>
+            <span class="perspective-badge" style="background: var(--green-light); color: var(--green);">System Design & Mechanics</span>
+            <h3>architecture.html</h3>
+            <p>How <code>json-to-tag</code> achieves decoupling: <code>json-traversal</code> navigates tree recursion while <code>buildElement</code> executes as the injected node factory.</p>
+          </div>
+          <div style="font-size: 0.85rem; font-weight: 700; color: var(--green);">Read Architecture Story →</div>
+        </a>
+
+        <!-- Developer Manual -->
+        <a class="perspective-card dev" href="developer.html">
+          <div>
+            <span class="perspective-badge" style="background: var(--blue-light); color: var(--blue);">Developer Guide & API</span>
+            <h3>developer.html</h3>
+            <p>High-speed <code>buildSpecElement</code> vs validated <code>buildSpecElementWithValidate</code>. Full JSON specification schema, parameter shapes, and console warnings.</p>
+          </div>
+          <div style="font-size: 0.85rem; font-weight: 700; color: var(--blue);">Read Developer Guide →</div>
+        </a>
+      </div>
+    </div>
+
     <!-- Subfolders Menu -->
     <div class="menu-section">
       <div class="menu-title">Child Dependencies at this Location</div>

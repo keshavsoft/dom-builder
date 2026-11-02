@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Developer API & Execution Modes | json-to-tag</title>
+  <meta name="description"
+    content="Developer manual for json-to-tag: High-Speed vs Validated execution modes, function signatures, data contracts, and examples." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --green: #10b981;
+      --green-light: #ecfdf5;
+      --amber: #f59e0b;
+      --pale: #f8fafc;
+      --code: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.65;
+    }
+
+    pre, code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .wrap {
+      width: min(100% - 40px, 1140px);
+      margin: 0 auto;
+    }
+
+    /* Top Breadcrumbs */
+    .crumb-bar {
+      background: var(--pale);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 0;
+      font-size: 0.82rem;
+    }
+
+    .crumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .crumbs a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .crumbs a:hover {
+      color: var(--blue);
+    }
+
+    .crumbs .sep {
+      color: #cbd5e1;
+      font-size: 0.75rem;
+    }
+
+    .crumbs .current {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 48px 0 36px;
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 70%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+      color: var(--blue);
+      background: var(--blue-light);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 2.85rem);
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+      font-weight: 850;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 800px;
+      margin-bottom: 24px;
+    }
+
+    .badge-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--pale);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .pill:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    /* Content Area */
+    .content {
+      padding: 40px 0 60px;
+    }
+
+    section {
+      margin-bottom: 48px;
+    }
+
+    .section-kicker {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 1.65rem;
+      letter-spacing: -0.03em;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #334155;
+      margin-bottom: 14px;
+    }
+
+    /* Mode Comparison Table */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    th {
+      background: var(--pale);
+      color: var(--ink);
+      font-weight: 700;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      color: #334155;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    pre {
+      background: var(--code);
+      color: #f1f5f9;
+      padding: 20px 22px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: 0.86rem;
+      line-height: 1.7;
+      margin: 16px 0;
+    }
+
+    .note {
+      padding: 16px 18px;
+      border-left: 4px solid var(--blue);
+      background: var(--blue-light);
+      border-radius: 0 10px 10px 0;
+      color: #1e40af;
+      font-size: 0.92rem;
+      margin: 18px 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: var(--pale);
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .footer-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Breadcrumbs -->
+  <nav class="crumb-bar" aria-label="Breadcrumbs">
+    <div class="wrap crumbs">
+      <a href="../../../index.html">dom-builder</a>
+      <span class="sep">/</span>
+      <a href="../../index.html">json-to-dom</a>
+      <span class="sep">/</span>
+      <a href="index.html">json-to-tag</a>
+      <span class="sep">/</span>
+      <span class="current">developer</span>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Developer Manual & API Reference</div>
+      <h1>json-to-tag Developer Guide</h1>
+      <p class="subtitle">
+        Master the two execution modes of <code>json-to-tag</code>: blazing-fast production rendering with <code>buildSpecElement</code>, and diagnostic debugging with <code>buildSpecElementWithValidate</code>.
+      </p>
+
+      <div class="badge-bar">
+        <a class="pill" href="index.html">← Back to json-to-tag Hub</a>
+        <a class="pill" href="architecture.html">Read Architecture Deep-Dive →</a>
+        <span class="pill"><strong>Engine Version:</strong> v12</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap content">
+    <!-- Section 1: The Two Modes -->
+    <section>
+      <div class="section-kicker">Execution Modes</div>
+      <h2>Choosing the Right Function</h2>
+      <p>
+        In modern web development, validation is crucial during development and testing, but can be pure overhead during 60 FPS animation loops or large batch table renders. <code>json-to-tag</code> provides two specialized functions to give you the best of both worlds:
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th><code>buildSpecElement</code> (Classic)</th>
+              <th><code>buildSpecElementWithValidate</code> (Guard)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Primary Purpose</strong></td>
+              <td>Production builds, pre-compiled specs, animation loops</td>
+              <td>Development, interactive playgrounds, user-supplied JSON</td>
+            </tr>
+            <tr>
+              <td><strong>Performance Overhead</strong></td>
+              <td><strong>0.00%</strong> (Zero validation overhead)</td>
+              <td>Pre-flight structural tree scan</td>
+            </tr>
+            <tr>
+              <td><strong>Diagnostic Logging</strong></td>
+              <td>Silent &mdash; compiles directly</td>
+              <td>Warns in <code>console.warn</code> with exact invalid node paths</td>
+            </tr>
+            <tr>
+              <td><strong>Mechanism</strong></td>
+              <td><code>traverse({ inSpec, inFunc: buildElement })</code></td>
+              <td>Runs <code>validate()</code> first, then runs <code>traverse()</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 2: Code Examples -->
+    <section>
+      <div class="section-kicker">Code Walkthrough</div>
+      <h2>Usage Examples</h2>
+
+      <h3>1. High-Speed Production Mode</h3>
+      <pre><code>import { buildSpecElement } from "@keshavsoft/json-to-tag";
+
+// Flexible signature: accepts { spec }, { inSpec }, or direct object
+const button = buildSpecElement({
+  spec: {
+    tagName: "button",
+    classList: "btn btn-primary",
+    textContent: "Save Changes",
+    attributes: { type: "submit" }
+  }
+});
+
+document.body.appendChild(button);</code></pre>
+
+      <h3 style="margin-top: 24px;">2. Development Mode with Validation Warning</h3>
+      <pre><code>import { buildSpecElementWithValidate } from "@keshavsoft/json-to-tag";
+
+// If a specification has a schema mistake (e.g. invalid tag or key):
+const badSpec = {
+  tagName: "btn-custom", // unrecognized or malformed
+  children: [{ invalidProperty: 123 }]
+};
+
+// Will log a diagnostic warning in the DevTools console, then continue compiling:
+const element = buildSpecElementWithValidate({ spec: badSpec });
+// Console Output:
+// [json-to-tag] Specification validation issues: [
+//   { path: "root", message: "Unknown tag 'btn-custom'" }
+// ]</code></pre>
+    </section>
+
+    <!-- Section 3: Data Contract -->
+    <section>
+      <div class="section-kicker">Data Contract</div>
+      <h2>JSON Specification Schema</h2>
+      <p>
+        Every element specification is a serializable plain JSON object supporting the following standard fields:
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Compulsory?</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>tagName</code></td>
+              <td><code>string</code></td>
+              <td><strong>Yes</strong></td>
+              <td>W3C HTML tag name (e.g. <code>"div"</code>, <code>"table"</code>, <code>"button"</code>)</td>
+            </tr>
+            <tr>
+              <td><code>textContent</code></td>
+              <td><code>string</code></td>
+              <td>No</td>
+              <td>Text inside the element (assigned via <code>element.textContent</code>)</td>
+            </tr>
+            <tr>
+              <td><code>classList</code></td>
+              <td><code>string</code></td>
+              <td>No</td>
+              <td>Space-separated CSS class names (e.g. <code>"btn btn-primary shadow"</code>)</td>
+            </tr>
+            <tr>
+              <td><code>attributes</code></td>
+              <td><code>object</code></td>
+              <td>No</td>
+              <td>HTML attributes and datasets (e.g. <code>{ type: "button", "data-id": "42" }</code>)</td>
+            </tr>
+            <tr>
+              <td><code>properties</code></td>
+              <td><code>object</code></td>
+              <td>No</td>
+              <td>Direct DOM object properties (e.g. <code>{ checked: true, disabled: false }</code>)</td>
+            </tr>
+            <tr>
+              <td><code>children</code></td>
+              <td><code>array</code></td>
+              <td>No</td>
+              <td>Recursive list of child element specifications or string nodes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 4: Global Browser Registration -->
+    <section>
+      <div class="section-kicker">CDN & Vanilla JS</div>
+      <h2>Global Browser Namespace</h2>
+      <p>
+        When imported directly via CDN or script tag in non-module environments, <code>json-to-tag</code> attaches itself cleanly to the standard KeshavSoft namespace:
+      </p>
+      <pre><code>// Available on window.ks:
+window.ks['json-to-tag'].buildSpecElement(spec);
+window.ks['json-to-tag'].buildSpecElementWithValidate(spec);</code></pre>
+    </section>
+
+    <!-- Navigation -->
+    <section>
+      <div class="section-kicker">Next Steps</div>
+      <h2>Related Documentation</h2>
+      <p>
+        <a href="architecture.html" style="color: var(--blue); font-weight: 600; text-decoration: none; margin-right: 20px;">
+          → Read Architecture Deep-Dive (Decoupled Traversal)
+        </a>
+        <a href="index.html" style="color: var(--green); font-weight: 600; text-decoration: none;">
+          ← Return to json-to-tag Hub
+        </a>
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-wrap">
+      <div><strong>dom-builder</strong> · json-to-tag developer guide</div>
+      <div>High-Speed vs Validated Compilation</div>
+    </div>
+  </footer>
+</body>
+
+</html>
+
