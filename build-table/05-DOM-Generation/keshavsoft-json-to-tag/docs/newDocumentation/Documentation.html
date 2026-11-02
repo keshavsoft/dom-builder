@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Documentation — json-to-tag</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .landing {
+      max-width: 1180px;
+      margin: auto;
+    }
+
+    .navlinks {
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .navlinks a {
+      color: #475569;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .navlinks a:hover,
+    .navlinks a.active {
+      color: var(--a);
+      background: #f0f9ff;
+      font-weight: 600;
+    }
+
+    .section2 {
+      padding: 36px 0 30px;
+    }
+
+    .head2 {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+    }
+
+    .head2 h1,
+    .head2 h2 {
+      margin: 0;
+      font-size: 32px;
+      letter-spacing: -.03em;
+      color: #0f172a;
+      font-weight: 800;
+    }
+
+    .head2 p {
+      margin: 0;
+      color: #64748b;
+      font-size: 13.5px;
+    }
+
+    .docs2 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .doc2 {
+      padding: 18px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #0f172a;
+      transition: all .18s ease;
+      text-decoration: none;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .doc2:hover {
+      text-decoration: none;
+      background: #f8fafc;
+      border-color: #0284c7;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.08);
+    }
+
+    .doc2 b {
+      display: block;
+      font-size: 13.5px;
+      color: #0f172a;
+      margin-bottom: 4px;
+      font-weight: 700;
+      transition: color .15s ease;
+    }
+
+    .doc2:hover b {
+      color: #0284c7;
+    }
+
+    .doc2 span {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.45;
+    }
+
+    .cta2 {
+      margin: 32px 0 40px;
+      padding: 24px;
+      border: 1px solid #bae6fd;
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f0f9ff;
+    }
+
+    .cta2 b {
+      font-size: 16px;
+      display: block;
+      color: #0369a1;
+      font-weight: 700;
+    }
+
+    .cta2 p {
+      margin: 4px 0 0;
+      color: #475569;
+      font-size: 13.5px;
+    }
+
+    .cta2 a {
+      padding: 9px 18px;
+      background: #0284c7;
+      color: #ffffff;
+      border: 1px solid #0284c7;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all .18s ease;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+    }
+
+    .cta2 a:hover {
+      background: #0369a1;
+      border-color: #0369a1;
+      color: #ffffff;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+    }
+
+    @media(max-width:900px) {
+      .docs2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width:550px) {
+      .docs2 {
+        grid-template-columns: 1fr;
+      }
+
+      .head2 {
+        display: block;
+      }
+
+      .head2 p {
+        margin-top: 6px;
+      }
+
+      .cta2 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="wrap navin">
+      <div style="display: flex; align-items: center; gap: 8px; margin-right: auto; flex-wrap: wrap;">
+        <a class="brand" href="index.html" style="margin-right: 0;">json-to-tag / docs</a>
+        <span style="color: #cbd5e1; font-weight: 400;">/</span>
+        <span style="color: var(--a); font-size: 12px; font-weight: 800; letter-spacing: .08em;">DOCUMENTATION</span>
+      </div>
+      <div class="navlinks">
+        <a href="../index.html">Home</a>
+        <a href="Documentation.html" class="active">documentation</a>
+      </div>
+    </div>
+  </nav>
+  <main>
+    <div class="wrap landing">
+      <section class="section2" id="docs">
+        <div class="head2">
+          <h1>documentation</h1>
+          <p>Open only the detail you need.</p>
+        </div>
+        <div class="docs2">
+          <a class="doc2" href="01-normal-html.html"><b>01 · Normal HTML</b><span>Direct HTML &amp; browser
+              output</span></a>
+          <a class="doc2" href="02-vanilla-javascript.html"><b>02 · Vanilla JS</b><span>Native DOM APIs &amp; manual
+              nodes</span></a>
+          <a class="doc2" href="03-json-specification.html"><b>03 · JSON Spec</b><span>Declarative tree &amp;
+              download</span></a>
+          <a class="doc2" href="04-cdn-build.html"><b>04 · CDN Build</b><span>Single script &amp; live
+              compile</span></a>
+          <a class="doc2" href="05-dynamic-data.html"><b>05 · Dynamic Data</b><span>Data binding, lists &amp;
+              inputs</span></a>
+          <a class="doc2" href="06-children.html"><b>06 · Children Tree</b><span>Nested DOM hierarchy</span></a>
+          <a class="doc2" href="07-element-builder.html"><b>07 · Element Builder</b><span>Six construction
+              stages</span></a>
+          <a class="doc2" href="08-reference.html"><b>08 · Reference</b><span>Fields &amp; source map</span></a>
+          <a class="doc2" href="09-interactive-live-build.html"><b>09 · Interactive Demo</b><span>Live DOM
+              builder</span></a>
+          <a class="doc2" href="10-upload-build.html"><b>10 · Upload &amp; Build</b><span>Upload JSON → CDN
+              DOM</span></a>
+          <a class="doc2" href="11-editor.html"><b>11 · Editor</b><span>JSON to DOM editor with live
+              rendering</span></a>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer>
+    <div class="wrap">
+      json-to-tag • Browser-first documentation
+      <span>·</span>
+      <a href="https://github.com/keshavsoft/json-to-tag" target="_blank" rel="noopener noreferrer">
+        GitHub ↗
+      </a>
+      <span>·</span>
+      <a href="https://www.npmjs.com/package/@keshavsoft/json-to-tag" target="_blank" rel="noopener noreferrer">
+        npm ↗
+      </a>
+    </div>
+  </footer>
+</body>
+
+</html>

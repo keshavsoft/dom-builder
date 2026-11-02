@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>json-renderers-build-table-options Documentation & Demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="card border-0 shadow-sm p-4 mb-4">
+      <h1 class="h3 fw-bold text-primary mb-2">json-renderers-build-table-options</h1>
+      <p class="text-secondary mb-3">
+        Declarative table decorator providing serial numbers (<code>#</code>), action options, and search extensions to JSON table specifications.
+      </p>
+      <div>
+        <span class="badge bg-success">Version 3.0</span>
+        <span class="badge bg-secondary">DOM-free</span>
+        <span class="badge bg-info text-dark">Declarative Instructions</span>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm p-4 h-100">
+          <h2 class="h5 fw-bold mb-3">Feature Overview</h2>
+          <ul class="list-group list-group-flush mb-3">
+            <li class="list-group-item px-0">
+              <strong>showSerial:</strong> Automatically inserts serial numbers (<code>#</code>) into colgroup, thead, and each tbody row.
+            </li>
+            <li class="list-group-item px-0">
+              <strong>showOptions:</strong> Injects an action options column with configurable buttons.
+            </li>
+            <li class="list-group-item px-0">
+              <strong>v3 Input Guard:</strong> Strictly verifies parameter types and ensures <code>inBase</code> is an object to prevent silent errors.
+            </li>
+          </ul>
+
+          <h2 class="h6 fw-bold mb-2">Quick Usage</h2>
+          <pre class="bg-dark text-light p-3 rounded small"><code>import buildOptions from "json-renderers-build-table-options";
+
+const outputSpec = buildOptions({
+  inOptions: {
+    showSerial: true,
+    showOptions: true
+  },
+  inBase: tableJsonSpec
+});</code></pre>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm p-4 h-100">
+          <h2 class="h5 fw-bold mb-3">Live Render Container</h2>
+          <p class="text-muted small">Resulting table specification rendered below:</p>
+          <div id="dom-render-container" class="table-responsive"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

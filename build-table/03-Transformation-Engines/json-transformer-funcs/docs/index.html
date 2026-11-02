@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSON Transformer Funcs</title><meta name="description" content="A coordinated set of three JSON-to-JSON transformation engines, each responsible for a different shape of output.">
+<style>
+:root{color-scheme:light;--ink:#182235;--muted:#53647a;--line:#d9e1eb;--paper:#fff;--bg:#f4f7fb;--accent:#2457a7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:980px;margin:0 auto;padding:28px 22px 64px}nav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px}
+nav a,.link{display:inline-block;padding:8px 12px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--accent);text-decoration:none}
+nav a[aria-current=page]{background:#e8effb;border-color:#b9cbed;font-weight:650}
+header,.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px;margin:0 0 18px}
+.kicker{font-size:.78rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);font-weight:750}
+h1{font-size:clamp(2rem,5vw,3.25rem);line-height:1.1;letter-spacing:-.035em;margin:.35em 0}
+h2{font-size:1.35rem;margin:.1em 0 .55em}p{margin:.45em 0 1em}.muted{color:var(--muted)}
+pre,code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f2f5f9;border:1px solid var(--line);padding:14px;border-radius:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.tile{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.flow span{padding:10px 13px;border:1px solid var(--line);border-radius:9px;background:#fff}.arrow{color:var(--accent);font-weight:800}
+footer{padding:14px 2px;color:var(--muted);font-size:.9rem}
+@media(max-width:600px){main{padding:16px 12px 40px}header,.panel{padding:19px}}
+</style></head><body><main>
+<nav aria-label="JSON Transformer architecture"><a href="../../json-transformer-funcs/docs/index.html" aria-current="page">Orchestrator</a><a href="../../json-transformer-funcs-primitive/docs/architecture.html">Primitive</a><a href="../../json-transformer-funcs-one-dimension/docs/architecture.html">One dimension</a><a href="../../json-transformer-funcs-two-dimensions/docs/architecture.html">Two dimensions</a></nav>
+<header><div class="kicker">THE ORCHESTRATOR</div><h1>JSON Transformer Funcs</h1><p class="muted">A coordinated set of three JSON-to-JSON transformation engines, each responsible for a different shape of output.</p></header>
+
+<section class="panel"><h2>The overall story</h2>
+<p>The system turns JSON descriptions and data into JSON element trees. It does not create browser DOM nodes itself. The resulting tree can be consumed by a renderer or another stage.</p>
+<div class="flow"><span><b>Data</b><br>values to place</span><span class="arrow">+</span><span><b>Spec</b><br>reusable element templates</span><span class="arrow">+</span><span><b>Instructions</b><br>source → transform → destination</span><span class="arrow">→</span><span><b>Element tree</b><br>JSON output</span></div></section>
+<section class="panel"><h2>Three transformation dimensions</h2><div class="grid">
+<article class="tile"><h2>One object</h2><p><b>Primitive</b> resolves one template against one data object.</p><a class="link" href="../../json-transformer-funcs-primitive/docs/architecture.html">Primitive responsibility</a></article>
+<article class="tile"><h2>A collection</h2><p><b>One dimension</b> applies one template to each object in an array.</p><a class="link" href="../../json-transformer-funcs-one-dimension/docs/architecture.html">Collection responsibility</a></article>
+<article class="tile"><h2>A grid</h2><p><b>Two dimensions</b> combines column definitions with row data to create row nodes containing cell nodes.</p><a class="link" href="../../json-transformer-funcs-two-dimensions/docs/architecture.html">Grid responsibility</a></article>
+</div></section>
+<section class="panel"><h2>What the orchestrator contributes</h2>
+<p>The package entry point re-exports the three engines and also exposes <code>resolvePath</code> and <code>findByRole</code>. The repository's samples express a build as a sequence: resolve source data, call the selected transformation with a template, then place the result at a destination in the base structure.</p>
+<p>The important distinction is that the engines perform transformations; the sample runner coordinates them. The base structure supplies the surrounding container, while the spec supplies reusable templates.</p></section>
+<section class="panel"><h2>Alignment checks from this source snapshot</h2>
+<p>The architecture roles are distinct in the active entry points. One packaging detail does not align in the uploaded snapshot: the orchestrator declares <code>json-transformer-funcs-one-dimension</code> as <code>^1.5.2</code>, while the sibling repository's package metadata says <code>1.5.1</code>. A local sibling source folder does not automatically become the installed npm dependency. Publish/install versions must be reconciled before claiming the four packages are release-aligned.</p>
+<p>The other declared ranges are <code>json-transformer-funcs-primitive ^1.9.1</code> and <code>json-transformer-funcs-two-dimensions ^1.5.2</code>; the uploaded sibling metadata is primitive <code>1.9.2</code> and two-dimensional <code>1.6.1</code>. Those satisfy the stated ranges. This page explains responsibilities; it does not claim that every release or sample has passed integration testing.</p></section>
+<section class="panel"><h2>Reading the contracts</h2>
+<ul><li><code>data</code> contains values and collections.</li><li><code>spec</code> names templates such as header, row, and cell shapes.</li><li><code>base</code> describes the structural skeleton that receives generated nodes.</li><li>Instructions connect source paths, engine functions, template keys, and destination paths.</li></ul>
+<p>These are the intended roles documented by the samples. The public package exports and the active source files remain the authority when a legacy document describes an older version.</p></section>
+
+<footer>JSON Transformer Funcs · Architecture guide · Describes the source version exported by each package entry point.</footer>
+</main></body></html>
